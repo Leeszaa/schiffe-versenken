@@ -13,6 +13,9 @@ public class BattleshipGUI extends JFrame {
     private JPanel panelCont;
     private Map<Point, Ship> player1Ships; 
     private Map<Point, Ship> player2Ships;
+    private Map<Point, Ship> player1Shoots = new HashMap<>();
+    private Map<Point, Ship> player2Shoots = new HashMap<>();
+
 
     public BattleshipGUI() {
         super("Battleship Game");
@@ -25,7 +28,7 @@ public class BattleshipGUI extends JFrame {
         // Views erstellen und hinzufügen
         panelCont.add(new MainMenuView(cardLayout, panelCont), "MainMenuView");
         panelCont.add(new PlacementView(cardLayout, panelCont, player1Ships, player2Ships), "PlacementView"); 
-        panelCont.add(new ShootingView(player1Ships, player2Ships), "ShootingView"); 
+        panelCont.add(new ShootingView(player1Ships, player2Ships, player1Shoots, player2Shoots), "ShootingView"); 
 
         add(panelCont);
 

@@ -91,6 +91,9 @@ public class PlacementView extends JPanel {
         for (char c = 'A'; c <= 'J'; c++) {
             JLabel label = new JLabel(String.valueOf(c), SwingConstants.CENTER);
             label.setFont(new Font("Roboto", Font.BOLD, 20));
+            label.setForeground(Color.WHITE);
+            label.setBackground(Color.darkGray);
+            label.setOpaque(true);
             panel.add(label);
         }
         return panel;
@@ -101,6 +104,9 @@ public class PlacementView extends JPanel {
         for (int i = 1; i <= 10; i++) {
             JLabel label = new JLabel(String.valueOf(i), SwingConstants.CENTER);
             label.setFont(new Font("Roboto", Font.BOLD, 20));
+            label.setForeground(Color.WHITE);
+            label.setBackground(Color.darkGray);
+            label.setOpaque(true);
             panel.add(label);
         }
         return panel;

@@ -27,18 +27,21 @@ public class ShootingView extends JPanel {
     }
 
     private void initComponents() {
+        setBackground(Color.darkGray);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
         JLabel label1 = new JLabel("Eigene Schiffe", SwingConstants.CENTER);
         label1.setFont(new Font("Roboto", Font.BOLD, 20));
+        label1.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(label1, gbc);
 
         JLabel label2 = new JLabel("Gegenerische Schiffe", SwingConstants.CENTER);
         label2.setFont(new Font("Roboto", Font.BOLD, 20));
+        label2.setForeground(Color.WHITE);
         gbc.gridx = 1;
         gbc.gridy = 0;
         add(label2, gbc);
@@ -76,7 +79,6 @@ public class ShootingView extends JPanel {
         gridWithLabels2.add(createRowLabels(), BorderLayout.WEST);
         gridWithLabels2.add(gridPanel2, BorderLayout.CENTER);
 
-        // Add grid panels to the layout
         gbc.gridx = 0;
         gbc.gridy = 1;
         add(gridWithLabels1, gbc);
@@ -90,6 +92,9 @@ public class ShootingView extends JPanel {
         for (char c = 'A'; c <= 'J'; c++) {
             JLabel label = new JLabel(String.valueOf(c), SwingConstants.CENTER);
             label.setFont(new Font("Roboto", Font.BOLD, 20));
+            label.setForeground(Color.WHITE);
+            label.setBackground(Color.darkGray);
+            label.setOpaque(true);
             panel.add(label);
         }
         return panel;
@@ -100,6 +105,9 @@ public class ShootingView extends JPanel {
         for (int i = 1; i <= 10; i++) {
             JLabel label = new JLabel(String.valueOf(i), SwingConstants.CENTER);
             label.setFont(new Font("Roboto", Font.BOLD, 20));
+            label.setForeground(Color.WHITE);
+            label.setBackground(Color.darkGray);
+            label.setOpaque(true);
             panel.add(label);
         }
         return panel;
