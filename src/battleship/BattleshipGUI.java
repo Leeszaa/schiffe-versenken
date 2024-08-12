@@ -3,6 +3,7 @@ package battleship;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class BattleshipGUI extends JPanel {
     private int player1ShipCount;
     private int player2ShipCount;
     private static final int TOTAL_SHIPS = 10;
-    private static final int[] SHIP_SIZES = {5, 4, 4, 3, 3, 3, 2, 2, 2, 2};
+    private static final int[] SHIP_SIZES = { 5, 4, 4, 3, 3, 3, 2, 2, 2, 2 };
     private static final Map<String, Integer> SHIP_LIMITS = new HashMap<>();
     private Map<String, Integer> player1ShipCounts;
     private Map<String, Integer> player2ShipCounts;
@@ -35,7 +36,8 @@ public class BattleshipGUI extends JPanel {
     public BattleshipGUI() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
         frame = new JFrame("Battleship Game");
@@ -73,39 +75,57 @@ public class BattleshipGUI extends JPanel {
         panelFirst.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
-    
+
         JLabel titleLabel = new JLabel("Schiffeversenken 0.0.1");
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setForeground(Color.WHITE); 
-        titleLabel.setFont(new Font("Roboto", Font.BOLD,64));
-    
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Roboto", Font.BOLD, 64));
+
         JButton buttonOne = new JButton("Lokaler Coop");
         JButton buttonTwo = new JButton("Online Multiplayer (WIP)");
         JButton buttonThree = new JButton("K.I. Gegner (WIP)");
-    
+
         buttonOne.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 cl.show(panelCont, "2");
             }
         });
-    
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridwidth = GridBagConstraints.REMAINDER; // Span across all columns
         panelFirst.add(titleLabel, gbc);
-    
+
         gbc.gridy = 1;
         gbc.gridwidth = 1; // Reset to default
         panelFirst.add(buttonOne, gbc);
-    
+
         gbc.gridy = 2;
         panelFirst.add(buttonTwo, gbc);
-    
+
         gbc.gridy = 3;
         panelFirst.add(buttonThree, gbc);
-    
+
+
+
+        String gifPath = "src/battleship/assets/waves.gif";
+        File gifFile = new File(gifPath);
+        String absoluteGifPath = gifFile.getAbsolutePath();
+        
+        ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+        if (gifIcon.getImageLoadStatus() == MediaTracker.COMPLETE) {
+            System.out.println("GIF loaded successfully.");
+        } else {
+            System.out.println("Failed to load GIF.");
+        }
+
+        gbc.gridy = 4;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        JLabel gifLabel = new JLabel(gifIcon);
+        panelFirst.add(gifLabel, gbc);
+
         panelFirst.setBackground(Color.darkGray);
     }
 
@@ -150,16 +170,17 @@ public class BattleshipGUI extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if ((isPlayer1Turn && player1ShipCount >= TOTAL_SHIPS) || (!isPlayer1Turn && player2ShipCount >= TOTAL_SHIPS)) {
+            if ((isPlayer1Turn && player1ShipCount >= TOTAL_SHIPS)
+                    || (!isPlayer1Turn && player2ShipCount >= TOTAL_SHIPS)) {
                 return;
             }
 
             JPanel panel = new JPanel(new GridLayout(2, 2));
             JLabel sizeLabel = new JLabel("Wähle ein Schiff aus:");
-            String[] shipOptions = {"Schlachtschiff (5)", "Kreuzer (4)", "Zerstörer (3)", "U-Boot (2)"};
+            String[] shipOptions = { "Schlachtschiff (5)", "Kreuzer (4)", "Zerstörer (3)", "U-Boot (2)" };
             JComboBox<String> sizeComboBox = new JComboBox<>(shipOptions);
             JLabel orientationLabel = new JLabel("Ausrichtung auswählen:");
-            String[] orientationOptions = {"Horizontal", "Vertikal"};
+            String[] orientationOptions = { "Horizontal", "Vertikal" };
             JComboBox<String> orientationComboBox = new JComboBox<>(orientationOptions);
 
             panel.add(sizeLabel);
@@ -167,7 +188,8 @@ public class BattleshipGUI extends JPanel {
             panel.add(orientationLabel);
             panel.add(orientationComboBox);
 
-            int result = JOptionPane.showConfirmDialog(frame, panel, "Schiff platzieren", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int result = JOptionPane.showConfirmDialog(frame, panel, "Schiff platzieren", JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
 
             if (result == JOptionPane.OK_OPTION) {
                 String selectedShip = (String) sizeComboBox.getSelectedItem();
@@ -213,7 +235,8 @@ public class BattleshipGUI extends JPanel {
             int r = isHorizontal ? row : row + i;
             int c = isHorizontal ? col + i : col;
 
-            if (r >= 10 || c >= 10 || currentPlayerShips.containsKey(new Point(r, c)) || isAdjacentToShip(r, c, currentPlayerShips)) {
+            if (r >= 10 || c >= 10 || currentPlayerShips.containsKey(new Point(r, c))
+                    || isAdjacentToShip(r, c, currentPlayerShips)) {
                 JOptionPane.showMessageDialog(frame, "Plazierung nicht möglich. Versuche es erneut.");
                 return;
             }
@@ -244,8 +267,8 @@ public class BattleshipGUI extends JPanel {
     }
 
     private boolean isAdjacentToShip(int row, int col, Map<Point, Ship> ships) {
-        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
-        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
+        int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
+        int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
 
         for (int i = 0; i < 8; i++) {
             int r = row + dx[i];
