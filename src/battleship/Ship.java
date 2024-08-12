@@ -5,11 +5,13 @@ public class Ship {
     private int hits;
     private boolean sunk;
     private int[][] position;
+    private boolean isHorizontal;
 
-    public Ship(int size) {
+    public Ship(int size, boolean isHorizontal) {
         this.size = size;
         this.hits = 0;
         this.sunk = false;
+        this.isHorizontal = isHorizontal;
     }
 
     public void place(int x, int y, boolean horizontal) {
@@ -48,5 +50,9 @@ public class Ship {
 
     public int getSize() {
         return size;
+    }
+
+    public boolean isHorizontal() {
+        return isHorizontal;
     }
 }
