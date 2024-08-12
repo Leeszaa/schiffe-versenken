@@ -33,6 +33,11 @@ public class BattleshipGUI extends JPanel {
     }
 
     public BattleshipGUI() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         frame = new JFrame("Battleship Game");
         panelCont = new JPanel();
         panelFirst = new JPanel();
@@ -41,10 +46,11 @@ public class BattleshipGUI extends JPanel {
 
         panelCont.setLayout(cl);
 
-        frame.setSize(800, 800);
+        frame.setSize(1000, 1000);
 
-        createFirstPanel();
-        createSecondPanel();
+        createEntrancePanel();
+        createPlacementPanel();
+        createShootingPanel();
 
         panelCont.add(panelFirst, "1");
         panelCont.add(panelSecond, "2");
@@ -63,19 +69,47 @@ public class BattleshipGUI extends JPanel {
         player2ShipCounts = new HashMap<>();
     }
 
-    private void createFirstPanel() {
+    private void createEntrancePanel() {
+        panelFirst.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+    
+        JLabel titleLabel = new JLabel("Schiffeversenken 0.0.1");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setForeground(Color.WHITE); 
+        titleLabel.setFont(new Font("Roboto", Font.BOLD,64));
+    
         JButton buttonOne = new JButton("Lokaler Coop");
+        JButton buttonTwo = new JButton("Online Multiplayer (WIP)");
+        JButton buttonThree = new JButton("K.I. Gegner (WIP)");
+    
         buttonOne.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 cl.show(panelCont, "2");
             }
         });
-        panelFirst.add(buttonOne);
+    
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.gridwidth = GridBagConstraints.REMAINDER; // Span across all columns
+        panelFirst.add(titleLabel, gbc);
+    
+        gbc.gridy = 1;
+        gbc.gridwidth = 1; // Reset to default
+        panelFirst.add(buttonOne, gbc);
+    
+        gbc.gridy = 2;
+        panelFirst.add(buttonTwo, gbc);
+    
+        gbc.gridy = 3;
+        panelFirst.add(buttonThree, gbc);
+    
         panelFirst.setBackground(Color.darkGray);
     }
 
-    private void createSecondPanel() {
+    private void createPlacementPanel() {
         JButton buttonSecond = new JButton("Zurück");
         buttonSecond.addActionListener(new ActionListener() {
             @Override
@@ -99,6 +133,10 @@ public class BattleshipGUI extends JPanel {
             }
         }
         panelSecond.add(gridPanel);
+    }
+
+    private void createShootingPanel() {
+        // TODO
     }
 
     private class GridCellClickListener extends MouseAdapter {
