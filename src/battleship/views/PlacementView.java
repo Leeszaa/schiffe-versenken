@@ -1,6 +1,9 @@
-package battleship;
+package battleship.views;
 
 import javax.swing.*;
+
+import battleship.Ship;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
@@ -18,7 +21,7 @@ public class PlacementView extends JPanel {
     private Map<Point, Ship> player2Ships;
 
 
-    private static final int TOTAL_SHIPS = 4; 
+    private static final int TOTAL_SHIPS = 10; 
     private static final Map<String, Integer> SHIP_LIMITS = new HashMap<>();
 
     static {

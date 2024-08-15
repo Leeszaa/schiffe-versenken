@@ -1,6 +1,9 @@
-package battleship;
+package battleship.views;
 
 import javax.swing.*;
+
+import battleship.Ship;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
