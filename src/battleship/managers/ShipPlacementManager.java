@@ -89,15 +89,19 @@ public class ShipPlacementManager {
             }
         }
 
-        switch (shipType) {
-            case "Schlachtschiff" ->
+                switch (shipType) {
+            case "Schlachtschiff":
                 currentPlayer.getGameBoard().placeShip(col, row, schlachtschiffFactory.createShip(), isHorizontal);
-            case "Kreuzer" ->
+                break;
+            case "Kreuzer":
                 currentPlayer.getGameBoard().placeShip(col, row, kreuzerFactory.createShip(), isHorizontal);
-            case "Zerstörer" ->
+                break;
+            case "Zerstörer":
                 currentPlayer.getGameBoard().placeShip(col, row, zerstörerFactory.createShip(), isHorizontal);
-            case "U-Boot" ->
+                break;
+            case "U-Boot":
                 currentPlayer.getGameBoard().placeShip(col, row, u_BootFactory.createShip(), isHorizontal);
+                break;
         }
 
         for (int i = 0; i < size; i++) {
@@ -202,14 +206,19 @@ public class ShipPlacementManager {
      * @param shipType The type of the ship.
      * @return The size of the ship.
      */
-    public int getShipSize(String shipType) {
-        return switch (shipType) {
-            case "Schlachtschiff" -> schlachtschiffFactory.getShipSize();
-            case "Kreuzer" -> kreuzerFactory.getShipSize();
-            case "Zerstörer" -> zerstörerFactory.getShipSize();
-            case "U-Boot" -> u_BootFactory.getShipSize();
-            default -> 0;
-        };
+        public int getShipSize(String shipType) {
+        switch (shipType) {
+            case "Schlachtschiff":
+                return schlachtschiffFactory.getShipSize();
+            case "Kreuzer":
+                return kreuzerFactory.getShipSize();
+            case "Zerstörer":
+                return zerstörerFactory.getShipSize();
+            case "U-Boot":
+                return u_BootFactory.getShipSize();
+            default:
+                return 0;
+        }
     }
 
     /**
