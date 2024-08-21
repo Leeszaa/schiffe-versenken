@@ -14,6 +14,7 @@ public class Kreuzer implements IShip {
     private int size; /**< The size of the ship */
     private String name; /**< The name of the ship */
     private int limit; /**< The limit of the ship */
+    private boolean isHorizontal; /**< The orientation of the ship */
 
     /**
      *   Gets the size of the ship.
@@ -67,5 +68,14 @@ public class Kreuzer implements IShip {
     @Override
     public void setShipLimit(int limit) {
         this.limit = limit;
+    }
+
+    /**
+     *   Gets the orientation of the ship.
+     * @return The orientation of the ship.
+     */
+    @Override
+    public boolean isHorizontal() {
+        return isHorizontal;
     }
 }

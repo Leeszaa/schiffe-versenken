@@ -46,4 +46,6 @@ public interface IShip {
      * @param limit The limit to set.
      */
     void setShipLimit(int limit);
+
+    boolean isHorizontal();
 }

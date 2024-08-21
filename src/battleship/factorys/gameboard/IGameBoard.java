@@ -51,4 +51,6 @@ public interface IGameBoard {
      * @return True if a ship is hit, false otherwise.
      */
     boolean isShipHit(int x, int y);
+
+    void removeShip(IShip ship);
 }

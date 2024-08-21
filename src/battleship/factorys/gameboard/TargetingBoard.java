@@ -99,4 +99,9 @@
      private boolean isValidPlacement(int x, int y, int shipSize, boolean isHorizontal) {
          return true;
      }
+
+     @Override
+        public void removeShip(IShip ship) {
+            ships.entrySet().removeIf(entry -> entry.getValue().equals(ship));
+        }
  }

@@ -117,4 +117,9 @@
          }
          return true; // Gültige Platzierung
      }
+
+        @Override
+        public void removeShip(IShip ship) {
+            ships.entrySet().removeIf(entry -> entry.getValue().equals(ship));
+        }
  }

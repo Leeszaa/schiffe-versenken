@@ -124,6 +124,42 @@ public class ShipPlacementManager {
         }
     }
 
+    
+    /**
+     *   Gets the ship at the specified location.
+     * @param row The row of the location.
+     * @param col The column of the location.
+     * @return The ship at the specified location, or null if no ship is present.
+     */
+    public IShip getShipAt(int row, int col) {
+        Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
+        return ships.get(new Point(col, row));
+    }
+
+    /**
+     *   Removes the ship at the specified location.
+     * @param row The row of the location.
+     * @param col The column of the location.
+     * @param ship The ship to be removed.
+     */
+    public void removeShip(int row, int col, IShip ship, JPanel[][] gridCells) {
+        currentPlayer.getGameBoard().removeShip(ship);
+        currentPlayerShipCounts.put(ship.getShipName(), currentPlayerShipCounts.get(ship.getShipName()) - 1);
+        placementView.clearGrid();
+        Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
+        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
+            Point point = entry.getKey();
+            IShip remainingShip = entry.getValue();
+            int shipSize = remainingShip.getShipSize();
+            boolean isHorizontal = remainingShip.isHorizontal();
+            for (int i = 0; i < shipSize; i++) {
+                int r = isHorizontal ? point.y : point.y + i;
+                int c = isHorizontal ? point.x + i : point.x;
+                gridCells[r][c].setBackground(Color.GRAY);
+            }
+        }
+    }
+
     /**
      *   Switches the current player.
      */
