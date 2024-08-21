@@ -52,9 +52,6 @@ public class BattleshipGUI extends JFrame {
         setSize(1400, 1000);
         setLocationRelativeTo(null);
         setVisible(true);
-
-        // Initialize the game
-        initializeLocalCoopGame();
     }
 
     /**

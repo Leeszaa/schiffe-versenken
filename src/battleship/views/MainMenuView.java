@@ -48,8 +48,8 @@ public class MainMenuView extends JPanel {
 
         JButton localCoopButton = new JButton("Lokaler Coop");
         localCoopButton.addActionListener(e -> {
-            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeLocalCoopGame();
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
         });
 
         JButton buttonTwo = new JButton("Online Multiplayer (WIP)");
