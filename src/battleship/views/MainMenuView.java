@@ -1,3 +1,8 @@
+/**
+ * @file MainMenuView.java
+ * @brief Represents the main menu view in the Battleship game.
+ */
+
 package battleship.views;
 
 import javax.swing.*;
@@ -8,16 +13,29 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
+/**
+ * @class MainMenuView
+ * @brief Represents the main menu view in the Battleship game.
+ * Extends {@link JPanel} to create a custom panel for the main menu.
+ */
 public class MainMenuView extends JPanel {
-    private CardLayout cardLayout;
-    private JPanel parentPanel; 
+    private CardLayout cardLayout; /**< The card layout for switching views */
+    private JPanel parentPanel; /**< The parent panel containing this view */
 
+    /**
+     * @brief Constructor for MainMenuView.
+     * @param cardLayout The card layout for switching views.
+     * @param parentPanel The parent panel containing this view.
+     */
     public MainMenuView(CardLayout cardLayout, JPanel parentPanel) {
         this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
         initComponents();
     }
 
+    /**
+     * @brief Initializes the components of the view.
+     */
     private void initComponents() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -32,7 +50,6 @@ public class MainMenuView extends JPanel {
         localCoopButton.addActionListener(e -> {
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeLocalCoopGame();
-            //cardLayout.show(parentPanel, "PlacementView");
         });
 
         JButton buttonTwo = new JButton("Online Multiplayer (WIP)");
@@ -60,10 +77,8 @@ public class MainMenuView extends JPanel {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView();
-                //cardLayout.show(parentPanel, "ShootingView");
             }
         });
-
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -91,7 +106,6 @@ public class MainMenuView extends JPanel {
         gbc.gridy = 7;
         add(buttonSix, gbc);
         buttonSix.setVisible(false);
-
 
         String gifPath = "src/battleship/assets/waves.gif";
         File gifFile = new File(gifPath);

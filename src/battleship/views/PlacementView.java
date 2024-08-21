@@ -1,5 +1,11 @@
+/**
+ * @file PlacementView.java
+ * @brief Represents the ship placement view in the Battleship game.
+ */
+
 package battleship.views;
 
+import battleship.BattleshipGUI;
 import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.player.IPlayer;
 import battleship.managers.ShipPlacementManager;
@@ -11,24 +17,44 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Map;
 
+/**
+ * @class PlacementView
+ * @brief Represents the ship placement view in the Battleship game.
+ * Extends {@link JPanel} to create a custom panel for ship placement.
+ */
 public class PlacementView extends JPanel {
-    private JPanel gridPanel;
-    private JPanel[][] gridCells;
-    private CardLayout cardLayout;
-    private JPanel parentPanel;
-    private ShipPlacementManager shipPlacementManager;
+    private JPanel gridPanel; /**< Panel for the grid layout */
+    private JPanel[][] gridCells; /**< 2D array of grid cells */
+    private CardLayout cardLayout; /**< Card layout for switching views */
+    private JPanel parentPanel; /**< Parent panel containing this view */
+    private ShipPlacementManager shipPlacementManager; /**< Manager for ship placement */
+    private BattleshipGUI battleshipGUI; /**< Reference to the main GUI */
 
-    private static final int TOTAL_SHIPS = 10;
+    private static final int TOTAL_SHIPS = 10; /**< Total number of ships to be placed */
 
+    /**
+     * @brief Constructor for PlacementView.
+     * @param cardLayout The card layout for switching views.
+     * @param parentPanel The parent panel containing this view.
+     * @param player1Board The game board for player 1.
+     * @param player2Board The game board for player 2.
+     * @param player1 The first player.
+     * @param player2 The second player.
+     * @param battleshipGUI The main GUI.
+     */
     public PlacementView(CardLayout cardLayout, JPanel parentPanel, IGameBoard player1Board, IGameBoard player2Board,
-                         IPlayer player1, IPlayer player2) {
+                         IPlayer player1, IPlayer player2, BattleshipGUI battleshipGUI) {
         this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
-        this.shipPlacementManager = new ShipPlacementManager(player1, player2);
+        this.battleshipGUI = battleshipGUI;
+        this.shipPlacementManager = new ShipPlacementManager(player1, player2, this, battleshipGUI);
 
         initComponents();
     }
 
+    /**
+     * @brief Initializes the components of the view.
+     */
     private void initComponents() {
         setLayout(new BorderLayout());
         setBackground(Color.darkGray);
@@ -76,6 +102,10 @@ public class PlacementView extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * @brief Creates the column labels for the grid.
+     * @return A panel containing the column labels.
+     */
     private JPanel createColumnLabels() {
         JPanel panel = new JPanel(new GridLayout(1, 10));
         for (char c = 'A'; c <= 'J'; c++) {
@@ -89,6 +119,10 @@ public class PlacementView extends JPanel {
         return panel;
     }
 
+    /**
+     * @brief Creates the row labels for the grid.
+     * @return A panel containing the row labels.
+     */
     private JPanel createRowLabels() {
         JPanel panel = new JPanel(new GridLayout(10, 1));
         for (int i = 1; i <= 10; i++) {
@@ -102,15 +136,29 @@ public class PlacementView extends JPanel {
         return panel;
     }
 
+    /**
+     * @class GridCellClickListener
+     * @brief Listener for grid cell clicks.
+     * Extends {@link MouseAdapter} to handle mouse click events on grid cells.
+     */
     private class GridCellClickListener extends MouseAdapter {
-        private final int row;
-        private final int col;
+        private final int row; /**< The row of the grid cell */
+        private final int col; /**< The column of the grid cell */
 
+        /**
+         * @brief Constructor for GridCellClickListener.
+         * @param row The row of the grid cell.
+         * @param col The column of the grid cell.
+         */
         public GridCellClickListener(int row, int col) {
             this.row = row;
             this.col = col;
         }
 
+        /**
+         * @brief Handles mouse click events on grid cells.
+         * @param e The mouse event.
+         */
         @Override
         public void mouseClicked(MouseEvent e) {
             if (shipPlacementManager.getPlacedShipsCount() >= TOTAL_SHIPS) {
@@ -161,16 +209,21 @@ public class PlacementView extends JPanel {
         }
     }
 
+    /**
+     * @brief Shows the ship locations for both players.
+     */
     private void showShipLocations() {
         Map<Point, IShip> player1Ships = shipPlacementManager.getPlayer1ShipLocations();
         Map<Point, IShip> player2Ships = shipPlacementManager.getPlayer2ShipLocations();
 
-        // Display or process the ship locations as needed
         System.out.println("Player 1 Ships: " + player1Ships);
         System.out.println("Player 2 Ships: " + player2Ships);
     }
 
-    private void clearGrid() {
+    /**
+     * @brief Clears the grid by resetting the background color of all cells.
+     */
+    public void clearGrid() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 gridCells[i][j].setBackground(null);

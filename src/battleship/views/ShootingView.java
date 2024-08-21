@@ -1,36 +1,58 @@
+/**
+ * @file ShootingView.java
+ * @brief Represents the shooting view in the Battleship game.
+ */
+
 package battleship.views;
 
 import javax.swing.*;
 
 import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.ships.*;
+import battleship.managers.ShootingManager;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Map;
 
+/**
+ * @class ShootingView
+ * @brief Represents the shooting view in the Battleship game.
+ * Extends {@link JPanel} to create a custom panel for shooting actions.
+ */
 public class ShootingView extends JPanel {
-    private JPanel gridPanel1; // Spielfeld von Spieler 1
-    private JPanel gridPanel2; // Spielfeld von Spieler 2
-    private JPanel[][] gridCells1;
-    private JPanel[][] gridCells2;
-    private IGameBoard player1Board; 
-    private IGameBoard player2Board;
-    private IGameBoard player1TargetingBoard;
-    private IGameBoard player2TargetingBoard;
-    private boolean isPlayer1Turn = true; 
+    private JPanel gridPanel1; /**< Panel for player 1's ships */
+    private JPanel gridPanel2; /**< Panel for player 2's ships */
+    private JPanel[][] gridCells1; /**< 2D array of grid cells for player 1 */
+    private JPanel[][] gridCells2; /**< 2D array of grid cells for player 2 */
+    private IGameBoard player1Board; /**< Game board for player 1 */
+    private IGameBoard player2Board; /**< Game board for player 2 */
+    private IGameBoard player1TargetingBoard; /**< Targeting board for player 1 */
+    private IGameBoard player2TargetingBoard; /**< Targeting board for player 2 */
+    private boolean isPlayer1Turn = true; /**< Flag to indicate if it's player 1's turn */
+    private ShootingManager shootingManager; /**< Manager for handling shooting actions */
 
+    /**
+     * @brief Constructor for ShootingView.
+     * @param player1Board The game board for player 1.
+     * @param player1TargetingBoard The targeting board for player 1.
+     * @param player2Board The game board for player 2.
+     * @param player2TargetingBoard The targeting board for player 2.
+     */
     public ShootingView(IGameBoard player1Board, IGameBoard player1TargetingBoard, IGameBoard player2Board, IGameBoard player2TargetingBoard) {
-
         this.player1Board = player1Board;
         this.player1TargetingBoard = player1TargetingBoard;
         this.player2Board = player2Board;
         this.player2TargetingBoard = player2TargetingBoard;
+        this.shootingManager = new ShootingManager();
 
         initComponents();
     }
 
+    /**
+     * @brief Initializes the components of the view.
+     */
     private void initComponents() {
         setBackground(Color.darkGray);
         setLayout(new GridBagLayout());
@@ -92,6 +114,10 @@ public class ShootingView extends JPanel {
         add(gridWithLabels2, gbc);
     }
 
+    /**
+     * @brief Creates the column labels for the grid.
+     * @return A panel containing the column labels.
+     */
     private JPanel createColumnLabels() {
         JPanel panel = new JPanel(new GridLayout(1, 10));
         for (char c = 'A'; c <= 'J'; c++) {
@@ -105,6 +131,10 @@ public class ShootingView extends JPanel {
         return panel;
     }
 
+    /**
+     * @brief Creates the row labels for the grid.
+     * @return A panel containing the row labels.
+     */
     private JPanel createRowLabels() {
         JPanel panel = new JPanel(new GridLayout(10, 1));
         for (int i = 1; i <= 10; i++) {
@@ -118,21 +148,35 @@ public class ShootingView extends JPanel {
         return panel;
     }
 
+    /**
+     * @class GridClickListener
+     * @brief Listener for grid cell clicks.
+     * Extends {@link MouseAdapter} to handle mouse click events on grid cells.
+     */
     private class GridClickListener extends MouseAdapter {
-        private final int row;
-        private final int col;
-        private final int playerGrid;
+        private final int row; /**< The row of the grid cell */
+        private final int col; /**< The column of the grid cell */
+        private final int playerGrid; /**< The player grid identifier */
 
+        /**
+         * @brief Constructor for GridClickListener.
+         * @param row The row of the grid cell.
+         * @param col The column of the grid cell.
+         * @param playerGrid The player grid identifier.
+         */
         public GridClickListener(int row, int col, int playerGrid) {
             this.row = row;
             this.col = col;
             this.playerGrid = playerGrid;
         }
 
+        /**
+         * @brief Handles mouse click events on grid cells.
+         * @param e The mouse event.
+         */
         @Override
         public void mouseClicked(MouseEvent e) {
             // Handle click event
         }
     }
-
 }

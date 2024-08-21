@@ -1,3 +1,8 @@
+/**
+ * @file BattleshipGUI.java
+ * @brief Main GUI class for the Battleship game.
+ */
+
 package battleship;
 
 import javax.swing.*;
@@ -13,18 +18,27 @@ import battleship.views.ShootingView;
 
 import java.awt.*;
 
+/**
+ * @class BattleshipGUI
+ * @brief Main GUI class for the Battleship game.
+ * Extends {@link JFrame} to create the main window for the game.
+ */
 public class BattleshipGUI extends JFrame {
 
-    private CardLayout cardLayout;
-    private JPanel panelCont;
+    private CardLayout cardLayout; /**< The card layout for switching views */
+    private JPanel panelCont; /**< The main container panel */
 
-    private IGameBoard player1Board;
-    private IGameBoard player1TargetingBoard;
-    private IGameBoard player2Board;
-    private IGameBoard player2TargetingBoard;
-    private IPlayer player1;
-    private IPlayer player2;
+    private IGameBoard player1Board; /**< Game board for player 1 */
+    private IGameBoard player1TargetingBoard; /**< Targeting board for player 1 */
+    private IGameBoard player2Board; /**< Game board for player 2 */
+    private IGameBoard player2TargetingBoard; /**< Targeting board for player 2 */
+    private IPlayer player1; /**< The first player */
+    private IPlayer player2; /**< The second player */
 
+    /**
+     * @brief Constructor for BattleshipGUI.
+     * Initializes the main window and starts the local coop game.
+     */
     public BattleshipGUI() {
         super("Battleship Game");
         cardLayout = new CardLayout();
@@ -43,6 +57,10 @@ public class BattleshipGUI extends JFrame {
         initializeLocalCoopGame();
     }
 
+    /**
+     * @brief Shows the ship placement view.
+     * Ensures players are initialized before showing the placement view.
+     */
     public void showPlacementView() {
         if (player1 == null || player2 == null) {
             System.err.println("Players are not initialized. Call initializeLocalCoopGame first.");
@@ -55,11 +73,16 @@ public class BattleshipGUI extends JFrame {
                 player1Board,
                 player2Board,
                 player1,
-                player2);
+                player2,
+                this);
         panelCont.add(placementView, "PlacementView");
         cardLayout.show(panelCont, "PlacementView");
     }
 
+    /**
+     * @brief Shows the shooting view.
+     * Ensures players are initialized before showing the shooting view.
+     */
     public void showShootingView() {
         if (player1 == null || player2 == null) {
             System.err.println("Players are not initialized. Call initializeLocalCoopGame first.");
@@ -72,6 +95,10 @@ public class BattleshipGUI extends JFrame {
         cardLayout.show(panelCont, "ShootingView");
     }
 
+    /**
+     * @brief Initializes the local coop game.
+     * Creates players and their respective game boards and targeting boards.
+     */
     public void initializeLocalCoopGame() {
         // Spieler erstellen
         player1 = new LocalPlayerFactory().createPlayer("Spieler 1");
