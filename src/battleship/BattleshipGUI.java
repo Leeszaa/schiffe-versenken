@@ -20,27 +20,49 @@ import java.awt.*;
 
 /**
  * @class BattleshipGUI
- *   Main GUI class for the Battleship game.
- * Extends {@link JFrame} to create the main window for the game.
+ *        Main GUI class for the Battleship game.
+ *        Extends {@link JFrame} to create the main window for the game.
  */
 public class BattleshipGUI extends JFrame {
 
-    private CardLayout cardLayout; /**< The card layout for switching views */
-    private JPanel panelCont; /**< The main container panel */
+    private CardLayout cardLayout;
+    /** < The card layout for switching views */
+    private JPanel panelCont;
+    /** < The main container panel */
 
-    private IGameBoard player1Board; /**< Game board for player 1 */
-    private IGameBoard player1TargetingBoard; /**< Targeting board for player 1 */
-    private IGameBoard player2Board; /**< Game board for player 2 */
-    private IGameBoard player2TargetingBoard; /**< Targeting board for player 2 */
-    private IPlayer player1; /**< The first player */
-    private IPlayer player2; /**< The second player */
+    private IGameBoard player1Board;
+    /** < Game board for player 1 */
+    private IGameBoard player1TargetingBoard;
+    /** < Targeting board for player 1 */
+    private IGameBoard player2Board;
+    /** < Game board for player 2 */
+    private IGameBoard player2TargetingBoard;
+    /** < Targeting board for player 2 */
+    private IPlayer player1;
+    /** < The first player */
+    private IPlayer player2;
+
+    /** < The second player */
 
     /**
-     *   Constructor for BattleshipGUI.
+     * Constructor for BattleshipGUI.
      * Initializes the main window and starts the local coop game.
      */
     public BattleshipGUI() {
         super("Battleship Game");
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        } catch (UnsupportedLookAndFeelException e) {
+            // handle exception
+        } catch (ClassNotFoundException e) {
+            // handle exception
+        } catch (InstantiationException e) {
+            // handle exception
+        } catch (IllegalAccessException e) {
+            // handle exception
+        }
         cardLayout = new CardLayout();
         panelCont = new JPanel(cardLayout);
 
@@ -55,7 +77,7 @@ public class BattleshipGUI extends JFrame {
     }
 
     /**
-     *   Shows the ship placement view.
+     * Shows the ship placement view.
      * Ensures players are initialized before showing the placement view.
      */
     public void showPlacementView() {
@@ -77,7 +99,7 @@ public class BattleshipGUI extends JFrame {
     }
 
     /**
-     *   Shows the shooting view.
+     * Shows the shooting view.
      * Ensures players are initialized before showing the shooting view.
      */
     public void showShootingView() {
@@ -93,7 +115,7 @@ public class BattleshipGUI extends JFrame {
     }
 
     /**
-     *   Initializes the local coop game.
+     * Initializes the local coop game.
      * Creates players and their respective game boards and targeting boards.
      */
     public void initializeLocalCoopGame() {
