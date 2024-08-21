@@ -1,6 +1,9 @@
 package battleship.views;
 
 import javax.swing.*;
+
+import battleship.BattleshipGUI;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -27,7 +30,9 @@ public class MainMenuView extends JPanel {
 
         JButton localCoopButton = new JButton("Lokaler Coop");
         localCoopButton.addActionListener(e -> {
-            cardLayout.show(parentPanel, "PlacementView");
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeLocalCoopGame();
+            //cardLayout.show(parentPanel, "PlacementView");
         });
 
         JButton buttonTwo = new JButton("Online Multiplayer (WIP)");
@@ -54,7 +59,8 @@ public class MainMenuView extends JPanel {
         buttonSix.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                cardLayout.show(parentPanel, "ShootingView");
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView();
+                //cardLayout.show(parentPanel, "ShootingView");
             }
         });
 

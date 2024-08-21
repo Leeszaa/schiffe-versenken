@@ -2,7 +2,14 @@ package battleship.views;
 
 import javax.swing.*;
 
-import battleship.Ship;
+import battleship.factorys.gameboard.IGameBoard;
+import battleship.factorys.player.IPlayer;
+import battleship.factorys.ships.SchlachtschiffFactory;
+import battleship.factorys.ships.IShip;
+import battleship.factorys.ships.KreuzerFactory;
+import battleship.factorys.ships.ShipFactory;
+import battleship.factorys.ships.U_BootFactory;
+import battleship.factorys.ships.ZerstörerFactory;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,34 +19,48 @@ import java.util.Map;
 public class PlacementView extends JPanel {
     private JPanel gridPanel;
     private JPanel[][] gridCells;
-    private Map<Point, Ship> currentPlayerShips;
-    private Map<String, Integer> currentPlayerShipCounts;
     private boolean isPlayer1Turn = true;
     private CardLayout cardLayout;
     private JPanel parentPanel;
-    private Map<Point, Ship> player1Ships; 
-    private Map<Point, Ship> player2Ships;
+    private IGameBoard player1Board;
+    private IGameBoard player2Board;
+    private Map<String, Integer> currentPlayerShipCounts;
+    private Map<String, Integer> shipLimits;
 
+    private ZerstörerFactory zerstörerFactory;
+    private SchlachtschiffFactory schlachtschiffFactory;
+    private KreuzerFactory kreuzerFactory;
+    private U_BootFactory u_BootFactory;
+    private IPlayer player1;
+    private IPlayer player2;
 
-    private static final int TOTAL_SHIPS = 10; 
-    private static final Map<String, Integer> SHIP_LIMITS = new HashMap<>();
+    private static final int TOTAL_SHIPS = 5;
 
-    static {
-        SHIP_LIMITS.put("Schlachtschiff (5)", 1);
-        SHIP_LIMITS.put("Kreuzer (4)", 2);
-        SHIP_LIMITS.put("Zerstörer (3)", 3);
-        SHIP_LIMITS.put("U-Boot (2)", 4);
-    }
-
-    public PlacementView(CardLayout cardLayout, JPanel parentPanel, Map<Point, Ship> player1Ships, Map<Point, Ship> player2Ships) {
+    public PlacementView(CardLayout cardLayout, JPanel parentPanel, IGameBoard player1Board, IGameBoard player2Board,
+            IPlayer player1, IPlayer player2) {
         this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
-        this.player1Ships = player1Ships;
-        this.player2Ships = player2Ships;
+        this.player1Board = player1Board;
+        this.player2Board = player2Board;
+        this.player1 = player1;
+        this.player2 = player2;
 
-        currentPlayerShips = new HashMap<>();
-        currentPlayerShipCounts = new HashMap<>(); 
+        this.zerstörerFactory = new ZerstörerFactory();
+        this.schlachtschiffFactory = new SchlachtschiffFactory();
+        this.kreuzerFactory = new KreuzerFactory();
+        this.u_BootFactory = new U_BootFactory();
+
+        currentPlayerShipCounts = new HashMap<>();
+        shipLimits = new HashMap<>();
+        initializeShipLimits();
         initComponents();
+    }
+
+    private void initializeShipLimits() {
+        shipLimits.put("Schlachtschiff", schlachtschiffFactory.getShipLimit());
+        shipLimits.put("Kreuzer", kreuzerFactory.getShipLimit());
+        shipLimits.put("Zerstörer", zerstörerFactory.getShipLimit());
+        shipLimits.put("U-Boot", u_BootFactory.getShipLimit());
     }
 
     private void initComponents() {
@@ -126,25 +147,23 @@ public class PlacementView extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (currentPlayerShips.size() >= TOTAL_SHIPS) {
+            if (getPlacedShipsCount() >= TOTAL_SHIPS) {
                 if (isPlayer1Turn) {
-                    // Spieler 1 ist fertig, Spieler 2 ist dran
                     isPlayer1Turn = false;
-                    currentPlayerShips = new HashMap<>(); // Neues Schiff-Map für Spieler 2
-                    currentPlayerShipCounts = new HashMap<>(); // Neue Zählung für Spieler 2
-                    clearGrid(); 
-                    JOptionPane.showMessageDialog(PlacementView.this, "Spieler 1 hat alle Schiffe platziert. Nun ist Spieler 2 drann.");
+                    currentPlayerShipCounts = new HashMap<>();
+                    clearGrid();
+                    JOptionPane.showMessageDialog(PlacementView.this,
+                            "Spieler 1 hat alle Schiffe platziert. Nun ist Spieler 2 drann.");
                 } else {
-                    // Beide Spieler sind fertig
                     JOptionPane.showMessageDialog(PlacementView.this, "Schiffsplatzierung abgeschlossen.");
-                    cardLayout.show(parentPanel, "ShootingView"); // Übergang zur ShootingView
+                    cardLayout.show(parentPanel, "ShootingView");
                 }
-                return; 
+                return;
             }
 
             JPanel panel = new JPanel(new GridLayout(2, 2));
             JLabel sizeLabel = new JLabel("Wähle ein Schiff aus:");
-            String[] shipOptions = { "Schlachtschiff (5)", "Kreuzer (4)", "Zerstörer (3)", "U-Boot (2)" };
+            String[] shipOptions = { "Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot" };
             JComboBox<String> sizeComboBox = new JComboBox<>(shipOptions);
             JLabel orientationLabel = new JLabel("Ausrichtung auswählen:");
             String[] orientationOptions = { "Horizontal", "Vertikal" };
@@ -166,7 +185,8 @@ public class PlacementView extends JPanel {
                 if (canPlaceShip(selectedShip)) {
                     placeShip(row, col, shipSize, isHorizontal, selectedShip);
                 } else {
-                    JOptionPane.showMessageDialog(PlacementView.this, "Du hast bereits das Maximum dieses Typs platziert.");
+                    JOptionPane.showMessageDialog(PlacementView.this,
+                            "Du hast bereits das Maximum dieses Typs platziert.");
                 }
             }
         }
@@ -174,18 +194,26 @@ public class PlacementView extends JPanel {
 
     private int getShipSize(String shipType) {
         return switch (shipType) {
-            case "Schlachtschiff (5)" -> 5;
-            case "Kreuzer (4)" -> 4;
-            case "Zerstörer (3)" -> 3;
-            case "U-Boot (2)" -> 2;
+            case "Schlachtschiff" -> schlachtschiffFactory.getShipSize();
+            case "Kreuzer" -> kreuzerFactory.getShipSize();
+            case "Zerstörer" -> zerstörerFactory.getShipSize();
+            case "U-Boot" -> u_BootFactory.getShipSize();
             default -> 0;
         };
     }
 
     private boolean canPlaceShip(String shipType) {
         int currentCount = currentPlayerShipCounts.getOrDefault(shipType, 0);
-        int maxCount = SHIP_LIMITS.get(shipType);
+        int maxCount = shipLimits.get(shipType);
         return currentCount < maxCount;
+    }
+
+    private int getPlacedShipsCount() {
+        int totalCount = 0;
+        for (int count : currentPlayerShipCounts.values()) {
+            totalCount += count;
+        }
+        return totalCount;
     }
 
     private void placeShip(int row, int col, int size, boolean isHorizontal, String shipType) {
@@ -193,32 +221,52 @@ public class PlacementView extends JPanel {
             int r = isHorizontal ? row : row + i;
             int c = isHorizontal ? col + i : col;
 
-            if (r >= 10 || c >= 10 || currentPlayerShips.containsKey(new Point(r, c))
-                    || isAdjacentToShip(r, c, currentPlayerShips)) {
+            if (r >= 10 || c >= 10 || isAdjacentToShip(r, c)) {
                 JOptionPane.showMessageDialog(this, "Platzierung ungültig.");
                 return;
             }
         }
+        try {
+            switch (shipType) {
+                case "Schlachtschiff" ->
+                    player1.getGameBoard().placeShip(col, row, schlachtschiffFactory.createShip(), isHorizontal);
+                case "Kreuzer" -> player1.getGameBoard().placeShip(col, row, kreuzerFactory.createShip(), isHorizontal);
+                case "Zerstörer" ->
+                    player1.getGameBoard().placeShip(col, row, zerstörerFactory.createShip(), isHorizontal);
+                case "U-Boot" -> player1.getGameBoard().placeShip(col, row, u_BootFactory.createShip(), isHorizontal);
+            }
 
-        for (int i = 0; i < size; i++) {
-            int r = isHorizontal ? row : row + i;
-            int c = isHorizontal ? col + i : col;
-            currentPlayerShips.put(new Point(r, c), new Ship(size, isHorizontal));
-            gridCells[r][c].setBackground(Color.GRAY);
+            for (int i = 0; i < size; i++) {
+                int r = isHorizontal ? row : row + i;
+                int c = isHorizontal ? col + i : col;
+                gridCells[r][c].setBackground(Color.GRAY);
+            }
+
+            currentPlayerShipCounts.put(shipType, currentPlayerShipCounts.getOrDefault(shipType, 0) + 1);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
         }
-
-        currentPlayerShipCounts.put(shipType, currentPlayerShipCounts.getOrDefault(shipType, 0) + 1);
     }
 
-    private boolean isAdjacentToShip(int row, int col, Map<Point, Ship> ships) {
+    private boolean isAdjacentToShip(int row, int col) {
+        if (isPlayer1Turn) {
+            Map<Point, IShip> ships = player1.getGameBoard().getShipLocations();
+            return isAdjacent(row, col, ships);
+        } else {
+            Map<Point, IShip> ships = player2.getGameBoard().getShipLocations();
+            return isAdjacent(row, col, ships);
+        }
+    }
+
+    private boolean isAdjacent(int row, int col, Map<Point, IShip> ships) {
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-                if (i == 0 && j == 0) { 
-                    continue; 
+                if (i == 0 && j == 0) {
+                    continue;
                 }
                 int r = row + i;
                 int c = col + j;
-                if (r >= 0 && r < 10 && c >= 0 && c < 10 && ships.containsKey(new Point(r, c))) {
+                if (r >= 0 && r < 10 && c >= 0 && c < 10 && ships.containsKey(new Point(c, r))) {
                     return true;
                 }
             }

@@ -2,7 +2,8 @@ package battleship.views;
 
 import javax.swing.*;
 
-import battleship.Ship;
+import battleship.factorys.gameboard.IGameBoard;
+import battleship.factorys.ships.*;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -14,17 +15,18 @@ public class ShootingView extends JPanel {
     private JPanel gridPanel2; // Spielfeld von Spieler 2
     private JPanel[][] gridCells1;
     private JPanel[][] gridCells2;
-    private Map<Point, Ship> player1Ships;
-    private Map<Point, Ship> player2Ships;
-    private Map<Point, Ship> player1Shots;
-    private Map<Point, Ship> player2Shots;
+    private IGameBoard player1Board; 
+    private IGameBoard player2Board;
+    private IGameBoard player1TargetingBoard;
+    private IGameBoard player2TargetingBoard;
     private boolean isPlayer1Turn = true; 
 
-    public ShootingView(Map<Point, Ship> player1Ships, Map<Point, Ship> player2Ships, Map<Point, Ship> player1Shots, Map<Point, Ship> player2Shots) {
-        this.player1Ships = player1Ships; 
-        this.player2Ships = player2Ships;
-        this.player2Shots = player2Shots;
-        this.player1Shots = player1Shots;
+    public ShootingView(IGameBoard player1Board, IGameBoard player1TargetingBoard, IGameBoard player2Board, IGameBoard player2TargetingBoard) {
+
+        this.player1Board = player1Board;
+        this.player1TargetingBoard = player1TargetingBoard;
+        this.player2Board = player2Board;
+        this.player2TargetingBoard = player2TargetingBoard;
 
         initComponents();
     }
