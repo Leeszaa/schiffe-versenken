@@ -1,19 +1,19 @@
 /**
  * @file KreuzerFactory.java
- * @brief Factory class for creating cruisers in the Battleship game.
+ *   Factory class for creating cruisers in the Battleship game.
  */
 
 package battleship.factorys.ships;
 
 /**
  * @class KreuzerFactory
- * @brief Factory class for creating cruisers in the Battleship game.
+ *   Factory class for creating cruisers in the Battleship game.
  * Extends the {@link ShipFactory} class.
  */
 public class KreuzerFactory extends ShipFactory {
 
     /**
-     * @brief Gets the size of the cruiser.
+     *   Gets the size of the cruiser.
      * @return The size of the cruiser.
      */
     public int getShipSize() {
@@ -21,7 +21,7 @@ public class KreuzerFactory extends ShipFactory {
     }
 
     /**
-     * @brief Gets the limit of the cruiser.
+     *   Gets the limit of the cruiser.
      * @return The limit of the cruiser.
      */
     public int getShipLimit() {
@@ -29,7 +29,7 @@ public class KreuzerFactory extends ShipFactory {
     }
 
     /**
-     * @brief Creates a new cruiser.
+     *   Creates a new cruiser.
      * @return A new instance of {@link Kreuzer}.
      */
     @Override

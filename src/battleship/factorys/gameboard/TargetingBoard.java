@@ -1,6 +1,6 @@
 /**
  * @file TargetingBoard.java
- * @brief Represents a targeting board in the Battleship game.
+ *   Represents a targeting board in the Battleship game.
  */
 
  package battleship.factorys.gameboard;
@@ -12,7 +12,7 @@
  
  /**
   * @class TargetingBoard
-  * @brief Represents a targeting board in the Battleship game.
+  *   Represents a targeting board in the Battleship game.
   * Implements the {@link IGameBoard} interface.
   */
  public class TargetingBoard implements IGameBoard {
@@ -20,7 +20,7 @@
      private final Map<Point, Boolean> hitAttempts; /**< A map of hit attempts on the board */
  
      /**
-      * @brief Constructor for TargetingBoard.
+      *   Constructor for TargetingBoard.
       * Initializes the ships and hitAttempts maps.
       */
      public TargetingBoard() {
@@ -29,7 +29,7 @@
      }
  
      /**
-      * @brief Places a ship on the game board.
+      *   Places a ship on the game board.
       * @param x The x-coordinate of the starting position.
       * @param y The y-coordinate of the starting position.
       * @param ship The ship to be placed.
@@ -41,7 +41,7 @@
      }
  
      /**
-      * @brief Receives a hit on the game board.
+      *   Receives a hit on the game board.
       * @param x The x-coordinate of the hit.
       * @param y The y-coordinate of the hit.
       * @param isHit True if the hit was successful, false otherwise.
@@ -53,7 +53,7 @@
      }
  
      /**
-      * @brief Displays the game board.
+      *   Displays the game board.
       */
      @Override
      public void display() {
@@ -61,7 +61,7 @@
      }
  
      /**
-      * @brief Gets the locations of all ships on the board.
+      *   Gets the locations of all ships on the board.
       * @return A map of ship locations.
       */
      @Override
@@ -70,7 +70,7 @@
      }
  
      /**
-      * @brief Checks if a ship is hit at the given coordinates.
+      *   Checks if a ship is hit at the given coordinates.
       * @param x The x-coordinate to check.
       * @param y The y-coordinate to check.
       * @return False as this board does not track ship hits.
@@ -81,7 +81,7 @@
      }
  
      /**
-      * @brief Gets the hit attempts on the board.
+      *   Gets the hit attempts on the board.
       * @return A map of hit attempts.
       */
      public Map<Point, Boolean> getHitAttempts() {
@@ -89,7 +89,7 @@
      }
  
      /**
-      * @brief Checks if the placement of a ship is valid.
+      *   Checks if the placement of a ship is valid.
       * @param x The x-coordinate of the starting position.
       * @param y The y-coordinate of the starting position.
       * @param shipSize The size of the ship.

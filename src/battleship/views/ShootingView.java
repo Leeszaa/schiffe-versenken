@@ -1,6 +1,6 @@
 /**
  * @file ShootingView.java
- * @brief Represents the shooting view in the Battleship game.
+ *   Represents the shooting view in the Battleship game.
  */
 
 package battleship.views;
@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * @class ShootingView
- * @brief Represents the shooting view in the Battleship game.
+ * Represents the shooting view in the Battleship game.
  * Extends {@link JPanel} to create a custom panel for shooting actions.
  */
 public class ShootingView extends JPanel {
@@ -34,7 +34,7 @@ public class ShootingView extends JPanel {
     private ShootingManager shootingManager; /**< Manager for handling shooting actions */
 
     /**
-     * @brief Constructor for ShootingView.
+     *   Constructor for ShootingView.
      * @param player1Board The game board for player 1.
      * @param player1TargetingBoard The targeting board for player 1.
      * @param player2Board The game board for player 2.
@@ -51,7 +51,7 @@ public class ShootingView extends JPanel {
     }
 
     /**
-     * @brief Initializes the components of the view.
+     *   Initializes the components of the view.
      */
     private void initComponents() {
         setBackground(Color.darkGray);
@@ -115,7 +115,7 @@ public class ShootingView extends JPanel {
     }
 
     /**
-     * @brief Creates the column labels for the grid.
+     *   Creates the column labels for the grid.
      * @return A panel containing the column labels.
      */
     private JPanel createColumnLabels() {
@@ -132,7 +132,7 @@ public class ShootingView extends JPanel {
     }
 
     /**
-     * @brief Creates the row labels for the grid.
+     *   Creates the row labels for the grid.
      * @return A panel containing the row labels.
      */
     private JPanel createRowLabels() {
@@ -150,7 +150,7 @@ public class ShootingView extends JPanel {
 
     /**
      * @class GridClickListener
-     * @brief Listener for grid cell clicks.
+     *   Listener for grid cell clicks.
      * Extends {@link MouseAdapter} to handle mouse click events on grid cells.
      */
     private class GridClickListener extends MouseAdapter {
@@ -159,7 +159,7 @@ public class ShootingView extends JPanel {
         private final int playerGrid; /**< The player grid identifier */
 
         /**
-         * @brief Constructor for GridClickListener.
+         *   Constructor for GridClickListener.
          * @param row The row of the grid cell.
          * @param col The column of the grid cell.
          * @param playerGrid The player grid identifier.
@@ -171,7 +171,7 @@ public class ShootingView extends JPanel {
         }
 
         /**
-         * @brief Handles mouse click events on grid cells.
+         *   Handles mouse click events on grid cells.
          * @param e The mouse event.
          */
         @Override

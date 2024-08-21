@@ -1,13 +1,13 @@
 /**
  * @file Zerstörer.java
- * @brief Implementation of the IShip interface for a destroyer in the Battleship game.
+ *   Implementation of the IShip interface for a destroyer in the Battleship game.
  */
 
 package battleship.factorys.ships;
 
 /**
  * @class Zerstörer
- * @brief Represents a destroyer in the Battleship game.
+ *   Represents a destroyer in the Battleship game.
  * Implements the {@link IShip} interface.
  */
 public class Zerstörer implements IShip {
@@ -16,7 +16,7 @@ public class Zerstörer implements IShip {
     private int limit; /**< The limit of the ship */
 
     /**
-     * @brief Gets the size of the ship.
+     *   Gets the size of the ship.
      * @return The size of the ship.
      */
     @Override
@@ -25,7 +25,7 @@ public class Zerstörer implements IShip {
     }
 
     /**
-     * @brief Gets the name of the ship.
+     *   Gets the name of the ship.
      * @return The name of the ship.
      */
     @Override
@@ -34,7 +34,7 @@ public class Zerstörer implements IShip {
     }
 
     /**
-     * @brief Sets the size of the ship.
+     *   Sets the size of the ship.
      * @param size The size to set.
      */
     @Override
@@ -43,7 +43,7 @@ public class Zerstörer implements IShip {
     }
 
     /**
-     * @brief Sets the name of the ship.
+     *   Sets the name of the ship.
      * @param name The name to set.
      */
     @Override
@@ -52,7 +52,7 @@ public class Zerstörer implements IShip {
     }
 
     /**
-     * @brief Gets the limit of the ship.
+     *   Gets the limit of the ship.
      * @return The limit of the ship.
      */
     @Override
@@ -61,7 +61,7 @@ public class Zerstörer implements IShip {
     }
 
     /**
-     * @brief Sets the limit of the ship.
+     *   Sets the limit of the ship.
      * @param limit The limit to set.
      */
     @Override

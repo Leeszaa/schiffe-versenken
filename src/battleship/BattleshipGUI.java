@@ -1,6 +1,6 @@
 /**
  * @file BattleshipGUI.java
- * @brief Main GUI class for the Battleship game.
+ *   Main GUI class for the Battleship game.
  */
 
 package battleship;
@@ -20,7 +20,7 @@ import java.awt.*;
 
 /**
  * @class BattleshipGUI
- * @brief Main GUI class for the Battleship game.
+ *   Main GUI class for the Battleship game.
  * Extends {@link JFrame} to create the main window for the game.
  */
 public class BattleshipGUI extends JFrame {
@@ -36,7 +36,7 @@ public class BattleshipGUI extends JFrame {
     private IPlayer player2; /**< The second player */
 
     /**
-     * @brief Constructor for BattleshipGUI.
+     *   Constructor for BattleshipGUI.
      * Initializes the main window and starts the local coop game.
      */
     public BattleshipGUI() {
@@ -58,7 +58,7 @@ public class BattleshipGUI extends JFrame {
     }
 
     /**
-     * @brief Shows the ship placement view.
+     *   Shows the ship placement view.
      * Ensures players are initialized before showing the placement view.
      */
     public void showPlacementView() {
@@ -80,7 +80,7 @@ public class BattleshipGUI extends JFrame {
     }
 
     /**
-     * @brief Shows the shooting view.
+     *   Shows the shooting view.
      * Ensures players are initialized before showing the shooting view.
      */
     public void showShootingView() {
@@ -96,7 +96,7 @@ public class BattleshipGUI extends JFrame {
     }
 
     /**
-     * @brief Initializes the local coop game.
+     *   Initializes the local coop game.
      * Creates players and their respective game boards and targeting boards.
      */
     public void initializeLocalCoopGame() {

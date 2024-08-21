@@ -1,6 +1,6 @@
 /**
  * @file MainMenuView.java
- * @brief Represents the main menu view in the Battleship game.
+ *   Represents the main menu view in the Battleship game.
  */
 
 package battleship.views;
@@ -15,7 +15,7 @@ import java.io.File;
 
 /**
  * @class MainMenuView
- * @brief Represents the main menu view in the Battleship game.
+ *   Represents the main menu view in the Battleship game.
  * Extends {@link JPanel} to create a custom panel for the main menu.
  */
 public class MainMenuView extends JPanel {
@@ -23,7 +23,7 @@ public class MainMenuView extends JPanel {
     private JPanel parentPanel; /**< The parent panel containing this view */
 
     /**
-     * @brief Constructor for MainMenuView.
+     *   Constructor for MainMenuView.
      * @param cardLayout The card layout for switching views.
      * @param parentPanel The parent panel containing this view.
      */
@@ -34,7 +34,7 @@ public class MainMenuView extends JPanel {
     }
 
     /**
-     * @brief Initializes the components of the view.
+     *   Initializes the components of the view.
      */
     private void initComponents() {
         setLayout(new GridBagLayout());

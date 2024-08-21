@@ -1,6 +1,6 @@
 /**
  * @file ShipPlacementManager.java
- * @brief Manages the placement of ships in the Battleship game.
+ *   Manages the placement of ships in the Battleship game.
  */
 
 package battleship.managers;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * @class ShipPlacementManager
- * @brief Manages the placement of ships in the Battleship game.
+ *   Manages the placement of ships in the Battleship game.
  */
 public class ShipPlacementManager {
     private IPlayer currentPlayer; /**< The current player placing ships */
@@ -35,7 +35,7 @@ public class ShipPlacementManager {
     private static final int TOTAL_SHIPS = 10; /**< Total number of ships to be placed */
 
     /**
-     * @brief Constructor for ShipPlacementManager.
+     *   Constructor for ShipPlacementManager.
      * @param player1 The first player.
      * @param player2 The second player.
      * @param placementView The view for ship placement.
@@ -60,7 +60,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Initializes the ship limits for each type of ship.
+     *   Initializes the ship limits for each type of ship.
      */
     private void initializeShipLimits() {
         shipLimits.put("Schlachtschiff", schlachtschiffFactory.getShipLimit());
@@ -70,7 +70,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Places a ship on the game board.
+     *   Places a ship on the game board.
      * @param row The row to place the ship.
      * @param col The column to place the ship.
      * @param size The size of the ship.
@@ -121,7 +121,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Switches the current player.
+     *   Switches the current player.
      */
     private void switchPlayer() {
         placementView.clearGrid();
@@ -135,7 +135,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Shows a confirmation dialog with the given message.
+     *   Shows a confirmation dialog with the given message.
      * @param message The message to display in the dialog.
      */
     private void showConfirmationDialog(String message) {
@@ -146,14 +146,14 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Switches to the shooting view in the GUI.
+     *   Switches to the shooting view in the GUI.
      */
     private void switchToShootingView() {        
         battleshipGUI.showShootingView();
     }
 
     /**
-     * @brief Checks if a cell is adjacent to any ship.
+     *   Checks if a cell is adjacent to any ship.
      * @param row The row of the cell.
      * @param col The column of the cell.
      * @return True if the cell is adjacent to any ship, false otherwise.
@@ -164,7 +164,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Checks if a cell is adjacent to any ship in the given map.
+     *   Checks if a cell is adjacent to any ship in the given map.
      * @param row The row of the cell.
      * @param col The column of the cell.
      * @param ships The map of ship locations.
@@ -187,7 +187,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Checks if the current player can place a ship of the given type.
+     *   Checks if the current player can place a ship of the given type.
      * @param shipType The type of the ship.
      * @return True if the player can place the ship, false otherwise.
      */
@@ -198,7 +198,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Gets the size of the ship of the given type.
+     *   Gets the size of the ship of the given type.
      * @param shipType The type of the ship.
      * @return The size of the ship.
      */
@@ -213,7 +213,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Gets the total number of ships placed by the current player.
+     *   Gets the total number of ships placed by the current player.
      * @return The total number of ships placed.
      */
     public int getPlacedShipsCount() {
@@ -225,7 +225,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Gets the ship locations for player 1.
+     *   Gets the ship locations for player 1.
      * @return A map of ship locations for player 1.
      */
     public Map<Point, IShip> getPlayer1ShipLocations() {
@@ -233,7 +233,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Gets the ship locations for player 2.
+     *   Gets the ship locations for player 2.
      * @return A map of ship locations for player 2.
      */
     public Map<Point, IShip> getPlayer2ShipLocations() {
@@ -241,7 +241,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * @brief Gets the current player.
+     *   Gets the current player.
      * @return "player1" if the current player is player 1, "player2" otherwise.
      */
     public String getCurrentPlayer() {

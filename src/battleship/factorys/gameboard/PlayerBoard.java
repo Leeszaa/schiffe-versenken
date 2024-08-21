@@ -1,6 +1,6 @@
 /**
  * @file PlayerBoard.java
- * @brief Represents a player's game board in the Battleship game.
+ *   Represents a player's game board in the Battleship game.
  */
 
  package battleship.factorys.gameboard;
@@ -67,7 +67,7 @@
      }
  
      /**
-      * @brief Displays the game board.
+      *   Displays the game board.
       */
      @Override
      public void display() {
@@ -84,7 +84,7 @@
      }
  
      /**
-      * @brief Checks if a ship is hit at the given coordinates.
+      *   Checks if a ship is hit at the given coordinates.
       * @param x The x-coordinate to check.
       * @param y The y-coordinate to check.
       * @return True if a ship is hit, false otherwise.
@@ -95,7 +95,7 @@
      }
  
      /**
-      * @brief Checks if the placement of a ship is valid.
+      *   Checks if the placement of a ship is valid.
       * @param x The x-coordinate of the starting position.
       * @param y The y-coordinate of the starting position.
       * @param shipSize The size of the ship.

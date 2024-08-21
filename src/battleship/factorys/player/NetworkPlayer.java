@@ -1,6 +1,6 @@
 /**
  * @file NetworkPlayer.java
- * @brief Implementation of the IPlayer interface for a network player in the Battleship game.
+ *   Implementation of the IPlayer interface for a network player in the Battleship game.
  */
 
 package battleship.factorys.player;
@@ -9,7 +9,7 @@ import battleship.factorys.gameboard.IGameBoard;
 
 /**
  * @class NetworkPlayer
- * @brief Represents a network player in the Battleship game.
+ *   Represents a network player in the Battleship game.
  * Implements the {@link IPlayer} interface.
  */
 public class NetworkPlayer implements IPlayer {
@@ -18,7 +18,7 @@ public class NetworkPlayer implements IPlayer {
     private String name; /**< The name of the player */
 
     /**
-     * @brief Constructor for NetworkPlayer.
+     *   Constructor for NetworkPlayer.
      * @param name The name of the player.
      */
     public NetworkPlayer(String name) {
@@ -26,7 +26,7 @@ public class NetworkPlayer implements IPlayer {
     }
 
     /**
-     * @brief Gets the name of the player.
+     *   Gets the name of the player.
      * @return The name of the player.
      */
     @Override
@@ -35,7 +35,7 @@ public class NetworkPlayer implements IPlayer {
     }
 
     /**
-     * @brief Places ships on the given game board.
+     *   Places ships on the given game board.
      * @param gameBoard The game board on which to place ships.
      */
     @Override
@@ -44,7 +44,7 @@ public class NetworkPlayer implements IPlayer {
     }
 
     /**
-     * @brief Takes a turn by attacking the opponent's board.
+     *   Takes a turn by attacking the opponent's board.
      * @param opponentBoard The opponent's game board.
      * @return True if the turn was successful, false otherwise.
      */
@@ -55,7 +55,7 @@ public class NetworkPlayer implements IPlayer {
     }
 
     /**
-     * @brief Sets the player's game board.
+     *   Sets the player's game board.
      * @param gameBoard The game board to set.
      */
     @Override
@@ -64,7 +64,7 @@ public class NetworkPlayer implements IPlayer {
     }
 
     /**
-     * @brief Sets the player's targeting board.
+     *   Sets the player's targeting board.
      * @param targetingBoard The targeting board to set.
      */
     @Override
@@ -73,7 +73,7 @@ public class NetworkPlayer implements IPlayer {
     }
 
     /**
-     * @brief Gets the player's game board.
+     *   Gets the player's game board.
      * @return The player's game board.
      */
     @Override
@@ -82,7 +82,7 @@ public class NetworkPlayer implements IPlayer {
     }
 
     /**
-     * @brief Gets the player's targeting board.
+     *   Gets the player's targeting board.
      * @return The player's targeting board.
      */
     @Override
