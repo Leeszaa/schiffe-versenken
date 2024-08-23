@@ -9,6 +9,7 @@
  import java.util.Map;
  import java.awt.*;
  import battleship.factorys.ships.*;
+ import battleship.factorys.hits.*;
  
  /**
   * @class PlayerBoard
@@ -121,5 +122,16 @@
         @Override
         public void removeShip(IShip ship) {
             ships.entrySet().removeIf(entry -> entry.getValue().equals(ship));
+        }
+
+        @Override
+        public void placeHit(int x, int y, IHits hit) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public Map<Point, IHits> getHits() {
+            // TODO Auto-generated method stub
+            return null;
         }
  }

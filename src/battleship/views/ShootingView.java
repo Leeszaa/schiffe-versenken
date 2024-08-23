@@ -10,48 +10,76 @@ import javax.swing.*;
 import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.ships.*;
 import battleship.managers.ShootingManager;
+import battleship.factorys.player.IPlayer;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @class ShootingView
- * Represents the shooting view in the Battleship game.
- * Extends {@link JPanel} to create a custom panel for shooting actions.
+ *        Represents the shooting view in the Battleship game.
+ *        Extends {@link JPanel} to create a custom panel for shooting actions.
  */
 public class ShootingView extends JPanel {
-    private JPanel gridPanel1; /**< Panel for player 1's ships */
-    private JPanel gridPanel2; /**< Panel for player 2's ships */
-    private JPanel[][] gridCells1; /**< 2D array of grid cells for player 1 */
-    private JPanel[][] gridCells2; /**< 2D array of grid cells for player 2 */
-    private IGameBoard player1Board; /**< Game board for player 1 */
-    private IGameBoard player2Board; /**< Game board for player 2 */
-    private IGameBoard player1TargetingBoard; /**< Targeting board for player 1 */
-    private IGameBoard player2TargetingBoard; /**< Targeting board for player 2 */
-    private boolean isPlayer1Turn = true; /**< Flag to indicate if it's player 1's turn */
-    private ShootingManager shootingManager; /**< Manager for handling shooting actions */
+    private JPanel gridPanel1;
+    /** < Panel for player 1's ships */
+    private JPanel gridPanel2;
+    /** < Panel for player 2's ships */
+    private JPanel[][] gridCells1;
+    /** < 2D array of grid cells for player 1 */
+    private JPanel[][] gridCells2;
+    /** < 2D array of grid cells for player 2 */
+    private IGameBoard player1Board;
+    /** < Game board for player 1 */
+    private IGameBoard player2Board;
+    /** < Game board for player 2 */
+    private IGameBoard player1TargetingBoard;
+    /** < Targeting board for player 1 */
+    private IGameBoard player2TargetingBoard;
+    /** < Targeting board for player 2 */
+    private boolean isPlayer1Turn = true;
+    /** < Flag to indicate if it's player 1's turn */
+    private ShootingManager shootingManager;
+    /** < Manager for handling shooting actions */
+    private IPlayer player1;
+    /** < The first player */
+    private IPlayer player2;
+    /** < The second player */
+    private IGameBoard currentGameBoard;
+    /** < The current game board */
+    private IGameBoard currentTargetingBoard;
+    /** < The current targeting board */
+    private IGameBoard opponentGameBoard;
+
+    /** < The opponent's game board */
 
     /**
-     *   Constructor for ShootingView.
-     * @param player1Board The game board for player 1.
+     * Constructor for ShootingView.
+     * 
+     * @param player1Board          The game board for player 1.
      * @param player1TargetingBoard The targeting board for player 1.
-     * @param player2Board The game board for player 2.
+     * @param player2Board          The game board for player 2.
      * @param player2TargetingBoard The targeting board for player 2.
      */
-    public ShootingView(IGameBoard player1Board, IGameBoard player1TargetingBoard, IGameBoard player2Board, IGameBoard player2TargetingBoard) {
-        this.player1Board = player1Board;
-        this.player1TargetingBoard = player1TargetingBoard;
-        this.player2Board = player2Board;
-        this.player2TargetingBoard = player2TargetingBoard;
-        this.shootingManager = new ShootingManager();
+    public ShootingView(IPlayer player1, IPlayer player2) {
+
+        this.player1 = player1;
+        this.player2 = player2;
+        this.shootingManager = new ShootingManager(player1, player2);
+
+        this.currentGameBoard = shootingManager.currentGameBoard;
+        this.currentTargetingBoard = shootingManager.currentTargetBoard;
+        this.opponentGameBoard = shootingManager.currentOpponentBoard;
 
         initComponents();
     }
 
     /**
-     *   Initializes the components of the view.
+     * Initializes the components of the view.
      */
     private void initComponents() {
         setBackground(Color.darkGray);
@@ -78,8 +106,8 @@ public class ShootingView extends JPanel {
         gridPanel1.setPreferredSize(new Dimension(600, 600));
         gridPanel2.setPreferredSize(new Dimension(600, 600));
 
-        gridCells1 = new JPanel[10][10];
-        gridCells2 = new JPanel[10][10];
+        gridCells1 = new JPanel[10][10]; // Eigenes Spielfeld
+        gridCells2 = new JPanel[10][10]; // Gegnerisches Spielfeld
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -106,6 +134,8 @@ public class ShootingView extends JPanel {
         gridWithLabels2.add(createRowLabels(), BorderLayout.WEST);
         gridWithLabels2.add(gridPanel2, BorderLayout.CENTER);
 
+        drawShipsOnOwnBoard();
+
         gbc.gridx = 0;
         gbc.gridy = 1;
         add(gridWithLabels1, gbc);
@@ -115,7 +145,8 @@ public class ShootingView extends JPanel {
     }
 
     /**
-     *   Creates the column labels for the grid.
+     * Creates the column labels for the grid.
+     * 
      * @return A panel containing the column labels.
      */
     private JPanel createColumnLabels() {
@@ -132,7 +163,8 @@ public class ShootingView extends JPanel {
     }
 
     /**
-     *   Creates the row labels for the grid.
+     * Creates the row labels for the grid.
+     * 
      * @return A panel containing the row labels.
      */
     private JPanel createRowLabels() {
@@ -150,18 +182,24 @@ public class ShootingView extends JPanel {
 
     /**
      * @class GridClickListener
-     *   Listener for grid cell clicks.
-     * Extends {@link MouseAdapter} to handle mouse click events on grid cells.
+     *        Listener for grid cell clicks.
+     *        Extends {@link MouseAdapter} to handle mouse click events on grid
+     *        cells.
      */
     private class GridClickListener extends MouseAdapter {
-        private final int row; /**< The row of the grid cell */
-        private final int col; /**< The column of the grid cell */
-        private final int playerGrid; /**< The player grid identifier */
+        private final int row;
+        /** < The row of the grid cell */
+        private final int col;
+        /** < The column of the grid cell */
+        private final int playerGrid;
+
+        /** < The player grid identifier */
 
         /**
-         *   Constructor for GridClickListener.
-         * @param row The row of the grid cell.
-         * @param col The column of the grid cell.
+         * Constructor for GridClickListener.
+         * 
+         * @param row        The row of the grid cell.
+         * @param col        The column of the grid cell.
          * @param playerGrid The player grid identifier.
          */
         public GridClickListener(int row, int col, int playerGrid) {
@@ -171,12 +209,43 @@ public class ShootingView extends JPanel {
         }
 
         /**
-         *   Handles mouse click events on grid cells.
+         * Handles mouse click events on grid cells.
+         * 
          * @param e The mouse event.
          */
         @Override
         public void mouseClicked(MouseEvent e) {
-            // Handle click event
+            JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " + col);
+            shootingManager.addHitToTargetBoard(row, col);
+            shootingManager.switchPlayers();
+            drawShipsOnOwnBoard();
         }
+    }
+
+    private void drawShipsOnOwnBoard() {
+        Map<Point, IShip> ships = currentGameBoard.getShipLocations();
+        // Log the ship locations
+        Set<IShip> uniqueShips = new HashSet<>(ships.values());
+        for (IShip remainingShip : uniqueShips) {
+            Point point = getShipStartingPoint(remainingShip, ships);
+            System.out.println("Ship: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
+        }
+
+        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
+            Point point = entry.getKey();
+            int r = point.y;
+            int c = point.x;
+            gridCells1[r][c].setBackground(Color.GRAY);
+            System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
+        }
+    }
+
+    private Point getShipStartingPoint(IShip ship, Map<Point, IShip> ships) {
+        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
+            if (entry.getValue().equals(ship)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

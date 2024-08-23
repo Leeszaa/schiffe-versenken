@@ -108,8 +108,7 @@ public class BattleshipGUI extends JFrame {
             return;
         }
 
-        ShootingView shootingView = new ShootingView(player1Board, player1TargetingBoard, player2Board,
-                player1TargetingBoard);
+        ShootingView shootingView = new ShootingView(player1, player2);
         panelCont.add(shootingView, "ShootingView");
         cardLayout.show(panelCont, "ShootingView");
     }

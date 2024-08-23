@@ -6,6 +6,7 @@
 package battleship.factorys.gameboard;
 
 import battleship.factorys.ships.IShip;
+import battleship.factorys.hits.IHits;
 
 import java.awt.*;
 import java.util.Map;
@@ -53,4 +54,8 @@ public interface IGameBoard {
     boolean isShipHit(int x, int y);
 
     void removeShip(IShip ship);
+
+    void placeHit(int x, int y, IHits hit);
+
+    Map<Point, IHits> getHits();
 }
