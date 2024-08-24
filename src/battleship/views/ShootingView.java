@@ -216,9 +216,14 @@ public class ShootingView extends JPanel {
         @Override
         public void mouseClicked(MouseEvent e) {
             JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " + col);
+            
             shootingManager.addHitToTargetBoard(row, col);
+            //Zeigen des Hits
+            //Überprüfen ob Spiel vorbei
+            //Button für nächsten Spieler zeigen
             shootingManager.switchPlayers();
             drawShipsOnOwnBoard();
+            //Targeboard zeichnen
         }
     }
 

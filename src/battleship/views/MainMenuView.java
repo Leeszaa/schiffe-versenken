@@ -69,13 +69,14 @@ public class MainMenuView extends JPanel {
         buttonFive.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                cardLayout.show(parentPanel, "PlacementView");
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
             }
         });
 
         buttonSix.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeDebugGame();
                 ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView();
             }
         });
