@@ -3,6 +3,8 @@ package battleship.managers;
 import battleship.factorys.player.*;
 import battleship.factorys.ships.IShip;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import battleship.factorys.gameboard.IGameBoard;
@@ -12,12 +14,14 @@ public class ShootingManager {
 
     private IPlayer player1;
     private IPlayer player2;
-    private IPlayer currentPlayer;
-    private IPlayer opponentPlayer;
+    public IPlayer currentPlayer;
+    public IPlayer opponentPlayer;
     private ShipHitFactory hitFactory;
     public IGameBoard currentGameBoard;
     public IGameBoard currentTargetBoard;
     public IGameBoard currentOpponentBoard;
+
+    private List<ShootingManagerObserver> observers = new ArrayList<>();
 
 
     public ShootingManager(IPlayer player1, IPlayer player2) {
@@ -34,6 +38,16 @@ public class ShootingManager {
         getCurrentPlayerBoards();
     }
 
+    public void addObserver(ShootingManagerObserver observer) {
+        observers.add(observer);
+    }
+
+    private void notifyObservers() {
+        for (ShootingManagerObserver observer : observers) {
+            observer.onPlayerSwitched(currentPlayer, opponentPlayer);
+        }
+    }
+
     public void selectRandomPlayer() {
         if (Math.random() < 0.5) {
             this.currentPlayer = player1;
@@ -42,6 +56,7 @@ public class ShootingManager {
             this.currentPlayer = player2;
             this.opponentPlayer = player1;
         }
+        notifyObservers();
     }
 
     public void getCurrentPlayerBoards() {
@@ -72,7 +87,9 @@ public class ShootingManager {
             currentPlayer = player1;
             opponentPlayer = player2;
         }
+        System.out.println("Current player (ShootingManager): " + currentPlayer.getName());
         getCurrentPlayerBoards();
+        notifyObservers();
     }
     
 }

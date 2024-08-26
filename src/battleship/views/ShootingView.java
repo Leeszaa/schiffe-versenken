@@ -10,11 +10,14 @@ import javax.swing.*;
 import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.ships.*;
 import battleship.managers.ShootingManager;
+import battleship.managers.ShootingManagerObserver;
 import battleship.factorys.player.IPlayer;
+import battleship.factorys.hits.IHits;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +27,7 @@ import java.util.Set;
  *        Represents the shooting view in the Battleship game.
  *        Extends {@link JPanel} to create a custom panel for shooting actions.
  */
-public class ShootingView extends JPanel {
+public class ShootingView extends JPanel implements ShootingManagerObserver {
     private JPanel gridPanel1;
     /** < Panel for player 1's ships */
     private JPanel gridPanel2;
@@ -32,6 +35,8 @@ public class ShootingView extends JPanel {
     private JPanel[][] gridCells1;
     /** < 2D array of grid cells for player 1 */
     private JPanel[][] gridCells2;
+
+    private JButton nextPlayerButton;
     /** < 2D array of grid cells for player 2 */
     private IGameBoard player1Board;
     /** < Game board for player 1 */
@@ -55,6 +60,14 @@ public class ShootingView extends JPanel {
     /** < The current targeting board */
     private IGameBoard opponentGameBoard;
 
+    private IPlayer currentPlayer;
+    private IPlayer opponentPlayer;
+
+    private JLabel playerName;
+
+    private boolean clicksAllowed = true;
+
+    private boolean isGameOver = false;
     /** < The opponent's game board */
 
     /**
@@ -67,15 +80,30 @@ public class ShootingView extends JPanel {
      */
     public ShootingView(IPlayer player1, IPlayer player2) {
 
-        this.player1 = player1;
-        this.player2 = player2;
         this.shootingManager = new ShootingManager(player1, player2);
+        this.shootingManager.addObserver(this);
 
-        this.currentGameBoard = shootingManager.currentGameBoard;
-        this.currentTargetingBoard = shootingManager.currentTargetBoard;
-        this.opponentGameBoard = shootingManager.currentOpponentBoard;
+        this.currentPlayer = shootingManager.currentPlayer;
+        this.opponentPlayer = shootingManager.opponentPlayer;
+        this.currentGameBoard = currentPlayer.getGameBoard();
+        this.currentTargetingBoard = currentPlayer.getTargetingBoard();
+        this.opponentGameBoard = opponentPlayer.getGameBoard();
+
 
         initComponents();
+    }
+
+    @Override
+    public void onPlayerSwitched(IPlayer newPlayer, IPlayer opponentPlayer) {
+        System.out.println("Current player (on Switched): " + newPlayer.getName());
+        // Update the view accordingly
+        this.currentPlayer = newPlayer;
+        this.opponentPlayer = opponentPlayer;
+        this.currentGameBoard = newPlayer.getGameBoard();
+        this.currentTargetingBoard = newPlayer.getTargetingBoard();
+        this.opponentGameBoard = opponentPlayer.getGameBoard();
+
+        playerName.setText(newPlayer.getName());
     }
 
     /**
@@ -87,18 +115,25 @@ public class ShootingView extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
+        playerName = new JLabel(currentPlayer.getName(), SwingConstants.CENTER);
+        playerName.setFont(new Font("Roboto", Font.BOLD, 40));
+        playerName.setForeground(Color.WHITE);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(playerName, gbc);
+
         JLabel label1 = new JLabel("Eigene Schiffe", SwingConstants.CENTER);
         label1.setFont(new Font("Roboto", Font.BOLD, 20));
         label1.setForeground(Color.WHITE);
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         add(label1, gbc);
 
         JLabel label2 = new JLabel("Gegenerische Schiffe", SwingConstants.CENTER);
         label2.setFont(new Font("Roboto", Font.BOLD, 20));
         label2.setForeground(Color.WHITE);
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         add(label2, gbc);
 
         gridPanel1 = new JPanel(new GridLayout(10, 10));
@@ -135,13 +170,36 @@ public class ShootingView extends JPanel {
         gridWithLabels2.add(gridPanel2, BorderLayout.CENTER);
 
         drawShipsOnOwnBoard();
+        drawTargetBoard();
+
+        nextPlayerButton = new JButton("Nächster Spieler");
+        nextPlayerButton.addActionListener(e -> {
+            shootingManager.switchPlayers();
+            System.out.println("Current player: " + currentPlayer.getName());
+            clearGrids();
+            drawShipsOnOwnBoard();
+            drawTargetBoard();
+            revalidate();
+            repaint();
+            clicksAllowed = true;
+            nextPlayerButton.setVisible(false);
+        });
+        nextPlayerButton.setFont(new Font("Roboto", Font.BOLD, 20));
+        nextPlayerButton.setBackground(Color.WHITE);
+        nextPlayerButton.setForeground(Color.BLACK);
+        nextPlayerButton.setPreferredSize(new Dimension(200, 50));
+        nextPlayerButton.setVisible(false);
+        
 
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         add(gridWithLabels1, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         add(gridWithLabels2, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(nextPlayerButton, gbc);
     }
 
     /**
@@ -215,39 +273,78 @@ public class ShootingView extends JPanel {
          */
         @Override
         public void mouseClicked(MouseEvent e) {
-            //JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " + col);
-
+            // JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " +
+            // col);
+            if (!clicksAllowed) {
+                return; // If clicks are not allowed, do nothing
+            }
             boolean hit = shootingManager.addHitToTargetBoard(col, row);
 
             if (hit) {
                 gridCells2[row][col].setBackground(Color.RED);
             } else {
-                gridCells2[row][col].setBackground(Color.BLUE);
+            try {
+                File gifFile = new File("src/battleship/assets/water_tile.gif");
+                if (!gifFile.exists()) {
+                    System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
+                    return;
+                }
+    
+                String absoluteGifPath = gifFile.getAbsolutePath();
+                ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+                if (gifIcon.getIconWidth() == -1) {
+                    System.err.println("Failed to load GIF: " + absoluteGifPath);
+                    return;
+                }
+    
+                JLabel missLabel = new JLabel(gifIcon);
+                missLabel.setHorizontalAlignment(JLabel.CENTER);
+                missLabel.setVerticalAlignment(JLabel.CENTER);
+    
+                gridCells2[row][col].setLayout(new GridBagLayout());
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = 0;
+                gbc.gridy = 0;
+                gbc.weightx = 1.0;
+                gbc.weighty = 1.0;
+                gbc.anchor = GridBagConstraints.CENTER;
+                gridCells2[row][col].add(missLabel, gbc);
+                gridCells2[row][col].revalidate();
+                gridCells2[row][col].repaint();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+        }
 
-            JLabel cross = new JLabel("X", SwingConstants.CENTER);
-            cross.setFont(new Font("Roboto", Font.BOLD, 20));
-            gridCells2[row][col].add(cross);
-        
-            shootingManager.addHitToTargetBoard(row, col);
             Map<Point, IShip> ships = opponentGameBoard.getShipLocations();
             // Log the ship locations
             Set<IShip> uniqueShips = new HashSet<>(ships.values());
             for (IShip remainingShip : uniqueShips) {
                 Point point = getShipStartingPoint(remainingShip, ships);
-                System.out.println("Gegner Schiffe: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
+                System.out.println(
+                        "Gegner Schiffe: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
             }
-            //Zeigen des Hits
-            //Überprüfen ob Spiel vorbei
-            //Button für nächsten Spieler zeigen
+            // Zeigen des Hits
+            // Überprüfen ob Spiel vorbei
+            // Button für nächsten Spieler zeigen
+            clicksAllowed = false;
+            nextPlayerButton.setVisible(true);
             //shootingManager.switchPlayers();
+            //System.out.println("Current player: " + currentPlayer.getName());
+            //clearGrids();
             //drawShipsOnOwnBoard();
-            //Targeboard zeichnen
+            //drawTargetBoard();
+            //revalidate();
+            //repaint();
+            // drawShipsOnOwnBoard();
+            // Targeboard zeichnen
+            
         }
     }
 
     private void drawShipsOnOwnBoard() {
         Map<Point, IShip> ships = currentGameBoard.getShipLocations();
+        Map<Point, IHits> hits = opponentPlayer.getTargetingBoard().getHits();
         // Log the ship locations
         Set<IShip> uniqueShips = new HashSet<>(ships.values());
         for (IShip remainingShip : uniqueShips) {
@@ -262,6 +359,57 @@ public class ShootingView extends JPanel {
             gridCells1[r][c].setBackground(Color.GRAY);
             System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
         }
+
+        for (Map.Entry<Point, IHits> entry : hits.entrySet()) {
+            Point point = entry.getKey();
+            int r = point.y;
+            int c = point.x;
+                gridCells1[r][c].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        }
+    }
+
+    private void drawTargetBoard() {
+        Map<Point, IHits> hits = currentTargetingBoard.getHits();
+        for (Map.Entry<Point, IHits> entry : hits.entrySet()) {
+            Point point = entry.getKey();
+            int r = point.y;
+            int c = point.x;
+            if (entry.getValue().isHit()) {
+                gridCells2[r][c].setBackground(Color.RED);
+            } else {
+                try {
+                    File gifFile = new File("src/battleship/assets/water_tile.gif");
+                    if (!gifFile.exists()) {
+                        System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
+                        return;
+                    }
+        
+                    String absoluteGifPath = gifFile.getAbsolutePath();
+                    ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+                    if (gifIcon.getIconWidth() == -1) {
+                        System.err.println("Failed to load GIF: " + absoluteGifPath);
+                        return;
+                    }
+        
+                    JLabel missLabel = new JLabel(gifIcon);
+                    missLabel.setHorizontalAlignment(JLabel.CENTER);
+                    missLabel.setVerticalAlignment(JLabel.CENTER);
+        
+                    gridCells2[r][c].setLayout(new GridBagLayout());
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    gbc.weightx = 1.0;
+                    gbc.weighty = 1.0;
+                    gbc.anchor = GridBagConstraints.CENTER;
+                    gridCells2[r][c].add(missLabel, gbc);
+                    gridCells2[r][c].revalidate();
+                    gridCells2[r][c].repaint();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
 
     private Point getShipStartingPoint(IShip ship, Map<Point, IShip> ships) {
@@ -271,5 +419,17 @@ public class ShootingView extends JPanel {
             }
         }
         return null;
+    }
+
+    public void clearGrids() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                gridCells1[i][j].setBackground(null);
+                gridCells1[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                gridCells1[i][j].removeAll();
+                gridCells2[i][j].setBackground(null);
+                gridCells2[i][j].removeAll();
+            }
+        }
     }
 }
