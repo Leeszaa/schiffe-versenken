@@ -215,14 +215,33 @@ public class ShootingView extends JPanel {
          */
         @Override
         public void mouseClicked(MouseEvent e) {
-            JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " + col);
-            
+            //JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " + col);
+
+            boolean hit = shootingManager.addHitToTargetBoard(col, row);
+
+            if (hit) {
+                gridCells2[row][col].setBackground(Color.RED);
+            } else {
+                gridCells2[row][col].setBackground(Color.BLUE);
+            }
+
+            JLabel cross = new JLabel("X", SwingConstants.CENTER);
+            cross.setFont(new Font("Roboto", Font.BOLD, 20));
+            gridCells2[row][col].add(cross);
+        
             shootingManager.addHitToTargetBoard(row, col);
+            Map<Point, IShip> ships = opponentGameBoard.getShipLocations();
+            // Log the ship locations
+            Set<IShip> uniqueShips = new HashSet<>(ships.values());
+            for (IShip remainingShip : uniqueShips) {
+                Point point = getShipStartingPoint(remainingShip, ships);
+                System.out.println("Gegner Schiffe: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
+            }
             //Zeigen des Hits
             //Überprüfen ob Spiel vorbei
             //Button für nächsten Spieler zeigen
-            shootingManager.switchPlayers();
-            drawShipsOnOwnBoard();
+            //shootingManager.switchPlayers();
+            //drawShipsOnOwnBoard();
             //Targeboard zeichnen
         }
     }

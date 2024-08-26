@@ -51,10 +51,12 @@ public class ShootingManager {
         this.currentOpponentBoard = opponentPlayer.getGameBoard();
     }
 
-    public void addHitToTargetBoard(int x, int y) {
+    public boolean addHitToTargetBoard(int x, int y) {
         boolean isHit = isHitHittingShip(x, y);
         IHits hit = hitFactory.createHit(isHit);
         currentTargetBoard.placeHit(x, y, hit);
+        System.out.println("Hit: " + currentTargetBoard.getHits());
+        return isHit;
         //currentOpponentBoard.getShipLocations()
     }
 
