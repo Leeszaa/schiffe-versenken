@@ -7,6 +7,7 @@ package battleship.managers;
 
 import battleship.BattleshipGUI;
 import battleship.factorys.gameboard.IGameBoard;
+import battleship.factorys.hits.IHits;
 import battleship.factorys.player.IPlayer;
 import battleship.factorys.ships.*;
 import battleship.views.PlacementView;
@@ -194,8 +195,15 @@ public class ShipPlacementManager {
             System.out.println("Ship: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
         }
 
+        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
+            Point point = entry.getKey();
+            int r = point.y;
+            int c = point.x;
+            gridCells[r][c].setBackground(Color.GRAY);
+            System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
+        }
         // Update the grid cells with the remaining ships
-        for (IShip remainingShip : uniqueShips) {
+        /*for (IShip remainingShip : uniqueShips) {
             Point point = getShipStartingPoint(remainingShip, ships);
             int shipSize = remainingShip.getShipSize();
             boolean isHorizontal = !remainingShip.isHorizontal();
@@ -208,7 +216,7 @@ public class ShipPlacementManager {
                 gridCells[r][c].setBackground(Color.GRAY);
                 System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
             }
-        }
+        }*/
 
         // Print the game board to the console
         System.out.println("Current game board:");
@@ -265,7 +273,7 @@ public class ShipPlacementManager {
      * Switches to the shooting view in the GUI.
      */
     private void switchToShootingView() {
-        battleshipGUI.showShootingView();
+        battleshipGUI.showShootingView(false);
     }
 
     /**

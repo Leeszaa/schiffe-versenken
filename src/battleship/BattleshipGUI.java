@@ -103,15 +103,19 @@ public class BattleshipGUI extends JFrame {
      * Shows the shooting view.
      * Ensures players are initialized before showing the shooting view.
      */
-    public void showShootingView() {
+    public void showShootingView(boolean isOnePlayerDebug) {
         if (player1 == null || player2 == null) {
             System.err.println("Players are not initialized. Call initializeLocalCoopGame first.");
             return;
         }
 
-        ShootingView shootingView = new ShootingView(player1, player2);
+        ShootingView shootingView = new ShootingView(player1, player2, isOnePlayerDebug, this);
         panelCont.add(shootingView, "ShootingView");
         cardLayout.show(panelCont, "ShootingView");
+    }
+
+    public void showMainMenuView() {
+        cardLayout.show(panelCont, "MainMenuView");
     }
 
     /**

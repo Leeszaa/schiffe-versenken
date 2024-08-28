@@ -6,6 +6,7 @@ import battleship.factorys.ships.IShip;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.awt.Point;
 
 import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.hits.*;
@@ -90,6 +91,23 @@ public class ShootingManager {
         System.out.println("Current player (ShootingManager): " + currentPlayer.getName());
         getCurrentPlayerBoards();
         notifyObservers();
+    }
+
+    public boolean isGameOver() {
+        for (Map.Entry<Point, IShip> entry : currentOpponentBoard.getShipLocations().entrySet()) {
+            Point shipLocation = entry.getKey();
+            IHits hit = currentTargetBoard.getHits().get(shipLocation);
+    
+            // Check if the hit exists and if it is a successful hit
+            if (hit == null || !hit.isHit()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isAlreadyHit(int x, int y) {
+        return currentTargetBoard.getHits().containsKey(new Point(x, y));
     }
     
 }

@@ -7,6 +7,7 @@ package battleship.views;
 
 import javax.swing.*;
 
+import battleship.BattleshipGUI;
 import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.ships.*;
 import battleship.managers.ShootingManager;
@@ -68,6 +69,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     private boolean clicksAllowed = true;
 
     private boolean isGameOver = false;
+
+    private boolean isOnePlayerDebug = false;
+
+    private BattleshipGUI battleshipGUI;
+
     /** < The opponent's game board */
 
     /**
@@ -78,7 +84,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
      * @param player2Board          The game board for player 2.
      * @param player2TargetingBoard The targeting board for player 2.
      */
-    public ShootingView(IPlayer player1, IPlayer player2) {
+    public ShootingView(IPlayer player1, IPlayer player2, boolean isOnePlayerDebug, BattleshipGUI battleshipGUI) {
 
         this.shootingManager = new ShootingManager(player1, player2);
         this.shootingManager.addObserver(this);
@@ -88,6 +94,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         this.currentGameBoard = currentPlayer.getGameBoard();
         this.currentTargetingBoard = currentPlayer.getTargetingBoard();
         this.opponentGameBoard = opponentPlayer.getGameBoard();
+
+        this.isOnePlayerDebug = isOnePlayerDebug;
+        this.battleshipGUI = battleshipGUI;
 
 
         initComponents();
@@ -278,6 +287,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
             if (!clicksAllowed) {
                 return; // If clicks are not allowed, do nothing
             }
+            if (shootingManager.isAlreadyHit(col, row)) {
+                JOptionPane.showMessageDialog(null, "Bereits auf dieses Feld geschossen!");
+                return;
+            }
+            
             boolean hit = shootingManager.addHitToTargetBoard(col, row);
 
             if (hit) {
@@ -324,20 +338,18 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 System.out.println(
                         "Gegner Schiffe: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
             }
-            // Zeigen des Hits
-            // Überprüfen ob Spiel vorbei
-            // Button für nächsten Spieler zeigen
-            clicksAllowed = false;
-            nextPlayerButton.setVisible(true);
-            //shootingManager.switchPlayers();
-            //System.out.println("Current player: " + currentPlayer.getName());
-            //clearGrids();
-            //drawShipsOnOwnBoard();
-            //drawTargetBoard();
-            //revalidate();
-            //repaint();
-            // drawShipsOnOwnBoard();
-            // Targeboard zeichnen
+            
+            if (shootingManager.isGameOver()) {
+                isGameOver = true;
+                JOptionPane.showMessageDialog(null, "Spiel vorbei! " + currentPlayer.getName() + " hat gewonnen!");
+                battleshipGUI.showMainMenuView();
+
+            }
+
+            if (!isOnePlayerDebug) {
+                clicksAllowed = false;
+                nextPlayerButton.setVisible(true);
+            }
             
         }
     }

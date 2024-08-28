@@ -57,12 +57,14 @@ public class MainMenuView extends JPanel {
         JButton buttonFour = new JButton("Debug Mode");
         JButton buttonFive = new JButton("Platzierungsphase");
         JButton buttonSix = new JButton("Schießphase");
+        JButton buttonSeven = new JButton("Schießphase (kein Player Switch)");
 
         buttonFour.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 buttonFive.setVisible(true);
                 buttonSix.setVisible(true);
+                buttonSeven.setVisible(true);
             }
         });
 
@@ -77,7 +79,15 @@ public class MainMenuView extends JPanel {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeDebugGame();
-                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView();
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView(false);
+            }
+        });
+
+        buttonSeven.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeDebugGame();
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView(true);
             }
         });
 
@@ -108,6 +118,10 @@ public class MainMenuView extends JPanel {
         add(buttonSix, gbc);
         buttonSix.setVisible(false);
 
+        gbc.gridy = 8;
+        add(buttonSeven, gbc);
+        buttonSeven.setVisible(false);
+
         String gifPath = "src/battleship/assets/waves.gif";
         File gifFile = new File(gifPath);
         String absoluteGifPath = gifFile.getAbsolutePath();
@@ -116,7 +130,7 @@ public class MainMenuView extends JPanel {
             System.out.println("Failed to load GIF.");
         }
 
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         add(new JLabel(gifIcon), gbc);
 
