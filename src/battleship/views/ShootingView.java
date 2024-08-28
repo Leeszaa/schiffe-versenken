@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 /**
  * @class ShootingView
@@ -35,7 +36,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     /** < Panel for player 2's ships */
     private JPanel[][] gridCells1;
     /** < 2D array of grid cells for player 1 */
-    private JPanel[][] gridCells2;
+    private LinePanel[][] gridCells2;
 
     private JButton nextPlayerButton;
     /** < 2D array of grid cells for player 2 */
@@ -98,7 +99,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         this.isOnePlayerDebug = isOnePlayerDebug;
         this.battleshipGUI = battleshipGUI;
 
-
         initComponents();
     }
 
@@ -113,6 +113,27 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         this.opponentGameBoard = opponentPlayer.getGameBoard();
 
         playerName.setText(newPlayer.getName());
+    }
+
+    class LinePanel extends JPanel {
+        private boolean isSunk = false;
+
+        public void setSunk(boolean isSunk) {
+            this.isSunk = isSunk;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (isSunk) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(new BasicStroke(3)); // Set the line thickness to 3
+                g2d.drawLine(0, 0, getWidth(), getHeight());
+                g2d.drawLine(0, getHeight(), getWidth(), 0);
+            }
+        }
     }
 
     /**
@@ -151,7 +172,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         gridPanel2.setPreferredSize(new Dimension(600, 600));
 
         gridCells1 = new JPanel[10][10]; // Eigenes Spielfeld
-        gridCells2 = new JPanel[10][10]; // Gegnerisches Spielfeld
+        gridCells2 = new LinePanel[10][10]; // Gegnerisches Spielfeld
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -160,7 +181,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 gridCells1[i][j] = cell1;
                 gridPanel1.add(cell1);
 
-                JPanel cell2 = new JPanel();
+                LinePanel cell2 = new LinePanel();
                 cell2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 cell2.addMouseListener(new GridClickListener(i, j, 2));
                 gridCells2[i][j] = cell2;
@@ -198,7 +219,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         nextPlayerButton.setForeground(Color.BLACK);
         nextPlayerButton.setPreferredSize(new Dimension(200, 50));
         nextPlayerButton.setVisible(false);
-        
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -291,44 +311,49 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 JOptionPane.showMessageDialog(null, "Bereits auf dieses Feld geschossen!");
                 return;
             }
-            
+
             boolean hit = shootingManager.addHitToTargetBoard(col, row);
 
             if (hit) {
                 gridCells2[row][col].setBackground(Color.RED);
+                List<Point> sunkShipCoordinates = shootingManager.isShipSunk(col, row);
+                if (!sunkShipCoordinates.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Schiff versenkt!");
+                    drawLineThroughSunkShip(sunkShipCoordinates);
+                }
             } else {
-            try {
-                File gifFile = new File("src/battleship/assets/water_tile.gif");
-                if (!gifFile.exists()) {
-                    System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
-                    return;
+                try {
+                    File gifFile = new File("src/battleship/assets/water_tile.gif");
+                    if (!gifFile.exists()) {
+                        System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
+                        return;
+                    }
+
+                    String absoluteGifPath = gifFile.getAbsolutePath();
+                    ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+                    if (gifIcon.getIconWidth() == -1) {
+                        System.err.println("Failed to load GIF: " + absoluteGifPath);
+                        return;
+                    }
+
+                    JLabel missLabel = new JLabel(gifIcon);
+                    missLabel.setHorizontalAlignment(JLabel.CENTER);
+                    missLabel.setVerticalAlignment(JLabel.CENTER);
+
+                    gridCells2[row][col].setLayout(new GridBagLayout());
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    gbc.weightx = 1.0;
+                    gbc.weighty = 1.0;
+                    gbc.anchor = GridBagConstraints.CENTER;
+                    gridCells2[row][col].add(missLabel, gbc);
+                    gridCells2[row][col].revalidate();
+                    gridCells2[row][col].repaint();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-    
-                String absoluteGifPath = gifFile.getAbsolutePath();
-                ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
-                if (gifIcon.getIconWidth() == -1) {
-                    System.err.println("Failed to load GIF: " + absoluteGifPath);
-                    return;
-                }
-    
-                JLabel missLabel = new JLabel(gifIcon);
-                missLabel.setHorizontalAlignment(JLabel.CENTER);
-                missLabel.setVerticalAlignment(JLabel.CENTER);
-    
-                gridCells2[row][col].setLayout(new GridBagLayout());
-                GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridx = 0;
-                gbc.gridy = 0;
-                gbc.weightx = 1.0;
-                gbc.weighty = 1.0;
-                gbc.anchor = GridBagConstraints.CENTER;
-                gridCells2[row][col].add(missLabel, gbc);
-                gridCells2[row][col].revalidate();
-                gridCells2[row][col].repaint();
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
-        }
 
             Map<Point, IShip> ships = opponentGameBoard.getShipLocations();
             // Log the ship locations
@@ -338,7 +363,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 System.out.println(
                         "Gegner Schiffe: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
             }
-            
+
             if (shootingManager.isGameOver()) {
                 isGameOver = true;
                 JOptionPane.showMessageDialog(null, "Spiel vorbei! " + currentPlayer.getName() + " hat gewonnen!");
@@ -350,7 +375,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 clicksAllowed = false;
                 nextPlayerButton.setVisible(true);
             }
-            
+
         }
     }
 
@@ -376,7 +401,13 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
             Point point = entry.getKey();
             int r = point.y;
             int c = point.x;
-                gridCells1[r][c].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            gridCells1[r][c].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+        }
+    }
+
+    private void drawLineThroughSunkShip(List<Point> coordinates) {
+        for (Point point : coordinates) {
+            gridCells2[point.y][point.x].setSunk(true);
         }
     }
 
@@ -395,18 +426,18 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                         System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
                         return;
                     }
-        
+
                     String absoluteGifPath = gifFile.getAbsolutePath();
                     ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
                     if (gifIcon.getIconWidth() == -1) {
                         System.err.println("Failed to load GIF: " + absoluteGifPath);
                         return;
                     }
-        
+
                     JLabel missLabel = new JLabel(gifIcon);
                     missLabel.setHorizontalAlignment(JLabel.CENTER);
                     missLabel.setVerticalAlignment(JLabel.CENTER);
-        
+
                     gridCells2[r][c].setLayout(new GridBagLayout());
                     GridBagConstraints gbc = new GridBagConstraints();
                     gbc.gridx = 0;
@@ -440,6 +471,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 gridCells1[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 gridCells1[i][j].removeAll();
                 gridCells2[i][j].setBackground(null);
+                gridCells2[i][j].setSunk(false);
                 gridCells2[i][j].removeAll();
             }
         }

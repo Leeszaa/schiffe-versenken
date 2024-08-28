@@ -4,6 +4,7 @@ import battleship.factorys.player.*;
 import battleship.factorys.ships.IShip;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.awt.Point;
@@ -23,7 +24,6 @@ public class ShootingManager {
     public IGameBoard currentOpponentBoard;
 
     private List<ShootingManagerObserver> observers = new ArrayList<>();
-
 
     public ShootingManager(IPlayer player1, IPlayer player2) {
         this.player1 = player1;
@@ -73,7 +73,7 @@ public class ShootingManager {
         currentTargetBoard.placeHit(x, y, hit);
         System.out.println("Hit: " + currentTargetBoard.getHits());
         return isHit;
-        //currentOpponentBoard.getShipLocations()
+        // currentOpponentBoard.getShipLocations()
     }
 
     public boolean isHitHittingShip(int x, int y) {
@@ -97,8 +97,7 @@ public class ShootingManager {
         for (Map.Entry<Point, IShip> entry : currentOpponentBoard.getShipLocations().entrySet()) {
             Point shipLocation = entry.getKey();
             IHits hit = currentTargetBoard.getHits().get(shipLocation);
-    
-            // Check if the hit exists and if it is a successful hit
+
             if (hit == null || !hit.isHit()) {
                 return false;
             }
@@ -106,8 +105,43 @@ public class ShootingManager {
         return true;
     }
 
+    public List<Point> isShipSunk(int x, int y) {
+        IShip ship = getShipAt(x, y);
+        if (ship == null) {
+            return Collections.emptyList();
+        }
+    
+        int shipLength = ship.getShipSize();
+        int hits = 0;
+        List<Point> shipCoordinates = new ArrayList<>();
+    
+        for (Map.Entry<Point, IShip> entry : currentOpponentBoard.getShipLocations().entrySet()) {
+            if (entry.getValue().equals(ship)) {
+                shipCoordinates.add(entry.getKey());
+            }
+        }
+
+        for (Point location : shipCoordinates) {
+            if (currentTargetBoard.getHits().containsKey(location)) {
+                hits++;
+                System.out.println("Hit detected at: " + location);
+            } else {
+                System.out.println("No hit at: " + location);
+            }
+        }
+    
+        System.out.println("Hits: " + hits + ", Ship length: " + shipLength);
+    
+        return hits == shipLength ? shipCoordinates : Collections.emptyList();
+    }
+
+    public IShip getShipAt(int x, int y) {
+        Map<Point, IShip> ships = opponentPlayer.getGameBoard().getShipLocations();
+        return ships.get(new Point(x, y));
+    }
+
     public boolean isAlreadyHit(int x, int y) {
         return currentTargetBoard.getHits().containsKey(new Point(x, y));
     }
-    
+
 }
