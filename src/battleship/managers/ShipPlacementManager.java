@@ -7,7 +7,6 @@ package battleship.managers;
 
 import battleship.BattleshipGUI;
 import battleship.factorys.gameboard.IGameBoard;
-import battleship.factorys.hits.IHits;
 import battleship.factorys.player.IPlayer;
 import battleship.factorys.ships.*;
 import battleship.views.PlacementView;
@@ -192,7 +191,6 @@ public class ShipPlacementManager {
         Set<IShip> uniqueShips = new HashSet<>(ships.values());
         for (IShip remainingShip : uniqueShips) {
             Point point = getShipStartingPoint(remainingShip, ships);
-            System.out.println("Ship: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
         }
 
         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
@@ -239,7 +237,6 @@ public class ShipPlacementManager {
         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
             Point point = entry.getKey();
             IShip ship = entry.getValue();
-            System.out.println("Ship: " + ship.getShipName() + " at (" + point.y + ", " + point.x + ")");
         }
     }
 

@@ -58,27 +58,6 @@ public class TargetingBoard implements IGameBoard {
     }
 
     /**
-     * Receives a hit on the game board.
-     * 
-     * @param x     The x-coordinate of the hit.
-     * @param y     The y-coordinate of the hit.
-     * @param isHit True if the hit was successful, false otherwise.
-     */
-    @Override
-    public void receiveHit(int x, int y, boolean isHit) {
-        Point point = new Point(x, y);
-        hitAttempts.put(point, isHit);
-    }
-
-    /**
-     * Displays the game board.
-     */
-    @Override
-    public void display() {
-        System.out.println("Player Board");
-    }
-
-    /**
      * Gets the locations of all ships on the board.
      * 
      * @return A map of ship locations.
@@ -107,20 +86,6 @@ public class TargetingBoard implements IGameBoard {
      */
     public Map<Point, Boolean> getHitAttempts() {
         return new HashMap<>(hitAttempts);
-    }
-
-    /**
-     * Checks if the placement of a ship is valid.
-     * 
-     * @param x            The x-coordinate of the starting position.
-     * @param y            The y-coordinate of the starting position.
-     * @param shipSize     The size of the ship.
-     * @param isHorizontal True if the ship is placed horizontally, false if
-     *                     vertically.
-     * @return True as this method currently does not validate placement.
-     */
-    private boolean isValidPlacement(int x, int y, int shipSize, boolean isHorizontal) {
-        return true;
     }
 
     @Override

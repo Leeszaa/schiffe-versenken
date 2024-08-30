@@ -10,12 +10,17 @@ import javax.swing.*;
 import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.gameboard.PlayerBoardFactory;
 import battleship.factorys.gameboard.TargetingBoardFactory;
+import battleship.factorys.player.ComputerPlayerFactory;
 import battleship.factorys.player.IPlayer;
 import battleship.factorys.player.LocalPlayerFactory;
 import battleship.factorys.ships.*;
+import battleship.managers.BattleshipAI;
 import battleship.views.MainMenuView;
 import battleship.views.PlacementView;
 import battleship.views.ShootingView;
+import battleship.views.SinglePlacementView;
+import battleship.views.ComputerDebugView;
+import battleship.views.ComputerShootingView;
 
 import java.awt.*;
 
@@ -42,6 +47,8 @@ public class BattleshipGUI extends JFrame {
     private IPlayer player1;
     /** < The first player */
     private IPlayer player2;
+
+    private IPlayer computer;
 
     /** < The second player */
 
@@ -118,6 +125,64 @@ public class BattleshipGUI extends JFrame {
         cardLayout.show(panelCont, "MainMenuView");
     }
 
+    public void showSinglePlacementView() {
+        if (player1 == null || computer == null) {
+            System.err.println("Players are not initialized. Call initializeComputerOpponentGame first.");
+            return;
+        }
+
+        SinglePlacementView singlePlacementView = new SinglePlacementView(
+                cardLayout,
+                panelCont,
+                player1Board,
+                player2Board,
+                player1,
+                computer,
+                this);
+        panelCont.add(singlePlacementView, "SinglePlacementView");
+        cardLayout.show(panelCont, "SinglePlacementView");
+    }
+
+    public void showComputerDebugView() {
+        if (player1 == null || computer == null) {
+            System.err.println("Players are not initialized. Call initializeComputerOpponentGame first.");
+            return;
+        }
+
+        ComputerDebugView computerDebugView = new ComputerDebugView(
+                cardLayout,
+                panelCont,
+                player1Board,
+                player2Board,
+                player1,
+                computer,
+                this);
+        panelCont.add(computerDebugView, "ComputerDebugView");
+        cardLayout.show(panelCont, "ComputerDebugView");
+    }
+
+    public void showComputerShootingView() {
+        if (player1 == null || computer == null) {
+            System.err.println("Players are not initialized. Call initializeComputerOpponentGame first.");
+            return;
+        }
+
+        ComputerShootingView shootingView = new ComputerShootingView(player1, computer, false, this);
+        panelCont.add(shootingView, "ComputerShootingView");
+        cardLayout.show(panelCont, "ComputerShootingView");
+    }
+
+    public void showComputerShootingViewDebug() {
+        if (player1 == null || computer == null) {
+            System.err.println("Players are not initialized. Call initializeComputerOpponentGame first.");
+            return;
+        }
+
+        ComputerShootingView shootingView = new ComputerShootingView(player1, computer, false, this);
+        panelCont.add(shootingView, "ComputerShootingView");
+        cardLayout.show(panelCont, "ComputerShootingView");
+    }
+
     /**
      * Initializes the local coop game.
      * Creates players and their respective game boards and targeting boards.
@@ -139,22 +204,22 @@ public class BattleshipGUI extends JFrame {
         player2.setTargetingBoard(player2TargetingBoard);
     }
 
-        public void initializeDebugGame() {
+    public void initializeDebugGame() {
         // Spieler erstellen
         player1 = new LocalPlayerFactory().createPlayer("Spieler 1");
         player2 = new LocalPlayerFactory().createPlayer("Spieler 2");
-    
+
         // Spielbretter erstellen
         player1Board = new PlayerBoardFactory().createGameBoard();
         player1TargetingBoard = new TargetingBoardFactory().createGameBoard();
         player2Board = new PlayerBoardFactory().createGameBoard();
         player2TargetingBoard = new TargetingBoardFactory().createGameBoard();
-    
+
         player1.setGameBoard(player1Board);
         player2.setGameBoard(player2Board);
         player1.setTargetingBoard(player1TargetingBoard);
         player2.setTargetingBoard(player2TargetingBoard);
-    
+
         // SchlachtschiffFactory instanziieren
         SchlachtschiffFactory schlachtschiffFactory = new SchlachtschiffFactory();
         ZerstörerFactory zerstörerFactory = new ZerstörerFactory();
@@ -162,7 +227,6 @@ public class BattleshipGUI extends JFrame {
         KreuzerFactory kreuzerFactory = new KreuzerFactory();
         U_BootFactory u_BootFactory = new U_BootFactory();
 
-    
         // Schiff platzieren
         player1.getGameBoard().placeShip(0, 0, schlachtschiffFactory.createShip(), true);
         player1.getGameBoard().placeShip(0, 2, zerstörerFactory.createShip(), true);
@@ -185,8 +249,59 @@ public class BattleshipGUI extends JFrame {
         player2.getGameBoard().placeShip(6, 4, u_BootFactory.createShip(), true);
         player2.getGameBoard().placeShip(6, 6, u_BootFactory.createShip(), true);
         player2.getGameBoard().placeShip(6, 8, u_BootFactory.createShip(), true);
-        
 
+    }
+
+    public void initializeComputerOpponentGame() {
+
+        player1 = new LocalPlayerFactory().createPlayer("Spieler 1");
+        computer = new ComputerPlayerFactory().createPlayer("Computer");
+
+        player1Board = new PlayerBoardFactory().createGameBoard();
+        player1TargetingBoard = new TargetingBoardFactory().createGameBoard();
+        player2Board = new PlayerBoardFactory().createGameBoard();
+        player2TargetingBoard = new TargetingBoardFactory().createGameBoard();
+
+        player1.setGameBoard(player1Board);
+        computer.setGameBoard(player2Board);
+        player1.setTargetingBoard(player1TargetingBoard);
+        computer.setTargetingBoard(player2TargetingBoard);      
+    }
+
+    public void initializeComputerOpponentGameDebug() {
+
+        player1 = new LocalPlayerFactory().createPlayer("Spieler 1");
+        computer = new ComputerPlayerFactory().createPlayer("Computer");
+
+        player1Board = new PlayerBoardFactory().createGameBoard();
+        player1TargetingBoard = new TargetingBoardFactory().createGameBoard();
+        player2Board = new PlayerBoardFactory().createGameBoard();
+        player2TargetingBoard = new TargetingBoardFactory().createGameBoard();
+
+        player1.setGameBoard(player1Board);
+        computer.setGameBoard(player2Board);
+        player1.setTargetingBoard(player1TargetingBoard);
+        computer.setTargetingBoard(player2TargetingBoard);
+
+        BattleshipAI battleshipAI = new BattleshipAI(player1, computer);
+        battleshipAI.placeAllShips();
+
+        SchlachtschiffFactory schlachtschiffFactory = new SchlachtschiffFactory();
+        ZerstörerFactory zerstörerFactory = new ZerstörerFactory();
+
+        KreuzerFactory kreuzerFactory = new KreuzerFactory();
+        U_BootFactory u_BootFactory = new U_BootFactory();
+
+        player1.getGameBoard().placeShip(0, 0, schlachtschiffFactory.createShip(), true);
+        player1.getGameBoard().placeShip(0, 2, zerstörerFactory.createShip(), true);
+        player1.getGameBoard().placeShip(0, 4, zerstörerFactory.createShip(), true);
+        player1.getGameBoard().placeShip(0, 6, kreuzerFactory.createShip(), true);
+        player1.getGameBoard().placeShip(0, 8, kreuzerFactory.createShip(), true);
+        player1.getGameBoard().placeShip(6, 0, kreuzerFactory.createShip(), true);
+        player1.getGameBoard().placeShip(6, 2, u_BootFactory.createShip(), true);
+        player1.getGameBoard().placeShip(6, 4, u_BootFactory.createShip(), true);
+        player1.getGameBoard().placeShip(6, 6, u_BootFactory.createShip(), true);
+        player1.getGameBoard().placeShip(6, 8, u_BootFactory.createShip(), true);
     }
 
 }

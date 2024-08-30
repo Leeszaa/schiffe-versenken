@@ -1,5 +1,5 @@
 /**
- * @file ShootingView.java
+ * @file ComputerShootingView.java
  *   Represents the shooting view in the Battleship game.
  */
 
@@ -8,11 +8,9 @@ package battleship.views;
 import javax.swing.*;
 
 import battleship.BattleshipGUI;
-import battleship.factorys.gameboard.IGameBoard;
+
 import battleship.factorys.ships.*;
-import battleship.managers.ShootingManager;
-import battleship.managers.ShootingManagerObserver;
-import battleship.views.ComputerShootingView.TransparentPanel;
+import battleship.managers.ComputerShootingManager;
 import battleship.factorys.player.IPlayer;
 import battleship.factorys.hits.IHits;
 
@@ -20,17 +18,15 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.List;
 
 /**
- * @class ShootingView
+ * @class ComputerShootingView
  *        Represents the shooting view in the Battleship game.
  *        Extends {@link JPanel} to create a custom panel for shooting actions.
  */
-public class ShootingView extends JPanel implements ShootingManagerObserver {
+public class ComputerShootingView extends JPanel {
     private JPanel gridPanel1;
     /** < Panel for player 1's ships */
     private JPanel gridPanel2;
@@ -40,16 +36,10 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     private LinePanel[][] gridCells2;
 
     private JButton nextPlayerButton;
-    private ShootingManager shootingManager;
-    private IGameBoard currentGameBoard;
-    /** < The current game board */
-    private IGameBoard currentTargetingBoard;
-    /** < The current targeting board */
-    private IGameBoard opponentGameBoard;
+    private ComputerShootingManager shootingManager;
 
-    private IPlayer currentPlayer;
-    private IPlayer opponentPlayer;
-
+    private IPlayer player;
+    private IPlayer computer;
     private JLabel playerName;
 
     private boolean clicksAllowed = true;
@@ -57,45 +47,30 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     private boolean isOnePlayerDebug = false;
 
     private BattleshipGUI battleshipGUI;
+    private IPlayer startplayer;
 
     /** < The opponent's game board */
 
     /**
-     * Constructor for ShootingView.
+     * Constructor for ComputerShootingView.
      * 
      * @param player1Board          The game board for player 1.
      * @param player1TargetingBoard The targeting board for player 1.
      * @param player2Board          The game board for player 2.
      * @param player2TargetingBoard The targeting board for player 2.
      */
-    public ShootingView(IPlayer player1, IPlayer player2, boolean isOnePlayerDebug, BattleshipGUI battleshipGUI) {
+    public ComputerShootingView(IPlayer player1, IPlayer computer, boolean isOnePlayerDebug,
+            BattleshipGUI battleshipGUI) {
 
-        this.shootingManager = new ShootingManager(player1, player2);
-        this.shootingManager.addObserver(this);
+        this.shootingManager = new ComputerShootingManager(player1, computer);
 
-        this.currentPlayer = shootingManager.currentPlayer;
-        this.opponentPlayer = shootingManager.opponentPlayer;
-        this.currentGameBoard = currentPlayer.getGameBoard();
-        this.currentTargetingBoard = currentPlayer.getTargetingBoard();
-        this.opponentGameBoard = opponentPlayer.getGameBoard();
+        this.player = player1;
+        this.computer = computer;
 
         this.isOnePlayerDebug = isOnePlayerDebug;
         this.battleshipGUI = battleshipGUI;
 
         initComponents();
-    }
-
-    @Override
-    public void onPlayerSwitched(IPlayer newPlayer, IPlayer opponentPlayer) {
-        System.out.println("Current player (on Switched): " + newPlayer.getName());
-        // Update the view accordingly
-        this.currentPlayer = newPlayer;
-        this.opponentPlayer = opponentPlayer;
-        this.currentGameBoard = newPlayer.getGameBoard();
-        this.currentTargetingBoard = newPlayer.getTargetingBoard();
-        this.opponentGameBoard = opponentPlayer.getGameBoard();
-
-        playerName.setText(newPlayer.getName());
     }
 
     class LinePanel extends JPanel {
@@ -146,7 +121,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        playerName = new JLabel(currentPlayer.getName(), SwingConstants.CENTER);
+        playerName = new JLabel(player.getName(), SwingConstants.CENTER);
         playerName.setFont(new Font("Roboto", Font.BOLD, 40));
         playerName.setForeground(Color.WHITE);
         gbc.gridx = 0;
@@ -200,20 +175,40 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         gridWithLabels2.add(createRowLabels(), BorderLayout.WEST);
         gridWithLabels2.add(gridPanel2, BorderLayout.CENTER);
 
+        startplayer = shootingManager.selectRandomPlayer();
+
+        if (startplayer == player) {
+            clicksAllowed = true;
+        } else {
+            clicksAllowed = false;
+            shootingManager.computerShoot();
+            clicksAllowed = true;
+        }
+
         drawShipsOnOwnBoard();
         drawTargetBoard();
 
-        nextPlayerButton = new JButton("Nächster Spieler");
+        nextPlayerButton = new JButton("Weiter");
         nextPlayerButton.addActionListener(e -> {
-            shootingManager.switchPlayers();
-            System.out.println("Current player: " + currentPlayer.getName());
+            shootingManager.computerShoot();
             clearGrids();
             drawShipsOnOwnBoard();
             drawTargetBoard();
             revalidate();
             repaint();
+            if (shootingManager.isGameOver(computer)) {
+                JOptionPane.showMessageDialog(null, "Spiel vorbei! " + computer.getName() + " hat gewonnen!");
+                battleshipGUI.showMainMenuView();
+
+            }
             clicksAllowed = true;
-            nextPlayerButton.setVisible(false);
+            if (isOnePlayerDebug) {
+                clicksAllowed = false;
+                nextPlayerButton.setVisible(true);
+            } else {
+                clicksAllowed = true;
+                nextPlayerButton.setVisible(false);
+            }
         });
         nextPlayerButton.setFont(new Font("Roboto", Font.BOLD, 20));
         nextPlayerButton.setBackground(Color.WHITE);
@@ -356,33 +351,22 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 }
             }
 
-            Map<Point, IShip> ships = opponentGameBoard.getShipLocations();
-            // Log the ship locations
-            Set<IShip> uniqueShips = new HashSet<>(ships.values());
-            for (IShip remainingShip : uniqueShips) {
-                Point point = getShipStartingPoint(remainingShip, ships);
-                System.out.println(
-                        "Gegner Schiffe: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
-            }
-
-            if (shootingManager.isGameOver()) {
-                JOptionPane.showMessageDialog(null, "Spiel vorbei! " + currentPlayer.getName() + " hat gewonnen!");
+            if (shootingManager.isGameOver(player)) {
+                JOptionPane.showMessageDialog(null, "Spiel vorbei! " + player.getName() + " hat gewonnen!");
                 battleshipGUI.showMainMenuView();
 
             }
-
-            if (!isOnePlayerDebug) {
-                clicksAllowed = false;
-                nextPlayerButton.setVisible(true);
-            }
+            clicksAllowed = false;
+            nextPlayerButton.setVisible(true);
 
         }
     }
 
-    private void drawShipsOnOwnBoard() {
-        Map<Point, IShip> ships = currentGameBoard.getShipLocations();
-        Map<Point, IHits> hits = opponentPlayer.getTargetingBoard().getHits();
-         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
+        private void drawShipsOnOwnBoard() {
+        Map<Point, IShip> ships = player.getGameBoard().getShipLocations();
+        Map<Point, IHits> hits = computer.getTargetingBoard().getHits();
+    
+        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
             Point point = entry.getKey();
             int r = point.y;
             int c = point.x;
@@ -412,7 +396,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     }
 
     private void drawTargetBoard() {
-        Map<Point, IHits> hits = currentTargetingBoard.getHits();
+        Map<Point, IHits> hits = player.getTargetingBoard().getHits();
         for (Map.Entry<Point, IHits> entry : hits.entrySet()) {
             Point point = entry.getKey();
             int r = point.y;
@@ -459,14 +443,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         }
     }
 
-    private Point getShipStartingPoint(IShip ship, Map<Point, IShip> ships) {
-        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
-            if (entry.getValue().equals(ship)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
 
     public void clearGrids() {
         for (int i = 0; i < 10; i++) {
@@ -480,4 +456,5 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
             }
         }
     }
+
 }

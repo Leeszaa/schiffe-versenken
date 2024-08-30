@@ -55,9 +55,19 @@ public class MainMenuView extends JPanel {
         JButton buttonTwo = new JButton("Online Multiplayer (WIP)");
         JButton buttonThree = new JButton("K.I. Gegner (WIP)");
         JButton buttonFour = new JButton("Debug Mode");
-        JButton buttonFive = new JButton("Platzierungsphase");
-        JButton buttonSix = new JButton("Schießphase");
-        JButton buttonSeven = new JButton("Schießphase (kein Player Switch)");
+        JButton buttonFive = new JButton("Platzierungsphase Debug");
+        JButton buttonSix = new JButton("Schießphase Debug");
+        JButton buttonSeven = new JButton("Schießphase (kein Player Switch) Debug");
+        JButton buttonEight = new JButton("Computer Gameboard Generator");
+        JButton buttonNine = new JButton("Computer Shooting View Debug");
+
+        buttonThree.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeComputerOpponentGame();
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showSinglePlacementView();
+            }
+        });
 
         buttonFour.addActionListener(new ActionListener() {
             @Override
@@ -65,6 +75,8 @@ public class MainMenuView extends JPanel {
                 buttonFive.setVisible(true);
                 buttonSix.setVisible(true);
                 buttonSeven.setVisible(true);
+                buttonEight.setVisible(true);
+                buttonNine.setVisible(true);
             }
         });
 
@@ -88,6 +100,22 @@ public class MainMenuView extends JPanel {
             public void actionPerformed(ActionEvent arg0) {
                 ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeDebugGame();
                 ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView(true);
+            }
+        });
+
+        buttonEight.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeComputerOpponentGame();
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showComputerDebugView();
+            }
+        });
+
+        buttonNine.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeComputerOpponentGameDebug();
+                ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showComputerShootingViewDebug();
             }
         });
 
@@ -122,6 +150,14 @@ public class MainMenuView extends JPanel {
         add(buttonSeven, gbc);
         buttonSeven.setVisible(false);
 
+        gbc.gridy = 9;
+        add(buttonEight, gbc);
+        buttonEight.setVisible(false);
+
+        gbc.gridy = 10;
+        add(buttonNine, gbc);
+        buttonNine.setVisible(false);
+
         String gifPath = "src/battleship/assets/waves.gif";
         File gifFile = new File(gifPath);
         String absoluteGifPath = gifFile.getAbsolutePath();
@@ -130,7 +166,7 @@ public class MainMenuView extends JPanel {
             System.out.println("Failed to load GIF.");
         }
 
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         add(new JLabel(gifIcon), gbc);
 

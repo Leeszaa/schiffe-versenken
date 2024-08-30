@@ -50,32 +50,6 @@
      }
  
      /**
-      * Receives a hit on the game board.
-      * @param x The x-coordinate of the hit.
-      * @param y The y-coordinate of the hit.
-      * @param isHit True if the hit was successful, false otherwise.
-      */
-     @Override
-     public void receiveHit(int x, int y, boolean isHit) {
-         if (ships.containsKey(new Point(x, y))) {
-             IShip ship = ships.get(new Point(x, y));
-             // Hier die Logik zum Umgang mit Schiffstreffern einfügen
-             
-             //if (/* Bedingung für Schiff versenkt */) { 
-                 ships.remove(new Point(x, y));
-             //}
-         }
-     }
- 
-     /**
-      *   Displays the game board.
-      */
-     @Override
-     public void display() {
-         System.out.println("Player Board");
-     }
- 
-     /**
       * Gets the locations of all ships on the board.
       * @return A map of ship locations.
       */

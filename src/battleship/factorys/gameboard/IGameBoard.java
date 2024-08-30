@@ -27,19 +27,6 @@ public interface IGameBoard {
     void placeShip(int x, int y, IShip ship, boolean isHorizontal);
 
     /**
-     *   Records a hit on the game board.
-     * @param x The x-coordinate of the hit.
-     * @param y The y-coordinate of the hit.
-     * @param isHit True if the hit was successful, false otherwise.
-     */
-    void receiveHit(int x, int y, boolean isHit);
-
-    /**
-     *   Displays the game board.
-     */
-    void display();
-
-    /**
      *   Gets the locations of all ships on the game board.
      * @return A map of ship locations with coordinates as keys and ships as values.
      */
