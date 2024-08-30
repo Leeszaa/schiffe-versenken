@@ -270,11 +270,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
      *        cells.
      */
     private class GridClickListener extends MouseAdapter {
-        private final int row;
+        private int row;
         /** < The row of the grid cell */
-        private final int col;
+        private int col;
         /** < The column of the grid cell */
-        private final int playerGrid;
+        private int playerGrid;
 
         /** < The player grid identifier */
 

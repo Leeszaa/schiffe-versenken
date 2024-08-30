@@ -18,7 +18,7 @@ public class ShootingManager {
     private IPlayer player2;
     public IPlayer currentPlayer;
     public IPlayer opponentPlayer;
-    private ShipHitFactory hitFactory;
+    private final ShipHitFactory hitFactory;
     public IGameBoard currentGameBoard;
     public IGameBoard currentTargetBoard;
     public IGameBoard currentOpponentBoard;

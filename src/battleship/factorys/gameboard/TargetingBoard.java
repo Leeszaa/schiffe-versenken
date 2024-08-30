@@ -17,11 +17,11 @@ import battleship.factorys.hits.*;
  *        Implements the {@link IGameBoard} interface.
  */
 public class TargetingBoard implements IGameBoard {
-    private final Map<Point, IShip> ships;
+    private Map<Point, IShip> ships;
     /** < A map of ship locations on the board */
-    private final Map<Point, Boolean> hitAttempts;
+    private Map<Point, Boolean> hitAttempts;
     /** < A map of hit attempts on the board */
-    private final Map<Point, IHits> hits;
+    private Map<Point, IHits> hits;
     /** < A map of hits on the board */
 
     /**

@@ -25,19 +25,19 @@ public class SinglePlacementManager {
     /** < The second player */
     private Map<String, Integer> currentPlayerShipCounts;
     /** < The count of ships placed by the current player */
-    private Map<String, Integer> shipLimits;
+    private final Map<String, Integer> shipLimits;
     /** < The limits for each type of ship */
-    private ZerstörerFactory zerstörerFactory;
+    private final ZerstörerFactory zerstörerFactory;
     /** < Factory for creating Zerstörer ships */
-    private SchlachtschiffFactory schlachtschiffFactory;
+    private final SchlachtschiffFactory schlachtschiffFactory;
     /** < Factory for creating Schlachtschiff ships */
-    private KreuzerFactory kreuzerFactory;
+    private final KreuzerFactory kreuzerFactory;
     /** < Factory for creating Kreuzer ships */
-    private U_BootFactory u_BootFactory;
+    private final U_BootFactory u_BootFactory;
     /** < Factory for creating U-Boot ships */
-    private SinglePlacementView placementView;
+    private final SinglePlacementView placementView;
     /** < The view for ship placement */
-    private BattleshipGUI battleshipGUI;
+    private final BattleshipGUI battleshipGUI;
     /** < Reference to the main GUI */
 
     private static final int TOTAL_SHIPS = 10;

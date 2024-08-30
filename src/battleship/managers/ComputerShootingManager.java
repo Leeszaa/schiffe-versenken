@@ -18,7 +18,7 @@ public class ComputerShootingManager {
     private final BattleshipAI battleshipAI;
     public IPlayer currentPlayer;
     public IPlayer opponentPlayer;
-    private ShipHitFactory hitFactory;
+    private final ShipHitFactory hitFactory;
 
     public ComputerShootingManager(IPlayer player1, IPlayer computer) {
         this.player = player1;

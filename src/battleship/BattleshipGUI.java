@@ -31,9 +31,9 @@ import java.awt.*;
  */
 public class BattleshipGUI extends JFrame {
 
-    private CardLayout cardLayout;
+    private final CardLayout cardLayout;
     /** < The card layout for switching views */
-    private JPanel panelCont;
+    private final JPanel panelCont;
     /** < The main container panel */
 
     private IGameBoard player1Board;

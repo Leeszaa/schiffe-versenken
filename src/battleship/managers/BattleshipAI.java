@@ -16,17 +16,17 @@ import battleship.factorys.player.*;
 public class BattleshipAI {
 
     private Random random;
-    private KreuzerFactory KreuzerFactory;
-    private ZerstörerFactory ZerstörerFactory;
-    private U_BootFactory U_BootFactory;
-    private SchlachtschiffFactory SchlachtschiffFactory;
-    private List<int[]> hitPositions; // Speichert die Positionen der Treffer
+    private final KreuzerFactory KreuzerFactory;
+    private final ZerstörerFactory ZerstörerFactory;
+    private final U_BootFactory U_BootFactory;
+    private final SchlachtschiffFactory SchlachtschiffFactory;
+    private List<int[]> hitPositions;
     private boolean inHuntMode = false;
     private boolean inSinkMode = false;
-    private int[] lastHit; // Der letzte Treffer
-    private ShipHitFactory hitFactory;
-    private IPlayer player;
-    private IPlayer computer;
+    private int[] lastHit;
+    private final ShipHitFactory hitFactory;
+    private final IPlayer player;
+    private final IPlayer computer;
     private List<int[]> potentialDirections; // Mögliche Richtungen für den Sink Mode
 
     public BattleshipAI(IPlayer player, IPlayer computer) {
@@ -40,7 +40,6 @@ public class BattleshipAI {
         this.ZerstörerFactory = new ZerstörerFactory();
         this.U_BootFactory = new U_BootFactory();
         this.SchlachtschiffFactory = new SchlachtschiffFactory();
-
     }
 
     private static final int MAX_ATTEMPTS_PER_SHIP = 100;
@@ -69,7 +68,6 @@ public class BattleshipAI {
 
                 allShipsPlaced = true; // Alle Schiffe erfolgreich platziert
             } catch (IllegalStateException e) {
-                // Fehler bei der Platzierung, versuche den Prozess erneut
                 System.out.println("Keine gültige Platzierung gefunden, Neustart der Platzierung...");
             }
         }
@@ -79,51 +77,31 @@ public class BattleshipAI {
         boolean placed = false;
         int attempts = 0;
 
-        System.out.println("Attempting to place ship of size " + shipSize + " using factory " + factoryType);
-
         while (!placed && attempts < MAX_ATTEMPTS_PER_SHIP) {
             int x = random.nextInt(10);
             int y = random.nextInt(10);
             boolean isHorizontal = random.nextBoolean();
 
-            System.out.println("Attempt " + (attempts + 1) + ": Trying to place ship at (" + x + ", " + y + ") "
-                    + (isHorizontal ? "horizontally" : "vertically"));
-
             if (canPlaceShip(y, x, shipSize, isHorizontal)) {
                 switch (factoryType) {
                     case "SchlachtschiffFactory":
                         computer.getGameBoard().placeShip(x, y, SchlachtschiffFactory.createShip(), isHorizontal);
-                        System.out.println("Placed Schlachtschiff at (" + x + ", " + y + ")");
                         break;
                     case "KreuzerFactory":
                         computer.getGameBoard().placeShip(x, y, KreuzerFactory.createShip(), isHorizontal);
-                        System.out.println("Placed Kreuzer at (" + x + ", " + y + ")");
                         break;
                     case "ZerstörerFactory":
                         computer.getGameBoard().placeShip(x, y, ZerstörerFactory.createShip(), isHorizontal);
-                        System.out.println("Placed Zerstörer at (" + x + ", " + y + ")");
                         break;
                     case "U_BootFactory":
                         computer.getGameBoard().placeShip(x, y, U_BootFactory.createShip(), isHorizontal);
-                        System.out.println("Placed U-Boot at (" + x + ", " + y + ")");
                         break;
                     default:
-                        System.out.println("Unknown factory type: " + factoryType);
                         break;
                 }
                 placed = true;
-            } else {
-                System.out.println("Cannot place ship at (" + x + ", " + y + ")");
             }
-
             attempts++;
-        }
-
-        if (!placed) {
-            System.out.println("Failed to place ship after " + attempts + " attempts.");
-            throw new IllegalStateException("Keine gültige Position für das Schiff gefunden.");
-        } else {
-            System.out.println("Successfully placed ship after " + attempts + " attempts.");
         }
     }
 
@@ -178,15 +156,12 @@ public class BattleshipAI {
         shipLocations.clear();
     }
 
-        public void makeNextMove() {
+    public void makeNextMove() {
         if (inSinkMode) {
-            System.out.println("Entering Sink Mode");
             sink();
         } else if (inHuntMode) {
-            System.out.println("Entering Hunt Mode");
             hunt();
         } else {
-            System.out.println("Entering Random Shot Mode");
             randomShot();
         }
     }
@@ -200,8 +175,6 @@ public class BattleshipAI {
         } while (computer.getTargetingBoard().getHits().containsKey(new Point(col, row)));
 
         boolean hit = addHitToTargetBoard(col, row);
-
-        System.out.println("Computer shot at (" + col + ", " + row + ") and " + (hit ? "hit a ship" : "missed"));
 
         if (hit) {
             lastHit = new int[] { col, row };
@@ -261,16 +234,16 @@ public class BattleshipAI {
     private void sink() {
         int col = lastHit[0];
         int row = lastHit[1];
-    
+
         int[] firstHit = hitPositions.get(0);
         int[] secondHit = hitPositions.get(1);
-    
+
         int dCol = secondHit[0] - firstHit[0];
         int dRow = secondHit[1] - firstHit[1];
 
         int newCol = col + dCol;
         int newRow = row + dRow;
-    
+
         if (!tryShootingAt(newCol, newRow)) {
 
             dCol = -dCol;

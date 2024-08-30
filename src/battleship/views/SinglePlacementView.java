@@ -251,9 +251,9 @@ public class SinglePlacementView extends JPanel {
      *        cells.
      */
     private class GridCellClickListener extends MouseAdapter {
-        private final int row;
+        private int row;
         /** < The row of the grid cell */
-        private final int col;
+        private int col;
 
         /** < The column of the grid cell */
 
