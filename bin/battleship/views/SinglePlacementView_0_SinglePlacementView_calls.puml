@@ -1,0 +1,140 @@
+@startuml
+
+/' diagram meta data start
+config=CallConfiguration;
+{
+  "rootMethod": "battleship.views.SinglePlacementView#SinglePlacementView(CardLayout,JPanel,IGameBoard,IGameBoard,IPlayer,IPlayer,BattleshipGUI)",
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": true,
+    "cutInterfaceStructures": true,
+    "cutDataStructures": true,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showMethodParametersTypes": false,
+    "showMethodParametersNames": false,
+    "showMethodReturnType": false,
+    "showPackageLevels": 2,
+    "showCallOrder": false,
+    "edgeMode": "MethodsOnly", // TypesOnly, MethodsOnly, TypesAndMethods, MethodsAndDirectTypeUsage
+    "showDetailedClassStructure": false
+  },
+  "rootClass": "battleship.views.SinglePlacementView",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="LR"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_112204398 { 
+   	label=views
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1293549992 { 
+   	label=SinglePlacementView
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   SinglePlacementView585888012XXXSinglePlacementView1297938381[
+	label="+ SinglePlacementView()"
+	style=filled
+	fillcolor=white
+	tooltip="SinglePlacementView
+
+&#10;  Constructor for PlacementView.&#10;  &#10;  @param cardLayoutThe card layout for switching views.&#10;  @param parentPanel The parent panel containing this view.&#10;  @param player1Board The game board for player 1.&#10;  @param player2Board The game board for player 2.&#10;  @param player1 The first player.&#10;  @param computer The second player.&#10;  @param battleshipGUI The main GUI.&#10; "
+	penwidth=4
+	fontcolor=darkgreen
+];
+} 
+} 
+
+subgraph cluster_2054622964 { 
+   	label=battleship
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_764899341 { 
+   	label=BattleshipGUI
+	labeljust=l
+	fillcolor=white
+	style=filled
+   
+   BattleshipGUI2054622964XXXshowSinglePlacementView0[
+	label="+ showSinglePlacementView()"
+	style=filled
+	fillcolor=white
+	tooltip="BattleshipGUI
+
+null"
+	fontcolor=darkgreen
+];
+} 
+} 
+
+'edges    
+BattleshipGUI2054622964XXXshowSinglePlacementView0 -> SinglePlacementView585888012XXXSinglePlacementView1297938381;
+    
+}
+@enduml

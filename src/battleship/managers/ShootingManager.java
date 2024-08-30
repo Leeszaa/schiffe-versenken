@@ -71,9 +71,7 @@ public class ShootingManager {
         boolean isHit = isHitHittingShip(x, y);
         IHits hit = hitFactory.createHit(isHit);
         currentTargetBoard.placeHit(x, y, hit);
-        System.out.println("Hit: " + currentTargetBoard.getHits());
         return isHit;
-        // currentOpponentBoard.getShipLocations()
     }
 
     public boolean isHitHittingShip(int x, int y) {
@@ -88,7 +86,6 @@ public class ShootingManager {
             currentPlayer = player1;
             opponentPlayer = player2;
         }
-        System.out.println("Current player (ShootingManager): " + currentPlayer.getName());
         getCurrentPlayerBoards();
         notifyObservers();
     }
@@ -124,13 +121,8 @@ public class ShootingManager {
         for (Point location : shipCoordinates) {
             if (currentTargetBoard.getHits().containsKey(location)) {
                 hits++;
-                System.out.println("Hit detected at: " + location);
-            } else {
-                System.out.println("No hit at: " + location);
             }
         }
-    
-        System.out.println("Hits: " + hits + ", Ship length: " + shipLength);
     
         return hits == shipLength ? shipCoordinates : Collections.emptyList();
     }

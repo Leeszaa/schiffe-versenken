@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import battleship.factorys.gameboard.*;
 import battleship.factorys.hits.IHits;
 import battleship.factorys.hits.ShipHitFactory;
 import battleship.factorys.ships.*;
@@ -44,7 +43,6 @@ public class BattleshipAI {
 
     }
 
-    // Maximal 100 Versuche pro Schiff bevor der Vorgang neu gestartet wird
     private static final int MAX_ATTEMPTS_PER_SHIP = 100;
 
     public void placeAllShips() {
@@ -139,26 +137,7 @@ public class BattleshipAI {
                 return false;
             }
         }
-        return true; // Gültige Platzierung++
-
-        /*
-         * if (isHorizontal && x + shipSize > 10) {
-         * return false;
-         * } else if (!isHorizontal && y + shipSize > 10) {
-         * return false;
-         * }
-         * 
-         * for (int i = 0; i < shipSize; i++) {
-         * int currentCol = isHorizontal ? x + i : x;
-         * int currentRow = isHorizontal ? y : y + i;
-         * 
-         * if (isOccupiedOrAdjacent(currentCol, currentRow)) {
-         * return false;
-         * }
-         * }
-         * 
-         * return true;
-         */
+        return true;
     }
 
     private boolean isAdjacentToShip(int row, int col) {
@@ -191,44 +170,30 @@ public class BattleshipAI {
     }
 
     private void clearBoard() {
-        // Get all ship locations
         Map<Point, IShip> shipLocations = computer.getGameBoard().getShipLocations();
-
-        // Use a set to store unique ships to avoid removing the same ship multiple
-        // times
         Set<IShip> uniqueShips = new HashSet<>(shipLocations.values());
-
-        // Iterate over all unique ships and remove each ship
         for (IShip ship : uniqueShips) {
             computer.getGameBoard().removeShip(ship);
         }
-
-        // Optionally, clear the ship locations map if needed
         shipLocations.clear();
     }
 
-    // Führt den nächsten Schuss aus
         public void makeNextMove() {
         if (inSinkMode) {
             System.out.println("Entering Sink Mode");
-            // Systematisches Versenken im Sink Mode
             sink();
         } else if (inHuntMode) {
             System.out.println("Entering Hunt Mode");
-            // Zielgerichtete Schüsse im Hunt Mode
             hunt();
         } else {
             System.out.println("Entering Random Shot Mode");
-            // Zufälliger Schuss
             randomShot();
         }
     }
 
-    // Zufälliger Schuss, wenn kein Treffer bekannt ist
     private void randomShot() {
         int col, row;
 
-        // Suche zufällige Position, die noch nicht getroffen wurde
         do {
             col = random.nextInt(10);
             row = random.nextInt(10);
@@ -238,12 +203,11 @@ public class BattleshipAI {
 
         System.out.println("Computer shot at (" + col + ", " + row + ") and " + (hit ? "hit a ship" : "missed"));
 
-        // Treffer registrieren
         if (hit) {
             lastHit = new int[] { col, row };
             hitPositions.add(lastHit);
-            inHuntMode = true; // Wechsel in den Hunt Mode
-            potentialDirections = generatePotentialDirections(col, row); // Mögliche Richtungen speichern
+            inHuntMode = true;
+            potentialDirections = generatePotentialDirections(col, row);
         }
     }
 
@@ -258,27 +222,24 @@ public class BattleshipAI {
         return player.getGameBoard().isShipHit(x, y);
     }
 
-    // Logik für gezieltes Schießen, wenn ein Treffer gemacht wurde
     private void hunt() {
         int col = lastHit[0];
         int row = lastHit[1];
 
-        // Versuche, in den Nachbarpositionen zu schießen: rechts, links, oben, unten
         for (int[] direction : potentialDirections) {
             int newCol = col + direction[0];
             int newRow = row + direction[1];
 
             if (tryShootingAt(newCol, newRow)) {
-                return; // Beende den Zug nach einem Schuss
+                return;
             }
         }
 
-        inHuntMode = false; // Wenn kein weiterer Treffer gefunden wurde, beende den Hunt Mode
+        inHuntMode = false;
         randomShot();
 
     }
 
-    // Versuche, an einer bestimmten Position zu schießen
     private boolean tryShootingAt(int col, int row) {
         if (col >= 0 && col < 10 && row >= 0 && row < 10
                 && !computer.getTargetingBoard().getHits().containsKey(new Point(col, row))) {
@@ -289,61 +250,47 @@ public class BattleshipAI {
                 hitPositions.add(lastHit);
 
                 if (hitPositions.size() == 2) {
-                    inSinkMode = true; // Wenn zwei Treffer hintereinander sind, aktiviere den Sink Mode
+                    inSinkMode = true;
                 }
-                 // Beende den Zug nach einem Schuss
             }
             return true;
         }
         return false;
     }
 
-    // Weitere Logik für den Sink Mode könnte hinzugefügt werden,
-    // um sicherzustellen, dass das gesamte Schiff versenkt wird
     private void sink() {
         int col = lastHit[0];
         int row = lastHit[1];
     
-        // Bestimme die Richtung basierend auf den ersten zwei Treffern
         int[] firstHit = hitPositions.get(0);
         int[] secondHit = hitPositions.get(1);
     
         int dCol = secondHit[0] - firstHit[0];
         int dRow = secondHit[1] - firstHit[1];
-    
-        System.out.println("First hit: (" + firstHit[0] + ", " + firstHit[1] + ")");
-        System.out.println("Second hit: (" + secondHit[0] + ", " + secondHit[1] + ")");
-        System.out.println("Direction: (" + dCol + ", " + dRow + ")");
-    
-        // Schieße in die erkannte Richtung
+
         int newCol = col + dCol;
         int newRow = row + dRow;
     
-        System.out.println("Trying to shoot at: (" + newCol + ", " + newRow + ")");
         if (!tryShootingAt(newCol, newRow)) {
-            // Wenn der Schuss nicht trifft oder außerhalb des Bereichs ist, versuche die
-            // andere Richtung
+
             dCol = -dCol;
             dRow = -dRow;
             newCol = firstHit[0] + dCol;
             newRow = firstHit[1] + dRow;
-    
-            System.out.println("Trying to shoot in the opposite direction at: (" + newCol + ", " + newRow + ")");
+
             if (!tryShootingAt(newCol, newRow)) {
-                // Handle the case when both directions result in a miss or are out of bounds
-                System.out.println("Both directions missed or out of bounds. Exiting sink mode.");
                 inSinkMode = false;
-                hunt(); // Return to hunt mode
+                hunt();
             }
         }
     }
 
     private List<int[]> generatePotentialDirections(int col, int row) {
         List<int[]> directions = new ArrayList<>();
-        directions.add(new int[] { 1, 0 }); // Rechts
-        directions.add(new int[] { -1, 0 }); // Links
-        directions.add(new int[] { 0, 1 }); // Unten
-        directions.add(new int[] { 0, -1 }); // Oben
+        directions.add(new int[] { 1, 0 });
+        directions.add(new int[] { -1, 0 });
+        directions.add(new int[] { 0, 1 });
+        directions.add(new int[] { 0, -1 });
         return directions;
     }
 

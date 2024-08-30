@@ -1,2 +1,5 @@
 .metadata/
 .settings/
+.idea/
+src/battleship/out/
+src/battleship/.idea/

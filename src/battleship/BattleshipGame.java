@@ -16,6 +16,6 @@ public class BattleshipGame {
      * @param args Command line arguments.
      */
     public static void main(String[] args) {
-        BattleshipGUI gui = new BattleshipGUI();
+        new BattleshipGUI();
     }
 }

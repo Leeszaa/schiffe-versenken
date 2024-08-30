@@ -66,7 +66,6 @@
       */
      @Override
      public boolean isShipHit(int x, int y) {
-        System.out.println("Checking if ship is hit at (" + x + ", " + y + ")");
          return ships.containsKey(new Point(x, y));
      }
  

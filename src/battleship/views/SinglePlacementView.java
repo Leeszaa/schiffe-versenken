@@ -25,25 +25,13 @@ import java.util.Map;
  */
 public class SinglePlacementView extends JPanel {
     private JPanel gridPanel;
-    /** < Panel for the grid layout */
     private JPanel[][] gridCells;
-    /** < 2D array of grid cells */
     private CardLayout cardLayout;
-    /** < Card layout for switching views */
     private JPanel parentPanel;
-    /** < Parent panel containing this view */
     private SinglePlacementManager shipPlacementManager;
-    /** < Manager for ship placement */
     private BattleshipGUI battleshipGUI;
-    /** < Reference to the main GUI */
     private JLabel[] shipCountLabels;
-    /** < Labels for displaying ship counts */
     private IPlayer player1;
-    /** < The first player */
-    private IPlayer computer;
-    /** < The second player */
-
-    private static final int TOTAL_SHIPS = 10;
 
     /** < Total number of ships to be placed */
 
@@ -52,21 +40,16 @@ public class SinglePlacementView extends JPanel {
      * 
      * @param cardLayout    The card layout for switching views.
      * @param parentPanel   The parent panel containing this view.
-     * @param player1Board  The game board for player 1.
-     * @param player2Board  The game board for player 2.
      * @param player1       The first player.
-     * @param computer      The second player.
      * @param battleshipGUI The main GUI.
      */
-    public SinglePlacementView(CardLayout cardLayout, JPanel parentPanel, IGameBoard player1Board,
-            IGameBoard player2Board,
+    public SinglePlacementView(CardLayout cardLayout, JPanel parentPanel, 
             IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
         this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
         this.battleshipGUI = battleshipGUI;
         this.shipPlacementManager = new SinglePlacementManager(player1, this, battleshipGUI);
         this.player1 = player1;
-        this.computer = computer;
 
         initComponents();
     }
@@ -128,7 +111,6 @@ public class SinglePlacementView extends JPanel {
         gbc.gridy = 2;
         mainPanel.add(placementWithLabels, gbc);
 
-        // Add the ship list panel to the right of the grid panel
         JPanel shipListPanel = createShipListPanel();
         gbc.gridx = 2;
         gbc.gridy = 2;
@@ -151,12 +133,10 @@ public class SinglePlacementView extends JPanel {
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.getContentPane().setBackground(Color.darkGray);
 
-        // Create a panel to hold the labels
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(Color.darkGray);
 
-        // Create and add labels with the desired font and color
         String[] rules = {
                 "Regeln:",
                 "1. Jeder Spieler platziert abwechselnd seine Schiffe auf dem Spielfeld.",
@@ -221,7 +201,7 @@ public class SinglePlacementView extends JPanel {
         shipListPanel.setBackground(Color.darkGray);
 
         String[] shipNames = { "Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot" };
-        int[] shipCounts = { 1, 2, 3, 4 }; // Example counts for each ship type
+        int[] shipCounts = { 1, 2, 3, 4 };
         shipCountLabels = new JLabel[shipNames.length];
 
         JLabel titleLabel = new JLabel("Noch zu verteilende Schiffe:");
@@ -303,12 +283,10 @@ public class SinglePlacementView extends JPanel {
                 if (confirm == JOptionPane.YES_OPTION) {
                     shipPlacementManager.removeShip(row, col, existingShip, gridCells);
                     gridCells[row][col].setBackground(null);
-                    updateShipCount(existingShip.getShipName(), 1); // Increment the counter
+                    updateShipCount(existingShip.getShipName(), 1);
                 }
                 return;
             }
-
-
 
             JPanel panel = new JPanel(new GridLayout(2, 2));
             JLabel sizeLabel = new JLabel("Wähle ein Schiff aus:");
@@ -343,23 +321,7 @@ public class SinglePlacementView extends JPanel {
                             "Du hast bereits das Maximum dieses Typs platziert.");
                 }
             }
-
-            if (shipPlacementManager.getPlacedShipsCount() >= TOTAL_SHIPS) {
-                JOptionPane.showMessageDialog(SinglePlacementView.this, "Schiffsplatzierung abgeschlossen.");
-                showShipLocations();
-                cardLayout.show(parentPanel, "ComputerShootingView");
-                return;
-            }
         }
-    }
-
-    /**
-     * Shows the ship locations for both players.
-     */
-    private void showShipLocations() {
-        Map<Point, IShip> player1Ships = shipPlacementManager.getPlayer1ShipLocations();
-
-        System.out.println("Player 1 Ships: " + player1Ships);
     }
 
     /**

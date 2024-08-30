@@ -7,11 +7,8 @@ package battleship.views;
 
 import battleship.BattleshipGUI;
 import battleship.factorys.gameboard.IGameBoard;
-import battleship.factorys.hits.IHits;
 import battleship.factorys.player.IPlayer;
 import battleship.managers.BattleshipAI;
-import battleship.managers.ShipPlacementManager;
-import battleship.managers.SinglePlacementManager;
 import battleship.factorys.ships.IShip;
 
 import javax.swing.*;
@@ -38,16 +35,8 @@ public class ComputerDebugView extends JPanel {
     /** < Parent panel containing this view */
     private BattleshipAI ai;
     /** < Manager for ship placement */
-    private BattleshipGUI battleshipGUI;
-    /** < Reference to the main GUI */
-    private JLabel[] shipCountLabels;
-    /** < Labels for displaying ship counts */
-    private IPlayer player1;
-    /** < The first player */
     private IPlayer computer;
     /** < The second player */
-
-    private static final int TOTAL_SHIPS = 10;
 
     /** < Total number of ships to be placed */
 
@@ -67,9 +56,7 @@ public class ComputerDebugView extends JPanel {
             IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
         this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
-        this.battleshipGUI = battleshipGUI;
         this.ai = new BattleshipAI(player1, computer);
-        this.player1 = player1;
         this.computer = computer;
 
         initComponents();
@@ -175,9 +162,7 @@ public class ComputerDebugView extends JPanel {
      *        cells.
      */
     private class GridCellClickListener extends MouseAdapter {
-        private final int row;
-        /** < The row of the grid cell */
-        private final int col;
+
 
         /** < The column of the grid cell */
 
@@ -188,8 +173,6 @@ public class ComputerDebugView extends JPanel {
          * @param col The column of the grid cell.
          */
         public GridCellClickListener(int row, int col) {
-            this.row = row;
-            this.col = col;
         }
 
         /**
@@ -214,7 +197,6 @@ public class ComputerDebugView extends JPanel {
             int r = point.x;
             int c = point.y;
             gridCells[r][c].setBackground(Color.GRAY);
-            System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
         }
     }
 

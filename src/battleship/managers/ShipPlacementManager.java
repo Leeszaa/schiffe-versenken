@@ -6,7 +6,6 @@
 package battleship.managers;
 
 import battleship.BattleshipGUI;
-import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.player.IPlayer;
 import battleship.factorys.ships.*;
 import battleship.views.PlacementView;
@@ -14,9 +13,7 @@ import battleship.views.PlacementView;
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @class ShipPlacementManager
@@ -68,7 +65,6 @@ public class ShipPlacementManager {
         this.placementView = placementView;
         this.battleshipGUI = battleshipGUI;
 
-        // Initialize factory objects before calling initializeShipLimits
         this.zerstörerFactory = new ZerstörerFactory();
         this.schlachtschiffFactory = new SchlachtschiffFactory();
         this.kreuzerFactory = new KreuzerFactory();
@@ -132,12 +128,9 @@ public class ShipPlacementManager {
 
         currentPlayerShipCounts.put(shipType, currentPlayerShipCounts.getOrDefault(shipType, 0) + 1);
 
-        System.out.println("Placed Ships Count: " + getPlacedShipsCount());
-        System.out.println("Total Ships Allowed: " + TOTAL_SHIPS);
-
         if (getPlacedShipsCount() >= TOTAL_SHIPS) {
             if (currentPlayer == player1) {
-                showConfirmationDialog("Player 1 has placed all ships. Player 2, please place your ships.");
+                showConfirmationDialog("Spieler 1 hat alle Schiffe platziert. Jetzt ist Spieler 2 drann.");
             } else {
                 switchToShootingView();
             }
@@ -165,33 +158,19 @@ public class ShipPlacementManager {
      */
     public void removeShip(int row, int col, IShip ship, JPanel[][] gridCells) {
         if (ship == null) {
-            System.out.println("No ship found at the specified location (" + row + ", " + col + ").");
             return;
         }
 
-        System.out.println("Removing ship: " + ship.getShipName() + " at (" + row + ", " + col + ")");
-
-        // Remove the ship from the game board
         currentPlayer.getGameBoard().removeShip(ship);
 
-        // Update the ship count
         int newCount = currentPlayerShipCounts.get(ship.getShipName()) - 1;
         currentPlayerShipCounts.put(ship.getShipName(), newCount);
-        System.out.println("Updated ship count for " + ship.getShipName() + ": " + newCount);
 
-        // Clear the grid
         placementView.clearGrid();
-        System.out.println("Grid cleared.");
 
-        // Get the remaining ships on the game board
         Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
         System.out.println("Remaining ships on the board: " + ships.size());
 
-        // Log the ship locations
-        Set<IShip> uniqueShips = new HashSet<>(ships.values());
-        for (IShip remainingShip : uniqueShips) {
-            Point point = getShipStartingPoint(remainingShip, ships);
-        }
 
         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
             Point point = entry.getKey();
@@ -199,44 +178,6 @@ public class ShipPlacementManager {
             int c = point.x;
             gridCells[r][c].setBackground(Color.GRAY);
             System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
-        }
-        // Update the grid cells with the remaining ships
-        /*for (IShip remainingShip : uniqueShips) {
-            Point point = getShipStartingPoint(remainingShip, ships);
-            int shipSize = remainingShip.getShipSize();
-            boolean isHorizontal = !remainingShip.isHorizontal();
-            System.out.println("Drawing remaining ship: " + remainingShip.getShipName() + " at (" + point.y + ", "
-                    + point.x + ")");
-
-            for (int i = 0; i < shipSize; i++) {
-                int r = isHorizontal ? point.y : point.y + i;
-                int c = isHorizontal ? point.x + i : point.x;
-                gridCells[r][c].setBackground(Color.GRAY);
-                System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
-            }
-        }*/
-
-        // Print the game board to the console
-        System.out.println("Current game board:");
-        printGameBoard(currentPlayer.getGameBoard());
-    }
-
-    private Point getShipStartingPoint(IShip ship, Map<Point, IShip> ships) {
-        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
-            if (entry.getValue().equals(ship)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    public void printGameBoard(IGameBoard gameBoard) {
-        Map<Point, IShip> ships = gameBoard.getShipLocations();
-
-        // Iterate over the ship locations and print the coordinates and ship names
-        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
-            Point point = entry.getKey();
-            IShip ship = entry.getValue();
         }
     }
 
@@ -252,6 +193,7 @@ public class ShipPlacementManager {
             currentPlayer = player1;
             currentPlayerShipCounts.clear();
         }
+        placementView.updateLabels();
     }
 
     /**

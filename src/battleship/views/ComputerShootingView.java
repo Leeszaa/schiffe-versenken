@@ -87,7 +87,7 @@ public class ComputerShootingView extends JPanel {
             if (isSunk) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.BLACK);
-                g2d.setStroke(new BasicStroke(3)); // Set the line thickness to 3
+                g2d.setStroke(new BasicStroke(3));
                 g2d.drawLine(0, 0, getWidth(), getHeight());
                 g2d.drawLine(0, getHeight(), getWidth(), 0);
             }
@@ -99,7 +99,7 @@ public class ComputerShootingView extends JPanel {
     
         public TransparentPanel(Color overlayColor) {
             this.overlayColor = overlayColor;
-            setOpaque(false); // Ensure the panel is not opaque
+            setOpaque(false);
         }
     
         @Override
@@ -147,8 +147,8 @@ public class ComputerShootingView extends JPanel {
         gridPanel1.setPreferredSize(new Dimension(600, 600));
         gridPanel2.setPreferredSize(new Dimension(600, 600));
 
-        gridCells1 = new JPanel[10][10]; // Eigenes Spielfeld
-        gridCells2 = new LinePanel[10][10]; // Gegnerisches Spielfeld
+        gridCells1 = new JPanel[10][10];
+        gridCells2 = new LinePanel[10][10];
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -178,9 +178,11 @@ public class ComputerShootingView extends JPanel {
         startplayer = shootingManager.selectRandomPlayer();
 
         if (startplayer == player) {
+            JOptionPane.showMessageDialog(ComputerShootingView.this, "Du beginnst!");
             clicksAllowed = true;
         } else {
             clicksAllowed = false;
+            JOptionPane.showMessageDialog(ComputerShootingView.this, "Der Computer beginnt!");
             shootingManager.computerShoot();
             clicksAllowed = true;
         }
@@ -274,7 +276,6 @@ public class ComputerShootingView extends JPanel {
         /** < The row of the grid cell */
         private final int col;
         /** < The column of the grid cell */
-        private final int playerGrid;
 
         /** < The player grid identifier */
 
@@ -288,7 +289,6 @@ public class ComputerShootingView extends JPanel {
         public GridClickListener(int row, int col, int playerGrid) {
             this.row = row;
             this.col = col;
-            this.playerGrid = playerGrid;
         }
 
         /**
@@ -321,14 +321,12 @@ public class ComputerShootingView extends JPanel {
                 try {
                     File gifFile = new File("src/battleship/assets/water_tile.gif");
                     if (!gifFile.exists()) {
-                        System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
                         return;
                     }
 
                     String absoluteGifPath = gifFile.getAbsolutePath();
                     ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
                     if (gifIcon.getIconWidth() == -1) {
-                        System.err.println("Failed to load GIF: " + absoluteGifPath);
                         return;
                     }
 
@@ -379,8 +377,7 @@ public class ComputerShootingView extends JPanel {
             int c = point.x;
             gridCells1[r][c].setBorder(BorderFactory.createLineBorder(Color.RED, 4));
     
-            // Create a semi-transparent overlay
-            TransparentPanel overlay = new TransparentPanel(new Color(255, 0, 0, 50)); // Red with 50% transparency
+            TransparentPanel overlay = new TransparentPanel(new Color(255, 0, 0, 50));
             overlay.setBounds(0, 0, gridCells1[r][c].getWidth(), gridCells1[r][c].getHeight());
             gridCells1[r][c].setLayout(new BorderLayout());
             gridCells1[r][c].add(overlay, BorderLayout.CENTER);
@@ -411,14 +408,12 @@ public class ComputerShootingView extends JPanel {
                 try {
                     File gifFile = new File("src/battleship/assets/water_tile.gif");
                     if (!gifFile.exists()) {
-                        System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
                         return;
                     }
 
                     String absoluteGifPath = gifFile.getAbsolutePath();
                     ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
                     if (gifIcon.getIconWidth() == -1) {
-                        System.err.println("Failed to load GIF: " + absoluteGifPath);
                         return;
                     }
 

@@ -4,30 +4,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.awt.Point;
 
-
 import battleship.factorys.hits.IHits;
-import battleship.factorys.hits.ShipHit;
 import battleship.factorys.hits.ShipHitFactory;
 import battleship.factorys.player.IPlayer;
 import battleship.factorys.ships.IShip;
-import battleship.factorys.ships.*;
-import battleship.factorys.gameboard.*;
-
-
 
 public class ComputerShootingManager {
 
     private final IPlayer player;
     private final IPlayer computer;
     private final BattleshipAI battleshipAI;
-    private IPlayer player2;
     public IPlayer currentPlayer;
     public IPlayer opponentPlayer;
     private ShipHitFactory hitFactory;
-
 
     public ComputerShootingManager(IPlayer player1, IPlayer computer) {
         this.player = player1;
@@ -46,16 +37,14 @@ public class ComputerShootingManager {
         boolean isHit = isHitHittingShip(x, y);
         IHits hit = hitFactory.createHit(isHit);
         player.getTargetingBoard().placeHit(x, y, hit);
-        System.out.println("Hit: " + player.getTargetingBoard().getHits());
         return isHit;
-        // currentOpponentBoard.getShipLocations()
     }
 
     public boolean isHitHittingShip(int x, int y) {
         return computer.getGameBoard().isShipHit(x, y);
     }
 
-     public boolean isGameOver(IPlayer lastShooter) {
+    public boolean isGameOver(IPlayer lastShooter) {
         IPlayer opponent = lastShooter == player ? computer : player;
 
         for (Map.Entry<Point, IShip> entry : opponent.getGameBoard().getShipLocations().entrySet()) {
@@ -74,11 +63,11 @@ public class ComputerShootingManager {
         if (ship == null) {
             return Collections.emptyList();
         }
-    
+
         int shipLength = ship.getShipSize();
         int hits = 0;
         List<Point> shipCoordinates = new ArrayList<>();
-    
+
         for (Map.Entry<Point, IShip> entry : computer.getGameBoard().getShipLocations().entrySet()) {
             if (entry.getValue().equals(ship)) {
                 shipCoordinates.add(entry.getKey());
@@ -88,14 +77,9 @@ public class ComputerShootingManager {
         for (Point location : shipCoordinates) {
             if (player.getTargetingBoard().getHits().containsKey(location)) {
                 hits++;
-                System.out.println("Hit detected at: " + location);
             } else {
-                System.out.println("No hit at: " + location);
             }
         }
-    
-        System.out.println("Hits: " + hits + ", Ship length: " + shipLength);
-    
         return hits == shipLength ? shipCoordinates : Collections.emptyList();
     }
 
@@ -122,5 +106,5 @@ public class ComputerShootingManager {
     public void setCurrentPlayer(IPlayer player) {
         this.currentPlayer = player;
     }
-    
+
 }

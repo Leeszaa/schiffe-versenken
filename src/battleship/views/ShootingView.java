@@ -12,7 +12,6 @@ import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.ships.*;
 import battleship.managers.ShootingManager;
 import battleship.managers.ShootingManagerObserver;
-import battleship.views.ComputerShootingView.TransparentPanel;
 import battleship.factorys.player.IPlayer;
 import battleship.factorys.hits.IHits;
 
@@ -20,9 +19,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.List;
 
 /**
@@ -87,8 +84,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
 
     @Override
     public void onPlayerSwitched(IPlayer newPlayer, IPlayer opponentPlayer) {
-        System.out.println("Current player (on Switched): " + newPlayer.getName());
-        // Update the view accordingly
         this.currentPlayer = newPlayer;
         this.opponentPlayer = opponentPlayer;
         this.currentGameBoard = newPlayer.getGameBoard();
@@ -112,7 +107,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
             if (isSunk) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.BLACK);
-                g2d.setStroke(new BasicStroke(3)); // Set the line thickness to 3
+                g2d.setStroke(new BasicStroke(3));
                 g2d.drawLine(0, 0, getWidth(), getHeight());
                 g2d.drawLine(0, getHeight(), getWidth(), 0);
             }
@@ -124,7 +119,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     
         public TransparentPanel(Color overlayColor) {
             this.overlayColor = overlayColor;
-            setOpaque(false); // Ensure the panel is not opaque
+            setOpaque(false);
         }
     
         @Override
@@ -172,8 +167,8 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         gridPanel1.setPreferredSize(new Dimension(600, 600));
         gridPanel2.setPreferredSize(new Dimension(600, 600));
 
-        gridCells1 = new JPanel[10][10]; // Eigenes Spielfeld
-        gridCells2 = new LinePanel[10][10]; // Gegnerisches Spielfeld
+        gridCells1 = new JPanel[10][10];
+        gridCells2 = new LinePanel[10][10];
 
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -326,14 +321,12 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 try {
                     File gifFile = new File("src/battleship/assets/water_tile.gif");
                     if (!gifFile.exists()) {
-                        System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
                         return;
                     }
 
                     String absoluteGifPath = gifFile.getAbsolutePath();
                     ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
                     if (gifIcon.getIconWidth() == -1) {
-                        System.err.println("Failed to load GIF: " + absoluteGifPath);
                         return;
                     }
 
@@ -354,15 +347,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            }
-
-            Map<Point, IShip> ships = opponentGameBoard.getShipLocations();
-            // Log the ship locations
-            Set<IShip> uniqueShips = new HashSet<>(ships.values());
-            for (IShip remainingShip : uniqueShips) {
-                Point point = getShipStartingPoint(remainingShip, ships);
-                System.out.println(
-                        "Gegner Schiffe: " + remainingShip.getShipName() + " at (" + point.y + ", " + point.x + ")");
             }
 
             if (shootingManager.isGameOver()) {
@@ -457,15 +441,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 }
             }
         }
-    }
-
-    private Point getShipStartingPoint(IShip ship, Map<Point, IShip> ships) {
-        for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
-            if (entry.getValue().equals(ship)) {
-                return entry.getKey();
-            }
-        }
-        return null;
     }
 
     public void clearGrids() {

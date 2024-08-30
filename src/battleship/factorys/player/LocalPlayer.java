@@ -35,26 +35,6 @@ public class LocalPlayer implements IPlayer {
     }
 
     /**
-     *   Places ships on the given game board.
-     * @param gameBoard The game board on which to place ships.
-     */
-    @Override
-    public void placeShips(IGameBoard gameBoard) {
-        // Implementation for placing ships
-    }
-
-    /**
-     *   Takes a turn by attacking the opponent's board.
-     * @param opponentBoard The opponent's game board.
-     * @return True if the turn was successful, false otherwise.
-     */
-    @Override
-    public boolean takeTurn(IGameBoard opponentBoard) {
-        // Implementation for taking a turn
-        return true;
-    }
-
-    /**
      *   Sets the player's game board.
      * @param gameBoard The game board to set.
      */

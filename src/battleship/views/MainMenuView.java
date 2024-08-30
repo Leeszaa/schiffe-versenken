@@ -162,9 +162,6 @@ public class MainMenuView extends JPanel {
         File gifFile = new File(gifPath);
         String absoluteGifPath = gifFile.getAbsolutePath();
         ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
-        if (gifIcon.getImageLoadStatus() != MediaTracker.COMPLETE) {
-            System.out.println("Failed to load GIF.");
-        }
 
         gbc.gridy = 11;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
