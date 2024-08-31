@@ -163,8 +163,10 @@ public class ShipPlacementManager {
 
         currentPlayer.getGameBoard().removeShip(ship);
 
-        int newCount = currentPlayerShipCounts.get(ship.getShipName()) - 1;
-        currentPlayerShipCounts.put(ship.getShipName(), newCount);
+        String shipName = ship.getShipName();
+        int currentCount = currentPlayerShipCounts.getOrDefault(shipName, 0);
+        int newCount = currentCount - 1;
+        currentPlayerShipCounts.put(shipName, newCount);
 
         placementView.clearGrid();
 
@@ -198,10 +200,8 @@ public class ShipPlacementManager {
      * @param message The message to display in the dialog.
      */
     private void showConfirmationDialog(String message) {
-        int response = JOptionPane.showConfirmDialog(null, message, "Confirmation", JOptionPane.OK_CANCEL_OPTION);
-        if (response == JOptionPane.OK_OPTION) {
-            switchPlayer();
-        }
+        JOptionPane.showMessageDialog(placementView, message);
+        switchPlayer();
     }
 
     /**

@@ -79,7 +79,10 @@ public class MainMenuView extends JPanel {
         });
         add(debugButton, gbc);
 
-        buttonFive = addDebugButton(gbc, 5, "Platzierungsphase Debug",  () -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView());
+        buttonFive = addDebugButton(gbc, 5, "Platzierungsphase Debug",  () -> {
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeDebugGame();
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
+        });
         buttonSix = addDebugButton(gbc, 6, "Schießphase Debug", () -> {
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeDebugGame();
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showShootingView(false);

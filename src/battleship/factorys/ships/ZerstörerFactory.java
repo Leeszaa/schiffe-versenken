@@ -36,7 +36,7 @@ public class ZerstörerFactory extends ShipFactory {
     public IShip createShip() {
         IShip ship = new Zerstörer();
         ship.setShipSize(3);
-        ship.setShipName("Destroyer");
+        ship.setShipName("Zerstörer");
         ship.setShipLimit(3);
         return ship;
     }

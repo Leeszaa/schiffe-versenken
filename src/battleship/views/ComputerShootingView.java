@@ -1,14 +1,8 @@
-/**
- * @file ComputerShootingView.java
- *   Represents the shooting view in the Battleship game.
- */
-
 package battleship.views;
 
 import javax.swing.*;
 
 import battleship.BattleshipGUI;
-
 import battleship.factorys.ships.*;
 import battleship.managers.ComputerShootingManager;
 import battleship.factorys.player.IPlayer;
@@ -17,99 +11,45 @@ import battleship.factorys.hits.IHits;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @class ComputerShootingView
- *        Represents the shooting view in the Battleship game.
+ *        Represents the shooting view in the Battleship game against a computer opponent.
  *        Extends {@link JPanel} to create a custom panel for shooting actions.
  */
 public class ComputerShootingView extends JPanel {
     private JPanel gridPanel1;
-    /** < Panel for player 1's ships */
     private JPanel gridPanel2;
-    /** < Panel for player 2's ships */
     private JPanel[][] gridCells1;
-    /** < 2D array of grid cells for player 1 */
     private LinePanel[][] gridCells2;
-
     private JButton nextPlayerButton;
     private ComputerShootingManager shootingManager;
-
     private IPlayer player;
     private IPlayer computer;
     private JLabel playerName;
-
     private boolean clicksAllowed = true;
-
     private boolean isOnePlayerDebug = false;
-
     private BattleshipGUI battleshipGUI;
-    private IPlayer startplayer;
-
-    /** < The opponent's game board */
 
     /**
      * Constructor for ComputerShootingView.
-     * 
-     * @param player1Board          The game board for player 1.
-     * @param player1TargetingBoard The targeting board for player 1.
-     * @param player2Board          The game board for player 2.
-     * @param player2TargetingBoard The targeting board for player 2.
+     *
+     * @param player          The human player.
+     * @param computer     The computer player.
+     * @param isOnePlayerDebug Flag for single-player debug mode.
+     * @param battleshipGUI   Reference to the main GUI.
      */
-    public ComputerShootingView(IPlayer player1, IPlayer computer, boolean isOnePlayerDebug,
-            BattleshipGUI battleshipGUI) {
-
-        this.shootingManager = new ComputerShootingManager(player1, computer);
-
-        this.player = player1;
+    public ComputerShootingView(IPlayer player, IPlayer computer, boolean isOnePlayerDebug,
+                                 BattleshipGUI battleshipGUI) {
+        this.shootingManager = new ComputerShootingManager(player, computer);
+        this.player = player;
         this.computer = computer;
-
         this.isOnePlayerDebug = isOnePlayerDebug;
         this.battleshipGUI = battleshipGUI;
 
         initComponents();
-    }
-
-    class LinePanel extends JPanel {
-        private boolean isSunk = false;
-
-        public void setSunk(boolean isSunk) {
-            this.isSunk = isSunk;
-            repaint();
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (isSunk) {
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setColor(Color.BLACK);
-                g2d.setStroke(new BasicStroke(3));
-                g2d.drawLine(0, 0, getWidth(), getHeight());
-                g2d.drawLine(0, getHeight(), getWidth(), 0);
-            }
-        }
-    }
-
-    class TransparentPanel extends JPanel {
-        private Color overlayColor;
-    
-        public TransparentPanel(Color overlayColor) {
-            this.overlayColor = overlayColor;
-            setOpaque(false);
-        }
-    
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setColor(overlayColor);
-            g2d.fillRect(0, 0, getWidth(), getHeight());
-            g2d.dispose();
-        }
     }
 
     /**
@@ -121,13 +61,32 @@ public class ComputerShootingView extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
+        initPlayerNameLabel(gbc);
+        initGridLabels(gbc);
+        initGridPanels(gbc);
+        initNextPlayerButton(gbc);
+
+        determineStartingPlayer();
+        drawShipsOnOwnBoard();
+        drawTargetBoard();
+
+        JButton backButton = new JButton("Spiel beenden");
+        backButton.addActionListener(e -> battleshipGUI.showMainMenuView());
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        add(backButton, gbc);
+    }
+    
+    private void initPlayerNameLabel(GridBagConstraints gbc) {
         playerName = new JLabel(player.getName(), SwingConstants.CENTER);
         playerName.setFont(new Font("Roboto", Font.BOLD, 40));
         playerName.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 0;
         add(playerName, gbc);
-
+    }
+    
+    private void initGridLabels(GridBagConstraints gbc) {
         JLabel label1 = new JLabel("Eigene Schiffe", SwingConstants.CENTER);
         label1.setFont(new Font("Roboto", Font.BOLD, 20));
         label1.setForeground(Color.WHITE);
@@ -141,7 +100,9 @@ public class ComputerShootingView extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 1;
         add(label2, gbc);
-
+    }
+    
+    private void initGridPanels(GridBagConstraints gbc) {
         gridPanel1 = new JPanel(new GridLayout(10, 10));
         gridPanel2 = new JPanel(new GridLayout(10, 10));
         gridPanel1.setPreferredSize(new Dimension(600, 600));
@@ -150,20 +111,7 @@ public class ComputerShootingView extends JPanel {
         gridCells1 = new JPanel[10][10];
         gridCells2 = new LinePanel[10][10];
 
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                JPanel cell1 = new JPanel();
-                cell1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                gridCells1[i][j] = cell1;
-                gridPanel1.add(cell1);
-
-                LinePanel cell2 = new LinePanel();
-                cell2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                cell2.addMouseListener(new GridClickListener(i, j, 2));
-                gridCells2[i][j] = cell2;
-                gridPanel2.add(cell2);
-            }
-        }
+        initGridCells();
 
         JPanel gridWithLabels1 = new JPanel(new BorderLayout());
         gridWithLabels1.add(createColumnLabels(), BorderLayout.NORTH);
@@ -175,65 +123,92 @@ public class ComputerShootingView extends JPanel {
         gridWithLabels2.add(createRowLabels(), BorderLayout.WEST);
         gridWithLabels2.add(gridPanel2, BorderLayout.CENTER);
 
-        startplayer = shootingManager.selectRandomPlayer();
-
-        if (startplayer == player) {
-            JOptionPane.showMessageDialog(ComputerShootingView.this, "Du beginnst!");
-            clicksAllowed = true;
-        } else {
-            clicksAllowed = false;
-            JOptionPane.showMessageDialog(ComputerShootingView.this, "Der Computer beginnt!");
-            shootingManager.computerShoot();
-            clicksAllowed = true;
-        }
-
-        drawShipsOnOwnBoard();
-        drawTargetBoard();
-
-        nextPlayerButton = new JButton("Weiter");
-        nextPlayerButton.addActionListener(e -> {
-            shootingManager.computerShoot();
-            clearGrids();
-            drawShipsOnOwnBoard();
-            drawTargetBoard();
-            revalidate();
-            repaint();
-            if (shootingManager.isGameOver(computer)) {
-                JOptionPane.showMessageDialog(null, "Spiel vorbei! " + computer.getName() + " hat gewonnen!");
-                battleshipGUI.showMainMenuView();
-
-            }
-            clicksAllowed = true;
-            if (isOnePlayerDebug) {
-                clicksAllowed = false;
-                nextPlayerButton.setVisible(true);
-            } else {
-                clicksAllowed = true;
-                nextPlayerButton.setVisible(false);
-            }
-        });
-        nextPlayerButton.setFont(new Font("Roboto", Font.BOLD, 20));
-        nextPlayerButton.setBackground(Color.WHITE);
-        nextPlayerButton.setForeground(Color.BLACK);
-        nextPlayerButton.setPreferredSize(new Dimension(200, 50));
-        nextPlayerButton.setVisible(false);
-
-        JButton backButton = new JButton("Spiel beenden");
-        backButton.addActionListener(e -> battleshipGUI.showMainMenuView());
-
         gbc.gridx = 0;
         gbc.gridy = 2;
         add(gridWithLabels1, gbc);
         gbc.gridx = 1;
         gbc.gridy = 2;
         add(gridWithLabels2, gbc);
+    }
+    
+    private void initGridCells() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                JPanel cell1 = new JPanel();
+                cell1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                gridCells1[i][j] = cell1;
+                gridPanel1.add(cell1);
+
+                LinePanel cell2 = new LinePanel();
+                cell2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                cell2.addMouseListener(new GridClickListener(i, j));
+                gridCells2[i][j] = cell2;
+                gridPanel2.add(cell2);
+            }
+        }
+    }
+    
+    private void initNextPlayerButton(GridBagConstraints gbc) {
+        nextPlayerButton = new JButton("Weiter");
+        nextPlayerButton.addActionListener(e -> handleNextPlayerClick());
+        nextPlayerButton.setFont(new Font("Roboto", Font.BOLD, 20));
+        nextPlayerButton.setBackground(Color.WHITE);
+        nextPlayerButton.setForeground(Color.BLACK);
+        nextPlayerButton.setPreferredSize(new Dimension(200, 50));
+        nextPlayerButton.setVisible(false);
+        
         gbc.gridx = 0;
         gbc.gridy = 3;
         add(nextPlayerButton, gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        add(backButton, gbc);
     }
+    
+    private void handleNextPlayerClick() {
+        shootingManager.computerShoot();
+        clearGrids();
+        drawShipsOnOwnBoard();
+        drawTargetBoard();
+        revalidate();
+        repaint();
+
+        if (shootingManager.isGameOver(computer)) {
+            handleComputerWins();
+        } else {
+            handlePlayerTurn(); 
+        }
+    }
+
+    private void handleComputerWins() {
+        JOptionPane.showMessageDialog(null, "Spiel vorbei! " + computer.getName() + " hat gewonnen!");
+        battleshipGUI.showMainMenuView();
+    }
+    
+    private void handlePlayerTurn() {
+        clicksAllowed = true;
+        if (isOnePlayerDebug) {
+            clicksAllowed = false;
+            nextPlayerButton.setVisible(true);
+        } else {
+            nextPlayerButton.setVisible(false);
+        }
+    }
+
+    private void determineStartingPlayer() {
+        IPlayer startPlayer = shootingManager.selectRandomPlayer();
+        if (startPlayer == player) {
+            JOptionPane.showMessageDialog(ComputerShootingView.this, "Du beginnst!");
+            clicksAllowed = true;
+        } else {
+            handleComputerStarts();
+        }
+    }
+
+    private void handleComputerStarts() {
+        clicksAllowed = false;
+        JOptionPane.showMessageDialog(ComputerShootingView.this, "Der Computer beginnt!");
+        shootingManager.computerShoot();
+        clicksAllowed = true;
+    }
+
 
     /**
      * Creates the column labels for the grid.
@@ -270,125 +245,30 @@ public class ComputerShootingView extends JPanel {
         }
         return panel;
     }
-
-    /**
-     * @class GridClickListener
-     *        Listener for grid cell clicks.
-     *        Extends {@link MouseAdapter} to handle mouse click events on grid
-     *        cells.
-     */
-    private class GridClickListener extends MouseAdapter {
-        private  int row;
-        /** < The row of the grid cell */
-        private int col;
-        /** < The column of the grid cell */
-
-        /** < The player grid identifier */
-
-        /**
-         * Constructor for GridClickListener.
-         * 
-         * @param row        The row of the grid cell.
-         * @param col        The column of the grid cell.
-         * @param playerGrid The player grid identifier.
-         */
-        public GridClickListener(int row, int col, int playerGrid) {
-            this.row = row;
-            this.col = col;
-        }
-
-        /**
-         * Handles mouse click events on grid cells.
-         * 
-         * @param e The mouse event.
-         */
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            // JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " +
-            // col);
-            if (!clicksAllowed) {
-                return; // If clicks are not allowed, do nothing
-            }
-            if (shootingManager.isAlreadyHit(col, row)) {
-                JOptionPane.showMessageDialog(null, "Bereits auf dieses Feld geschossen!");
-                return;
-            }
-
-            boolean hit = shootingManager.addHitToTargetBoard(col, row);
-
-            if (hit) {
-                gridCells2[row][col].setBackground(Color.RED);
-                List<Point> sunkShipCoordinates = shootingManager.isShipSunk(col, row);
-                if (!sunkShipCoordinates.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Schiff versenkt!");
-                    drawLineThroughSunkShip(sunkShipCoordinates);
-                }
-            } else {
-                try {
-                    ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
-                    if (gifIcon.getIconWidth() == -1) {
-                        return;
-                    }
-
-                    JLabel missLabel = new JLabel(gifIcon);
-                    missLabel.setHorizontalAlignment(JLabel.CENTER);
-                    missLabel.setVerticalAlignment(JLabel.CENTER);
-
-                    gridCells2[row][col].setLayout(new GridBagLayout());
-                    GridBagConstraints gbc = new GridBagConstraints();
-                    gbc.gridx = 0;
-                    gbc.gridy = 0;
-                    gbc.weightx = 1.0;
-                    gbc.weighty = 1.0;
-                    gbc.anchor = GridBagConstraints.CENTER;
-                    gridCells2[row][col].add(missLabel, gbc);
-                    gridCells2[row][col].revalidate();
-                    gridCells2[row][col].repaint();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-
-            if (shootingManager.isGameOver(player)) {
-                JOptionPane.showMessageDialog(null, "Spiel vorbei! " + player.getName() + " hat gewonnen!");
-                battleshipGUI.showMainMenuView();
-
-            }
-            clicksAllowed = false;
-            nextPlayerButton.setVisible(true);
-
-        }
-    }
-
-        private void drawShipsOnOwnBoard() {
+    
+    private void drawShipsOnOwnBoard() {
         Map<Point, IShip> ships = player.getGameBoard().getShipLocations();
         Map<Point, IHits> hits = computer.getTargetingBoard().getHits();
-    
+
         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
             Point point = entry.getKey();
             int r = point.y;
             int c = point.x;
             gridCells1[r][c].setBackground(Color.GRAY);
         }
-    
+
         for (Map.Entry<Point, IHits> entry : hits.entrySet()) {
             Point point = entry.getKey();
             int r = point.y;
             int c = point.x;
             gridCells1[r][c].setBorder(BorderFactory.createLineBorder(Color.RED, 4));
-    
+
             TransparentPanel overlay = new TransparentPanel(new Color(255, 0, 0, 50));
             overlay.setBounds(0, 0, gridCells1[r][c].getWidth(), gridCells1[r][c].getHeight());
             gridCells1[r][c].setLayout(new BorderLayout());
             gridCells1[r][c].add(overlay, BorderLayout.CENTER);
             gridCells1[r][c].revalidate();
             gridCells1[r][c].repaint();
-        }
-    }
-
-    private void drawLineThroughSunkShip(List<Point> coordinates) {
-        for (Point point : coordinates) {
-            gridCells2[point.y][point.x].setSunk(true);
         }
     }
 
@@ -405,33 +285,42 @@ public class ComputerShootingView extends JPanel {
                     drawLineThroughSunkShip(sunkShipCoordinates);
                 }
             } else {
-                try {
-                	ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
-                    if (gifIcon.getIconWidth() == -1) {
-                        return;
-                    }
-
-                    JLabel missLabel = new JLabel(gifIcon);
-                    missLabel.setHorizontalAlignment(JLabel.CENTER);
-                    missLabel.setVerticalAlignment(JLabel.CENTER);
-
-                    gridCells2[r][c].setLayout(new GridBagLayout());
-                    GridBagConstraints gbc = new GridBagConstraints();
-                    gbc.gridx = 0;
-                    gbc.gridy = 0;
-                    gbc.weightx = 1.0;
-                    gbc.weighty = 1.0;
-                    gbc.anchor = GridBagConstraints.CENTER;
-                    gridCells2[r][c].add(missLabel, gbc);
-                    gridCells2[r][c].revalidate();
-                    gridCells2[r][c].repaint();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                drawMissMarker(r, c);
             }
         }
     }
 
+    private void drawMissMarker(int r, int c) {
+        try {
+            ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
+            if (gifIcon.getIconWidth() == -1) {
+                return;
+            }
+
+            JLabel missLabel = new JLabel(gifIcon);
+            missLabel.setHorizontalAlignment(JLabel.CENTER);
+            missLabel.setVerticalAlignment(JLabel.CENTER);
+
+            gridCells2[r][c].setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.weightx = 1.0;
+            gbc.weighty = 1.0;
+            gbc.anchor = GridBagConstraints.CENTER;
+            gridCells2[r][c].add(missLabel, gbc);
+            gridCells2[r][c].revalidate();
+            gridCells2[r][c].repaint();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    private void drawLineThroughSunkShip(List<Point> coordinates) {
+        for (Point point : coordinates) {
+            gridCells2[point.y][point.x].setSunk(true);
+        }
+    }
 
     public void clearGrids() {
         for (int i = 0; i < 10; i++) {
@@ -445,5 +334,123 @@ public class ComputerShootingView extends JPanel {
             }
         }
     }
+    
 
+    /**
+     * @class GridClickListener
+     *        Listener for grid cell clicks.
+     *        Extends {@link MouseAdapter} to handle mouse click events on grid
+     *        cells.
+     */
+    private class GridClickListener extends MouseAdapter {
+        private final int row;
+        private final int col;
+
+        /**
+         * Constructor for GridClickListener.
+         *
+         * @param row The row of the grid cell.
+         * @param col The column of the grid cell.
+         */
+        public GridClickListener(int row, int col) {
+            this.row = row;
+            this.col = col;
+        }
+
+        /**
+         * Handles mouse click events on grid cells.
+         *
+         * @param e The mouse event.
+         */
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            handleGridCellClick();
+        }
+
+        private void handleGridCellClick() {
+            if (!clicksAllowed) {
+                return; 
+            }
+            if (shootingManager.isAlreadyHit(col, row)) {
+                JOptionPane.showMessageDialog(null, "Bereits auf dieses Feld geschossen!");
+                return;
+            }
+
+            boolean hit = shootingManager.addHitToTargetBoard(col, row);
+
+            if (hit) {
+                handleHit();
+            } else {
+                handleMiss();
+            }
+
+            if (shootingManager.isGameOver(player)) {
+                handlePlayerWins();
+            } else {
+                prepareComputerTurn();
+            }
+        }
+        
+        private void handleHit() {
+            gridCells2[row][col].setBackground(Color.RED);
+            List<Point> sunkShipCoordinates = shootingManager.isShipSunk(col, row);
+            if (!sunkShipCoordinates.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Schiff versenkt!");
+                drawLineThroughSunkShip(sunkShipCoordinates);
+            }
+        }
+
+        private void handleMiss() {
+            drawMissMarker(row, col);
+        }
+
+        private void handlePlayerWins() {
+            JOptionPane.showMessageDialog(null, "Spiel vorbei! " + player.getName() + " hat gewonnen!");
+            battleshipGUI.showMainMenuView();
+        }
+        
+        private void prepareComputerTurn() {
+            clicksAllowed = false;
+            nextPlayerButton.setVisible(true);
+        }
+    }
+
+    class LinePanel extends JPanel {
+        private boolean isSunk = false;
+
+        public void setSunk(boolean isSunk) {
+            this.isSunk = isSunk;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (isSunk) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(new BasicStroke(3));
+                g2d.drawLine(0, 0, getWidth(), getHeight());
+                g2d.drawLine(0, getHeight(), getWidth(), 0);
+            }
+        }
+    }
+
+    class TransparentPanel extends JPanel {
+        private final Color overlayColor;
+
+        public TransparentPanel(Color overlayColor) {
+            this.overlayColor = overlayColor;
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setColor(overlayColor);
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+            g2d.dispose();
+        }
+    }
 }

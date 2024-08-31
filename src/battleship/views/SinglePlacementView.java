@@ -1,14 +1,7 @@
-/**
- * @file PlacementView.java
- *   Represents the ship placement view in the Battleship game.
- */
-
 package battleship.views;
 
 import battleship.BattleshipGUI;
-import battleship.factorys.gameboard.IGameBoard;
 import battleship.factorys.player.IPlayer;
-import battleship.managers.ShipPlacementManager;
 import battleship.managers.SinglePlacementManager;
 import battleship.factorys.ships.IShip;
 
@@ -16,11 +9,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Map;
 
 /**
- * @class PlacementView
- *        Represents the ship placement view in the Battleship game.
+ * @class SinglePlacementView
+ *        Represents the ship placement view in the Battleship game for computer player mode.
  *        Extends {@link JPanel} to create a custom panel for ship placement.
  */
 public class SinglePlacementView extends JPanel {
@@ -33,18 +25,17 @@ public class SinglePlacementView extends JPanel {
     private JLabel[] shipCountLabels;
     private IPlayer player1;
 
-    /** < Total number of ships to be placed */
-
     /**
      * Constructor for PlacementView.
-     * 
+     *
      * @param cardLayout    The card layout for switching views.
      * @param parentPanel   The parent panel containing this view.
      * @param player1       The first player.
+     * @param computer     The computer player.
      * @param battleshipGUI The main GUI.
      */
-    public SinglePlacementView(CardLayout cardLayout, JPanel parentPanel, 
-            IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
+    public SinglePlacementView(CardLayout cardLayout, JPanel parentPanel,
+                                IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
         this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
         this.battleshipGUI = battleshipGUI;
@@ -64,19 +55,7 @@ public class SinglePlacementView extends JPanel {
         JButton backButton = new JButton("Spiel beenden");
         backButton.addActionListener(e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
-        gridPanel = new JPanel(new GridLayout(10, 10));
-        gridPanel.setPreferredSize(new Dimension(600, 600));
-        gridCells = new JPanel[10][10];
-
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                JPanel cell = new JPanel();
-                cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                cell.addMouseListener(new GridCellClickListener(i, j));
-                gridCells[i][j] = cell;
-                gridPanel.add(cell);
-            }
-        }
+        initGridPanel();
 
         JPanel placementWithLabels = new JPanel(new BorderLayout());
         placementWithLabels.add(createColumnLabels(), BorderLayout.NORTH);
@@ -127,6 +106,22 @@ public class SinglePlacementView extends JPanel {
 
         add(mainPanel, BorderLayout.CENTER);
     }
+    
+    private void initGridPanel() {
+        gridPanel = new JPanel(new GridLayout(10, 10));
+        gridPanel.setPreferredSize(new Dimension(600, 600));
+        gridCells = new JPanel[10][10];
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                JPanel cell = new JPanel();
+                cell.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                cell.addMouseListener(new GridCellClickListener(i, j));
+                gridCells[i][j] = cell;
+                gridPanel.add(cell);
+            }
+        }
+    }
 
     private void showRulesDialog() {
         JDialog dialog = new JDialog(battleshipGUI, "Regeln", true);
@@ -140,7 +135,13 @@ public class SinglePlacementView extends JPanel {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(Color.darkGray);
+        addRulesToDialog(contentPanel);
 
+        dialog.getContentPane().add(contentPanel, BorderLayout.CENTER);
+        dialog.setVisible(true);
+    }
+
+    private void addRulesToDialog(JPanel contentPanel) {
         String[] rules = {
                 "Regeln:",
                 "1. Jeder Spieler platziert abwechselnd seine Schiffe auf dem Spielfeld.",
@@ -158,14 +159,10 @@ public class SinglePlacementView extends JPanel {
             label.setForeground(Color.WHITE);
             contentPanel.add(label);
         }
-
-        dialog.getContentPane().add(contentPanel, BorderLayout.CENTER);
-        dialog.setVisible(true);
     }
-
     /**
      * Creates the column labels for the grid.
-     * 
+     *
      * @return A panel containing the column labels.
      */
     private JPanel createColumnLabels() {
@@ -183,7 +180,7 @@ public class SinglePlacementView extends JPanel {
 
     /**
      * Creates the row labels for the grid.
-     * 
+     *
      * @return A panel containing the row labels.
      */
     private JPanel createRowLabels() {
@@ -216,25 +213,30 @@ public class SinglePlacementView extends JPanel {
         shipListPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         for (int i = 0; i < shipNames.length; i++) {
-            JPanel shipPanel = new JPanel(new BorderLayout());
-            shipPanel.setBackground(Color.darkGray);
-
-            JLabel nameLabel = new JLabel(shipNames[i] + ": ");
-            nameLabel.setFont(new Font("Roboto", Font.BOLD, 16));
-            nameLabel.setForeground(Color.WHITE);
-
-            shipCountLabels[i] = new JLabel("x" + shipCounts[i]);
-            shipCountLabels[i].setFont(new Font("Roboto", Font.BOLD, 16));
-            shipCountLabels[i].setForeground(Color.WHITE);
-
-            shipPanel.add(nameLabel, BorderLayout.WEST);
-            shipPanel.add(shipCountLabels[i], BorderLayout.EAST);
-
-            shipListPanel.add(shipPanel);
-            shipListPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+            createShipCountLabel(shipNames[i], shipCounts[i], shipListPanel);
         }
 
         return shipListPanel;
+    }
+    
+    private void createShipCountLabel(String shipName, int shipCount, JPanel shipListPanel) {
+        JPanel shipPanel = new JPanel(new BorderLayout());
+        shipPanel.setBackground(Color.darkGray);
+
+        JLabel nameLabel = new JLabel(shipName + ": ");
+        nameLabel.setFont(new Font("Roboto", Font.BOLD, 16));
+        nameLabel.setForeground(Color.WHITE);
+
+        int index = shipCount - 1;
+        shipCountLabels[index] = new JLabel("x" + shipCount);
+        shipCountLabels[index].setFont(new Font("Roboto", Font.BOLD, 16));
+        shipCountLabels[index].setForeground(Color.WHITE);
+
+        shipPanel.add(nameLabel, BorderLayout.WEST);
+        shipPanel.add(shipCountLabels[index], BorderLayout.EAST);
+
+        shipListPanel.add(shipPanel);
+        shipListPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     }
 
     private void updateShipCount(String shipName, int delta) {
@@ -255,15 +257,12 @@ public class SinglePlacementView extends JPanel {
      *        cells.
      */
     private class GridCellClickListener extends MouseAdapter {
-        private int row;
-        /** < The row of the grid cell */
-        private int col;
-
-        /** < The column of the grid cell */
+        private final int row;
+        private final int col;
 
         /**
          * Constructor for GridCellClickListener.
-         * 
+         *
          * @param row The row of the grid cell.
          * @param col The column of the grid cell.
          */
@@ -274,30 +273,43 @@ public class SinglePlacementView extends JPanel {
 
         /**
          * Handles mouse click events on grid cells.
-         * 
+         *
          * @param e The mouse event.
          */
         @Override
         public void mouseClicked(MouseEvent e) {
+            handleGridCellClick();
+        }
+
+        private void handleGridCellClick() {
             IShip existingShip = shipPlacementManager.getShipAt(row, col);
             if (existingShip != null) {
-                int confirm = JOptionPane.showConfirmDialog(SinglePlacementView.this,
-                        "An dieser Stelle befindet sich bereits ein Schiff. Möchten Sie es löschen?",
-                        "Schiff löschen", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) {
-                    shipPlacementManager.removeShip(row, col, existingShip, gridCells);
-                    gridCells[row][col].setBackground(null);
-                    updateShipCount(existingShip.getShipName(), 1);
-                }
+                handleExistingShipClick(existingShip);
                 return;
             }
 
+            showShipPlacementDialog();
+        }
+
+        private void handleExistingShipClick(IShip existingShip) {
+            int confirm = JOptionPane.showConfirmDialog(SinglePlacementView.this,
+                    "An dieser Stelle befindet sich bereits ein Schiff. Möchten Sie es löschen?",
+                    "Schiff löschen", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                shipPlacementManager.removeShip(row, col, existingShip, gridCells);
+                gridCells[row][col].setBackground(null);
+                updateShipCount(existingShip.getShipName(), 1);
+            }
+        }
+
+
+        private void showShipPlacementDialog() {
             JPanel panel = new JPanel(new GridLayout(2, 2));
             JLabel sizeLabel = new JLabel("Wähle ein Schiff aus:");
-            String[] shipOptions = { "Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot" };
+            String[] shipOptions = {"Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot"};
             JComboBox<String> sizeComboBox = new JComboBox<>(shipOptions);
             JLabel orientationLabel = new JLabel("Ausrichtung auswählen:");
-            String[] orientationOptions = { "Horizontal", "Vertikal" };
+            String[] orientationOptions = {"Horizontal", "Vertikal"};
             JComboBox<String> orientationComboBox = new JComboBox<>(orientationOptions);
 
             panel.add(sizeLabel);
@@ -309,21 +321,25 @@ public class SinglePlacementView extends JPanel {
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if (result == JOptionPane.OK_OPTION) {
-                String selectedShip = (String) sizeComboBox.getSelectedItem();
-                int shipSize = shipPlacementManager.getShipSize(selectedShip);
-                boolean isHorizontal = orientationComboBox.getSelectedItem().equals("Horizontal");
+                handleShipPlacement(sizeComboBox, orientationComboBox);
+            }
+        }
 
-                if (shipPlacementManager.canPlaceShip(selectedShip)) {
-                    try {
-                        shipPlacementManager.placeShip(row, col, shipSize, isHorizontal, selectedShip, gridCells);
-                        updateShipCount(selectedShip, -1);
-                    } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(SinglePlacementView.this, ex.getMessage());
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(SinglePlacementView.this,
-                            "Du hast bereits das Maximum dieses Typs platziert.");
+        private void handleShipPlacement(JComboBox<String> sizeComboBox, JComboBox<String> orientationComboBox) {
+            String selectedShip = (String) sizeComboBox.getSelectedItem();
+            int shipSize = shipPlacementManager.getShipSize(selectedShip);
+            boolean isHorizontal = orientationComboBox.getSelectedItem().equals("Horizontal");
+
+            if (shipPlacementManager.canPlaceShip(selectedShip)) {
+                try {
+                    shipPlacementManager.placeShip(row, col, shipSize, isHorizontal, selectedShip, gridCells);
+                    updateShipCount(selectedShip, -1);
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(SinglePlacementView.this, ex.getMessage());
                 }
+            } else {
+                JOptionPane.showMessageDialog(SinglePlacementView.this,
+                        "Du hast bereits das Maximum dieses Typs platziert.");
             }
         }
     }
