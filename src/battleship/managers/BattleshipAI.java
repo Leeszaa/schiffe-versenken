@@ -51,22 +51,18 @@ public class BattleshipAI {
             // Leeres Spielfeld resetten
             clearBoard();
             try {
-                // Ein Schlachtschiff (5 Felder)
                 placeShip(5, "SchlachtschiffFactory");
-                // Zwei Kreuzer (je 4 Felder)
                 placeShip(4, "KreuzerFactory");
                 placeShip(4, "KreuzerFactory");
-                // Drei Zerstörer (je 3 Felder)
                 placeShip(3, "ZerstörerFactory");
                 placeShip(3, "ZerstörerFactory");
                 placeShip(3, "ZerstörerFactory");
-                // Vier U-Boote (je 2 Felder)
                 placeShip(2, "U_BootFactory");
                 placeShip(2, "U_BootFactory");
                 placeShip(2, "U_BootFactory");
                 placeShip(2, "U_BootFactory");
 
-                allShipsPlaced = true; // Alle Schiffe erfolgreich platziert
+                allShipsPlaced = true;
             } catch (IllegalStateException e) {
                 System.out.println("Keine gültige Platzierung gefunden, Neustart der Platzierung...");
             }

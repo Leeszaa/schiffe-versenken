@@ -61,9 +61,8 @@ public class SinglePlacementView extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.darkGray);
 
-        JButton backButton = new JButton("Zurück");
-        backButton.addActionListener(e -> cardLayout.show(parentPanel, "MainMenuView"));
-        add(backButton, BorderLayout.NORTH);
+        JButton backButton = new JButton("Spiel beenden");
+        backButton.addActionListener(e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
         gridPanel = new JPanel(new GridLayout(10, 10));
         gridPanel.setPreferredSize(new Dimension(600, 600));
@@ -120,6 +119,11 @@ public class SinglePlacementView extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 1;
         mainPanel.add(rulesButton, gbc);
+
+        gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(backButton, gbc);
 
         add(mainPanel, BorderLayout.CENTER);
     }

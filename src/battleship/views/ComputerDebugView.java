@@ -69,9 +69,8 @@ public class ComputerDebugView extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.darkGray);
 
-        JButton backButton = new JButton("Zurück");
-        backButton.addActionListener(e -> cardLayout.show(parentPanel, "MainMenuView"));
-        add(backButton, BorderLayout.NORTH);
+        JButton backButton = new JButton("Beenden");
+        backButton.addActionListener(e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
         gridPanel = new JPanel(new GridLayout(10, 10));
         gridPanel.setPreferredSize(new Dimension(600, 600));
@@ -111,6 +110,9 @@ public class ComputerDebugView extends JPanel {
 
         gbc.gridy = 2;
         mainPanel.add(placementWithLabels, gbc);
+
+        gbc.gridy = 3;
+        mainPanel.add(backButton, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;

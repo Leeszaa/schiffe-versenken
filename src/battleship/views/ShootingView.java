@@ -201,7 +201,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         nextPlayerButton = new JButton("Nächster Spieler");
         nextPlayerButton.addActionListener(e -> {
             shootingManager.switchPlayers();
-            System.out.println("Current player: " + currentPlayer.getName());
             clearGrids();
             drawShipsOnOwnBoard();
             drawTargetBoard();
@@ -216,6 +215,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         nextPlayerButton.setPreferredSize(new Dimension(200, 50));
         nextPlayerButton.setVisible(false);
 
+        JButton backButton = new JButton("Spiel beenden");
+        backButton.addActionListener(e -> battleshipGUI.showMainMenuView());
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         add(gridWithLabels1, gbc);
@@ -225,6 +227,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         gbc.gridx = 0;
         gbc.gridy = 3;
         add(nextPlayerButton, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        add(backButton, gbc);
     }
 
     /**
@@ -298,8 +303,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
          */
         @Override
         public void mouseClicked(MouseEvent e) {
-            // JOptionPane.showMessageDialog(null, "Clicked on row: " + row + ", col: " +
-            // col);
             if (!clicksAllowed) {
                 return; // If clicks are not allowed, do nothing
             }
@@ -372,8 +375,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
             int r = point.y;
             int c = point.x;
             gridCells1[r][c].setBorder(BorderFactory.createLineBorder(Color.RED, 4));
-    
-            // Create a semi-transparent overlay
+
             TransparentPanel overlay = new TransparentPanel(new Color(255, 0, 0, 50)); // Red with 50% transparency
             overlay.setBounds(0, 0, gridCells1[r][c].getWidth(), gridCells1[r][c].getHeight());
             gridCells1[r][c].setLayout(new BorderLayout());
@@ -405,7 +407,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 try {
                     ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
                     if (gifIcon.getIconWidth() == -1) {
-                        System.err.println("Failed to load GIF: " + getClass().getResource("waves.gif"));
                         return;
                     }
 

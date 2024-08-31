@@ -218,6 +218,9 @@ public class ComputerShootingView extends JPanel {
         nextPlayerButton.setPreferredSize(new Dimension(200, 50));
         nextPlayerButton.setVisible(false);
 
+        JButton backButton = new JButton("Spiel beenden");
+        backButton.addActionListener(e -> battleshipGUI.showMainMenuView());
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         add(gridWithLabels1, gbc);
@@ -227,6 +230,9 @@ public class ComputerShootingView extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 3;
         add(nextPlayerButton, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        add(backButton, gbc);
     }
 
     /**

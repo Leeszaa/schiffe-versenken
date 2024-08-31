@@ -79,6 +79,7 @@ public class ShootingManager {
             currentPlayer = player1;
             opponentPlayer = player2;
         }
+        getCurrentPlayerBoards();
         notifyObservers();
     }
     

@@ -124,9 +124,6 @@ public class SinglePlacementManager {
 
         currentPlayerShipCounts.put(shipType, currentPlayerShipCounts.getOrDefault(shipType, 0) + 1);
 
-        System.out.println("Placed Ships Count: " + getPlacedShipsCount());
-        System.out.println("Total Ships Allowed: " + TOTAL_SHIPS);
-
         if (getPlacedShipsCount() >= TOTAL_SHIPS) {
             switchToShootingView();
 
@@ -154,23 +151,17 @@ public class SinglePlacementManager {
      */
     public void removeShip(int row, int col, IShip ship, JPanel[][] gridCells) {
         if (ship == null) {
-            System.out.println("No ship found at the specified location (" + row + ", " + col + ").");
             return;
         }
-
-        System.out.println("Removing ship: " + ship.getShipName() + " at (" + row + ", " + col + ")");
 
         currentPlayer.getGameBoard().removeShip(ship);
 
         int newCount = currentPlayerShipCounts.get(ship.getShipName()) - 1;
         currentPlayerShipCounts.put(ship.getShipName(), newCount);
-        System.out.println("Updated ship count for " + ship.getShipName() + ": " + newCount);
 
         placementView.clearGrid();
-        System.out.println("Grid cleared.");
 
         Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
-        System.out.println("Remaining ships on the board: " + ships.size());
 
         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
             Point point = entry.getKey();

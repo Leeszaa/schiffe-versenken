@@ -79,9 +79,8 @@ public class PlacementView extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.darkGray);
 
-        JButton backButton = new JButton("Zurück");
-        backButton.addActionListener(e -> cardLayout.show(parentPanel, "MainMenuView"));
-        add(backButton, BorderLayout.NORTH);
+        JButton backButton = new JButton("Spiel beenden");
+        backButton.addActionListener(e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
         gridPanel = new JPanel(new GridLayout(10, 10));
         gridPanel.setPreferredSize(new Dimension(600, 600));
@@ -134,6 +133,11 @@ public class PlacementView extends JPanel {
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         mainPanel.add(shipListPanel, gbc);
+
+        gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(backButton, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 1;

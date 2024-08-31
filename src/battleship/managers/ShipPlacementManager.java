@@ -169,15 +169,11 @@ public class ShipPlacementManager {
         placementView.clearGrid();
 
         Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
-        System.out.println("Remaining ships on the board: " + ships.size());
-
-
         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
             Point point = entry.getKey();
             int r = point.y;
             int c = point.x;
             gridCells[r][c].setBackground(Color.GRAY);
-            System.out.println("Updated cell (" + r + ", " + c + ") to GRAY.");
         }
     }
 

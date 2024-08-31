@@ -23,6 +23,10 @@ import battleship.views.ComputerDebugView;
 import battleship.views.ComputerShootingView;
 
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Random;
 
 /**
  * @class BattleshipGUI
@@ -122,6 +126,9 @@ public class BattleshipGUI extends JFrame {
     }
 
     public void showMainMenuView() {
+        player1 = null;
+        player2 = null;
+        computer = null;
         cardLayout.show(panelCont, "MainMenuView");
     }
 
@@ -214,33 +221,8 @@ public class BattleshipGUI extends JFrame {
         player1.setTargetingBoard(player1TargetingBoard);
         player2.setTargetingBoard(player2TargetingBoard);
 
-        SchlachtschiffFactory schlachtschiffFactory = new SchlachtschiffFactory();
-        ZerstörerFactory zerstörerFactory = new ZerstörerFactory();
-
-        KreuzerFactory kreuzerFactory = new KreuzerFactory();
-        U_BootFactory u_BootFactory = new U_BootFactory();
-
-        player1.getGameBoard().placeShip(0, 0, schlachtschiffFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 2, zerstörerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 4, zerstörerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 6, kreuzerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 8, kreuzerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 0, kreuzerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 2, u_BootFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 4, u_BootFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 6, u_BootFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 8, u_BootFactory.createShip(), true);
-
-        player2.getGameBoard().placeShip(0, 0, schlachtschiffFactory.createShip(), true);
-        player2.getGameBoard().placeShip(0, 2, zerstörerFactory.createShip(), true);
-        player2.getGameBoard().placeShip(0, 4, zerstörerFactory.createShip(), true);
-        player2.getGameBoard().placeShip(0, 6, kreuzerFactory.createShip(), true);
-        player2.getGameBoard().placeShip(0, 8, kreuzerFactory.createShip(), true);
-        player2.getGameBoard().placeShip(6, 0, kreuzerFactory.createShip(), true);
-        player2.getGameBoard().placeShip(6, 2, u_BootFactory.createShip(), true);
-        player2.getGameBoard().placeShip(6, 4, u_BootFactory.createShip(), true);
-        player2.getGameBoard().placeShip(6, 6, u_BootFactory.createShip(), true);
-        player2.getGameBoard().placeShip(6, 8, u_BootFactory.createShip(), true);
+        placeAllShips(player1);
+        placeAllShips(player2);
 
     }
 
@@ -281,22 +263,121 @@ public class BattleshipGUI extends JFrame {
         BattleshipAI battleshipAI = new BattleshipAI(player1, computer);
         battleshipAI.placeAllShips();
 
-        SchlachtschiffFactory schlachtschiffFactory = new SchlachtschiffFactory();
-        ZerstörerFactory zerstörerFactory = new ZerstörerFactory();
+        placeAllShips(player1);
+    }
 
-        KreuzerFactory kreuzerFactory = new KreuzerFactory();
-        U_BootFactory u_BootFactory = new U_BootFactory();
+    private static final int MAX_ATTEMPTS_PER_SHIP = 100;
 
-        player1.getGameBoard().placeShip(0, 0, schlachtschiffFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 2, zerstörerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 4, zerstörerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 6, kreuzerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(0, 8, kreuzerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 0, kreuzerFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 2, u_BootFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 4, u_BootFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 6, u_BootFactory.createShip(), true);
-        player1.getGameBoard().placeShip(6, 8, u_BootFactory.createShip(), true);
+    private void placeAllShips(IPlayer playerToPlace) {
+        boolean allShipsPlaced = false;
+
+        while (!allShipsPlaced) {
+            clearBoard(playerToPlace);
+            try {
+                placeShip(5, "SchlachtschiffFactory", playerToPlace);
+                placeShip(4, "KreuzerFactory", playerToPlace);
+                placeShip(4, "KreuzerFactory", playerToPlace);
+                placeShip(3, "ZerstörerFactory", playerToPlace);
+                placeShip(3, "ZerstörerFactory", playerToPlace);
+                placeShip(3, "ZerstörerFactory", playerToPlace);
+                placeShip(2, "U_BootFactory", playerToPlace);
+                placeShip(2, "U_BootFactory", playerToPlace);
+                placeShip(2, "U_BootFactory", playerToPlace);
+                placeShip(2, "U_BootFactory", playerToPlace);
+
+                allShipsPlaced = true;
+            } catch (IllegalStateException e) {
+                System.out.println("Keine gültige Platzierung gefunden, Neustart der Platzierung...");
+            }
+        }
+    }
+
+    private void placeShip(int shipSize, String factoryType, IPlayer playerToPlace) {
+        boolean placed = false;
+        int attempts = 0;
+        Random random = new Random();
+
+        while (!placed && attempts < MAX_ATTEMPTS_PER_SHIP) {
+            int x = random.nextInt(10);
+            int y = random.nextInt(10);
+            boolean isHorizontal = random.nextBoolean();
+
+            if (canPlaceShip(y, x, shipSize, isHorizontal, playerToPlace)) {
+                switch (factoryType) {
+                    case "SchlachtschiffFactory":
+                        SchlachtschiffFactory schlachtschiffFactory = new SchlachtschiffFactory();
+                        playerToPlace.getGameBoard().placeShip(x, y, schlachtschiffFactory.createShip(), isHorizontal);
+                        break;
+                    case "KreuzerFactory":
+                        KreuzerFactory kreuzerFactory = new KreuzerFactory();
+                        playerToPlace.getGameBoard().placeShip(x, y, kreuzerFactory.createShip(), isHorizontal);
+                        break;
+                    case "ZerstörerFactory":
+                        ZerstörerFactory zerstörerFactory = new ZerstörerFactory();
+                        playerToPlace.getGameBoard().placeShip(x, y, zerstörerFactory.createShip(), isHorizontal);
+                        break;
+                    case "U_BootFactory":
+                        U_BootFactory u_BootFactory = new U_BootFactory();
+                        playerToPlace.getGameBoard().placeShip(x, y, u_BootFactory.createShip(), isHorizontal);
+                        break;
+                    default:
+                        break;
+                }
+                placed = true;
+            }
+            attempts++;
+        }
+    }
+
+    private boolean canPlaceShip(int row, int col, int shipSize, boolean isHorizontal, IPlayer playerToPlace) {
+
+        for (int i = 0; i < shipSize; i++) {
+            int r = isHorizontal ? row : row + i;
+            int c = isHorizontal ? col + i : col;
+
+            if (r >= 10 || c >= 10 || isAdjacentToShip(r, c, playerToPlace)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isAdjacentToShip(int row, int col, IPlayer playerToPlace) {
+        Map<Point, IShip> ships = playerToPlace.getGameBoard().getShipLocations();
+        return isAdjacent(row, col, ships);
+    }
+
+    /**
+     * Checks if a cell is adjacent to any ship in the given map.
+     * 
+     * @param row   The row of the cell.
+     * @param col   The column of the cell.
+     * @param ships The map of ship locations.
+     * @return True if the cell is adjacent to any ship, false otherwise.
+     */
+    private boolean isAdjacent(int row, int col, Map<Point, IShip> ships) {
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (i == 0 && j == 0) {
+                    continue;
+                }
+                int r = row + i;
+                int c = col + j;
+                if (r >= 0 && r < 10 && c >= 0 && c < 10 && ships.containsKey(new Point(c, r))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void clearBoard(IPlayer playerToPlace) {
+        Map<Point, IShip> shipLocations = playerToPlace.getGameBoard().getShipLocations();
+        Set<IShip> uniqueShips = new HashSet<>(shipLocations.values());
+        for (IShip ship : uniqueShips) {
+            playerToPlace.getGameBoard().removeShip(ship);
+        }
+        shipLocations.clear();
     }
 
 }
