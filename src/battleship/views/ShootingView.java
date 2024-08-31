@@ -22,7 +22,11 @@ import java.util.Map;
  *        Extends {@link JPanel} to create a custom panel for shooting actions.
  */
 public class ShootingView extends JPanel implements ShootingManagerObserver {
-    private JPanel gridPanel1;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -33964322305217838L;
+	private JPanel gridPanel1;
     private JPanel gridPanel2;
     private JPanel[][] gridCells1;
     private LinePanel[][] gridCells2;
@@ -30,7 +34,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     private ShootingManager shootingManager;
     private IGameBoard currentGameBoard;
     private IGameBoard currentTargetingBoard;
-    private IGameBoard opponentGameBoard;
     private IPlayer currentPlayer;
     private IPlayer opponentPlayer;
     private JLabel playerName;
@@ -54,7 +57,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         this.opponentPlayer = shootingManager.opponentPlayer;
         this.currentGameBoard = currentPlayer.getGameBoard();
         this.currentTargetingBoard = currentPlayer.getTargetingBoard();
-        this.opponentGameBoard = opponentPlayer.getGameBoard();
 
         this.isOnePlayerDebug = isOnePlayerDebug;
         this.battleshipGUI = battleshipGUI;
@@ -68,7 +70,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         this.opponentPlayer = opponentPlayer;
         this.currentGameBoard = newPlayer.getGameBoard();
         this.currentTargetingBoard = newPlayer.getTargetingBoard();
-        this.opponentGameBoard = opponentPlayer.getGameBoard();
 
         playerName.setText(newPlayer.getName());
     }
@@ -329,7 +330,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     private class GridClickListener extends MouseAdapter {
         private final int row;
         private final int col;
-        private final int playerGrid;
 
         /**
          * Constructor for GridClickListener.
@@ -341,7 +341,6 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         public GridClickListener(int row, int col, int playerGrid) {
             this.row = row;
             this.col = col;
-            this.playerGrid = playerGrid;
         }
 
         @Override
@@ -397,7 +396,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     }
 
     class LinePanel extends JPanel {
-        private boolean isSunk = false;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 8261635737354447451L;
+		private boolean isSunk = false;
 
         public void setSunk(boolean isSunk) {
             this.isSunk = isSunk;
@@ -418,7 +421,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     }
 
     class TransparentPanel extends JPanel {
-        private final Color overlayColor;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -9012335818565252012L;
+		private final Color overlayColor;
 
         public TransparentPanel(Color overlayColor) {
             this.overlayColor = overlayColor;

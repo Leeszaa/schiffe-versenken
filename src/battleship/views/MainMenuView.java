@@ -3,14 +3,16 @@ package battleship.views;
 import javax.swing.*;
 import battleship.BattleshipGUI;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * Represents the main menu view in the Battleship game.
  * Extends {@link JPanel} for a custom main menu panel.
  */
 public class MainMenuView extends JPanel {
-    private final CardLayout cardLayout;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3508847850101162469L;
     private final JPanel parentPanel;
     private JButton buttonFive;
     private JButton buttonSix;
@@ -23,8 +25,7 @@ public class MainMenuView extends JPanel {
      * @param cardLayout The card layout for switching views.
      * @param parentPanel The parent panel containing this view.
      */
-    public MainMenuView(CardLayout cardLayout, JPanel parentPanel) {
-        this.cardLayout = cardLayout;
+    public MainMenuView(JPanel parentPanel) {
         this.parentPanel = parentPanel;
         initComponents();
     }
@@ -68,7 +69,7 @@ public class MainMenuView extends JPanel {
         }), gbc);
 
         gbc.gridy = 2;
-        add(createButton("K.I. Gegner (WIP)", () -> {
+        add(createButton("Computer Gegner", () -> {
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeComputerOpponentGame();
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showSinglePlacementView();
         }), gbc);
@@ -80,7 +81,7 @@ public class MainMenuView extends JPanel {
         add(debugButton, gbc);
 
         buttonFive = addDebugButton(gbc, 5, "Platzierungsphase Debug",  () -> {
-            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeDebugGame();
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeLocalCoopGame();
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
         });
         buttonSix = addDebugButton(gbc, 6, "Schießphase Debug", () -> {

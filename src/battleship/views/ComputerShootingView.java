@@ -20,7 +20,11 @@ import java.util.Map;
  *        Extends {@link JPanel} to create a custom panel for shooting actions.
  */
 public class ComputerShootingView extends JPanel {
-    private JPanel gridPanel1;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3677038397678972024L;
+	private JPanel gridPanel1;
     private JPanel gridPanel2;
     private JPanel[][] gridCells1;
     private LinePanel[][] gridCells2;
@@ -416,7 +420,11 @@ public class ComputerShootingView extends JPanel {
     }
 
     class LinePanel extends JPanel {
-        private boolean isSunk = false;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 790697028496269236L;
+		private boolean isSunk = false;
 
         public void setSunk(boolean isSunk) {
             this.isSunk = isSunk;
@@ -437,7 +445,11 @@ public class ComputerShootingView extends JPanel {
     }
 
     class TransparentPanel extends JPanel {
-        private final Color overlayColor;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 383926842048906531L;
+		private final Color overlayColor;
 
         public TransparentPanel(Color overlayColor) {
             this.overlayColor = overlayColor;

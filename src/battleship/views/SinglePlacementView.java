@@ -16,9 +16,12 @@ import java.awt.event.MouseEvent;
  *        Extends {@link JPanel} to create a custom panel for ship placement.
  */
 public class SinglePlacementView extends JPanel {
-    private JPanel gridPanel;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4946862325911538781L;
+	private JPanel gridPanel;
     private JPanel[][] gridCells;
-    private CardLayout cardLayout;
     private JPanel parentPanel;
     private SinglePlacementManager shipPlacementManager;
     private BattleshipGUI battleshipGUI;
@@ -34,9 +37,8 @@ public class SinglePlacementView extends JPanel {
      * @param computer     The computer player.
      * @param battleshipGUI The main GUI.
      */
-    public SinglePlacementView(CardLayout cardLayout, JPanel parentPanel,
+    public SinglePlacementView(JPanel parentPanel,
                                 IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
-        this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
         this.battleshipGUI = battleshipGUI;
         this.shipPlacementManager = new SinglePlacementManager(player1, this, battleshipGUI);

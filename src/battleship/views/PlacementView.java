@@ -17,7 +17,11 @@ import java.awt.event.MouseEvent;
  *        Extends {@link JPanel} to create a custom panel for ship placement.
  */
 public class PlacementView extends JPanel {
-    private static final int TOTAL_SHIPS = 10;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5028148731983685669L;
+	private static final int TOTAL_SHIPS = 10;
     private JPanel gridPanel;
     private JPanel[][] gridCells;
     private CardLayout cardLayout;

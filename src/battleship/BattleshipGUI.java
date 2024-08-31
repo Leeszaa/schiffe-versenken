@@ -35,7 +35,8 @@ import java.util.Random;
  */
 public class BattleshipGUI extends JFrame {
 
-    private final CardLayout cardLayout;
+    private static final long serialVersionUID = 6478487785876189474L;
+	private final CardLayout cardLayout;
     /** < The card layout for switching views */
     private final JPanel panelCont;
     /** < The main container panel */
@@ -78,7 +79,7 @@ public class BattleshipGUI extends JFrame {
         cardLayout = new CardLayout();
         panelCont = new JPanel(cardLayout);
 
-        panelCont.add(new MainMenuView(cardLayout, panelCont), "MainMenuView");
+        panelCont.add(new MainMenuView(panelCont), "MainMenuView");
 
         add(panelCont);
 
@@ -139,7 +140,6 @@ public class BattleshipGUI extends JFrame {
         }
 
         SinglePlacementView singlePlacementView = new SinglePlacementView(
-                cardLayout,
                 panelCont,
                 player1,
                 computer,
@@ -155,7 +155,6 @@ public class BattleshipGUI extends JFrame {
         }
 
         ComputerDebugView computerDebugView = new ComputerDebugView(
-                cardLayout,
                 panelCont,
                 player1Board,
                 player2Board,

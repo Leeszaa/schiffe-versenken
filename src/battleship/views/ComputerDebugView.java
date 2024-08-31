@@ -25,12 +25,14 @@ import java.util.Set;
  *        Extends {@link JPanel} to create a custom panel for ship placement.
  */
 public class ComputerDebugView extends JPanel {
-    private JPanel gridPanel;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -152661922747028345L;
+	private JPanel gridPanel;
     /** < Panel for the grid layout */
     private JPanel[][] gridCells;
     /** < 2D array of grid cells */
-    private CardLayout cardLayout;
-    /** < Card layout for switching views */
     private JPanel parentPanel;
     /** < Parent panel containing this view */
     private BattleshipAI ai;
@@ -51,10 +53,9 @@ public class ComputerDebugView extends JPanel {
      * @param computer      The second player.
      * @param battleshipGUI The main GUI.
      */
-    public ComputerDebugView(CardLayout cardLayout, JPanel parentPanel, IGameBoard player1Board,
+    public ComputerDebugView(JPanel parentPanel, IGameBoard player1Board,
             IGameBoard player2Board,
             IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
-        this.cardLayout = cardLayout;
         this.parentPanel = parentPanel;
         this.ai = new BattleshipAI(player1, computer);
         this.computer = computer;
