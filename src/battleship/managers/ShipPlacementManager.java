@@ -1,8 +1,3 @@
-/**
- * @file ShipPlacementManager.java
- *   Manages the placement of ships in the Battleship game.
- */
-
 package battleship.managers;
 
 import battleship.BattleshipGUI;
@@ -17,43 +12,34 @@ import java.util.Map;
 
 /**
  * @class ShipPlacementManager
- *        Manages the placement of ships in the Battleship game.
+ *        Handles the placement of ships on the game board for both players.
+ *        Enforces placement rules and manages ship counts.
  */
 public class ShipPlacementManager {
     private IPlayer currentPlayer;
-    /** < The current player placing ships */
     private final IPlayer player1;
-    /** < The first player */
     private final IPlayer player2;
-    /** < The second player */
     private Map<String, Integer> currentPlayerShipCounts;
-    /** < The count of ships placed by the current player */
     private final Map<String, Integer> shipLimits;
-    /** < The limits for each type of ship */
     private final ZerstörerFactory zerstörerFactory;
-    /** < Factory for creating Zerstörer ships */
     private final SchlachtschiffFactory schlachtschiffFactory;
-    /** < Factory for creating Schlachtschiff ships */
     private final KreuzerFactory kreuzerFactory;
-    /** < Factory for creating Kreuzer ships */
     private final U_BootFactory u_BootFactory;
-    /** < Factory for creating U-Boot ships */
     private final PlacementView placementView;
-    /** < The view for ship placement */
     private final BattleshipGUI battleshipGUI;
-    /** < Reference to the main GUI */
 
+    /**
+     * Total number of ships to be placed by each player.
+     */
     private static final int TOTAL_SHIPS = 10;
-
-    /** < Total number of ships to be placed */
 
     /**
      * Constructor for ShipPlacementManager.
      * 
      * @param player1       The first player.
      * @param player2       The second player.
-     * @param placementView The view for ship placement.
-     * @param battleshipGUI The main GUI.
+     * @param placementView The PlacementView object to use for visual updates.
+     * @param battleshipGUI Reference to the main BattleshipGUI object.
      */
     public ShipPlacementManager(IPlayer player1, IPlayer player2, PlacementView placementView,
             BattleshipGUI battleshipGUI) {
@@ -74,7 +60,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Initializes the ship limits for each type of ship.
+     * Initializes the map of ship limits for each ship type.
      */
     private void initializeShipLimits() {
         shipLimits.put("Schlachtschiff", schlachtschiffFactory.getShipLimit());
@@ -84,18 +70,21 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Places a ship on the game board.
+     * Places a ship on the game board for the current player.
      * 
-     * @param row          The row to place the ship.
-     * @param col          The column to place the ship.
-     * @param size         The size of the ship.
-     * @param isHorizontal True if the ship is placed horizontally, false if
+     * @param row          The row coordinate for the starting point of the ship.
+     * @param col          The column coordinate for the starting point of the ship.
+     * @param size         The size (length) of the ship.
+     * @param isHorizontal True if the ship should be placed horizontally, false if
      *                     vertically.
-     * @param shipType     The type of the ship.
-     * @param gridCells    The grid cells of the game board.
-     * @throws IllegalArgumentException if the placement is invalid.
+     * @param shipType     The type of ship to place (e.g., "Schlachtschiff").
+     * @param gridCells    The 2D array of JPanel representing the grid cells on the
+     *                     PlacementView.
+     * @throws IllegalArgumentException If the ship placement is invalid (out of
+     *                                  bounds or overlapping).
      */
     public void placeShip(int row, int col, int size, boolean isHorizontal, String shipType, JPanel[][] gridCells) {
+        // Check for valid placement (not out of bounds and not overlapping other ships)
         for (int i = 0; i < size; i++) {
             int r = isHorizontal ? row : row + i;
             int c = isHorizontal ? col + i : col;
@@ -105,6 +94,7 @@ public class ShipPlacementManager {
             }
         }
 
+        // Place the ship using the appropriate factory
         switch (shipType) {
             case "Schlachtschiff":
                 currentPlayer.getGameBoard().placeShip(col, row, schlachtschiffFactory.createShip(), isHorizontal);
@@ -120,29 +110,35 @@ public class ShipPlacementManager {
                 break;
         }
 
+        // Update the GUI to show the placed ship
         for (int i = 0; i < size; i++) {
             int r = isHorizontal ? row : row + i;
             int c = isHorizontal ? col + i : col;
             gridCells[r][c].setBackground(Color.GRAY);
         }
 
+        // Update the ship count for the current player
         currentPlayerShipCounts.put(shipType, currentPlayerShipCounts.getOrDefault(shipType, 0) + 1);
 
+        // Check if all ships have been placed
         if (getPlacedShipsCount() >= TOTAL_SHIPS) {
             if (currentPlayer == player1) {
+                // Switch to Player 2's turn
                 showConfirmationDialog("Spieler 1 hat alle Schiffe platziert. Jetzt ist Spieler 2 drann.");
             } else {
+                // Both players have placed their ships, switch to the shooting phase
                 switchToShootingView();
             }
         }
     }
 
     /**
-     * Gets the ship at the specified location.
+     * Returns the IShip object located at the specified grid coordinates for the
+     * current player.
      * 
-     * @param row The row of the location.
-     * @param col The column of the location.
-     * @return The ship at the specified location, or null if no ship is present.
+     * @param row The row coordinate of the cell.
+     * @param col The column coordinate of the cell.
+     * @return The IShip at the given location, or null if no ship is present.
      */
     public IShip getShipAt(int row, int col) {
         Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
@@ -150,11 +146,12 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Removes the ship at the specified location.
+     * Removes a ship from the current player's game board and updates the GUI.
      * 
-     * @param row  The row of the location.
-     * @param col  The column of the location.
-     * @param ship The ship to be removed.
+     * @param row       The row coordinate of the ship's starting point.
+     * @param col       The column coordinate of the ship's starting point.
+     * @param ship      The IShip object to be removed.
+     * @param gridCells The 2D array of JPanels representing the grid cells.
      */
     public void removeShip(int row, int col, IShip ship, JPanel[][] gridCells) {
         if (ship == null) {
@@ -170,6 +167,7 @@ public class ShipPlacementManager {
 
         placementView.clearGrid();
 
+        // Redraw the remaining ships on the grid
         Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
         for (Map.Entry<Point, IShip> entry : ships.entrySet()) {
             Point point = entry.getKey();
@@ -180,7 +178,7 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Switches the current player.
+     * Switches the current player and updates the GUI to reflect the change.
      */
     private void switchPlayer() {
         placementView.clearGrid();
@@ -195,9 +193,9 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Shows a confirmation dialog with the given message.
+     * Displays a confirmation dialog with the specified message.
      * 
-     * @param message The message to display in the dialog.
+     * @param message The message to be displayed in the dialog.
      */
     private void showConfirmationDialog(String message) {
         JOptionPane.showMessageDialog(placementView, message);
@@ -205,18 +203,19 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Switches to the shooting view in the GUI.
+     * Switches the game to the shooting view (ShootingView) in the BattleshipGUI.
      */
     private void switchToShootingView() {
         battleshipGUI.showShootingView(false);
     }
 
     /**
-     * Checks if a cell is adjacent to any ship.
+     * Checks if a cell at the given coordinates is adjacent to any ship on the
+     * current player's board.
      * 
-     * @param row The row of the cell.
-     * @param col The column of the cell.
-     * @return True if the cell is adjacent to any ship, false otherwise.
+     * @param row The row coordinate.
+     * @param col The column coordinate.
+     * @return True if the cell is adjacent to a ship, false otherwise.
      */
     private boolean isAdjacentToShip(int row, int col) {
         Map<Point, IShip> ships = currentPlayer.getGameBoard().getShipLocations();
@@ -224,21 +223,24 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Checks if a cell is adjacent to any ship in the given map.
+     * Checks if a cell at the given coordinates is adjacent to any ship in the
+     * provided map.
      * 
-     * @param row   The row of the cell.
-     * @param col   The column of the cell.
+     * @param row   The row coordinate.
+     * @param col   The column coordinate.
      * @param ships The map of ship locations.
-     * @return True if the cell is adjacent to any ship, false otherwise.
+     * @return True if the cell is adjacent to a ship, false otherwise.
      */
     private boolean isAdjacent(int row, int col, Map<Point, IShip> ships) {
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
+                // Skip the cell itself
                 if (i == 0 && j == 0) {
                     continue;
                 }
                 int r = row + i;
                 int c = col + j;
+                // Check bounds and if a ship exists at the adjacent cell
                 if (r >= 0 && r < 10 && c >= 0 && c < 10 && ships.containsKey(new Point(c, r))) {
                     return true;
                 }
@@ -248,10 +250,12 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Checks if the current player can place a ship of the given type.
+     * Checks if the current player can place another ship of the given type,
+     * based on the ship placement limits.
      * 
-     * @param shipType The type of the ship.
-     * @return True if the player can place the ship, false otherwise.
+     * @param shipType The type of ship to check (e.g., "Schlachtschiff").
+     * @return True if the player can place the ship, false if the limit has been
+     *         reached.
      */
     public boolean canPlaceShip(String shipType) {
         int currentCount = currentPlayerShipCounts.getOrDefault(shipType, 0);
@@ -260,10 +264,10 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Gets the size of the ship of the given type.
+     * Returns the size (length) of the ship with the given type.
      * 
-     * @param shipType The type of the ship.
-     * @return The size of the ship.
+     * @param shipType The type of ship (e.g., "Kreuzer").
+     * @return The size of the ship, or 0 if the ship type is invalid.
      */
     public int getShipSize(String shipType) {
         switch (shipType) {
@@ -281,9 +285,9 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Gets the total number of ships placed by the current player.
+     * Returns the total number of ships placed by the current player.
      * 
-     * @return The total number of ships placed.
+     * @return The total ship count.
      */
     public int getPlacedShipsCount() {
         int totalCount = 0;
@@ -294,27 +298,31 @@ public class ShipPlacementManager {
     }
 
     /**
-     * Gets the ship locations for player 1.
+     * Returns a map of the ship locations for player 1.
      * 
-     * @return A map of ship locations for player 1.
+     * @return A Map where the key is the Point representing the ship's starting
+     *         location on the grid,
+     *         and the value is the IShip object.
      */
     public Map<Point, IShip> getPlayer1ShipLocations() {
         return player1.getGameBoard().getShipLocations();
     }
 
     /**
-     * Gets the ship locations for player 2.
+     * Returns a map of the ship locations for player 2.
      * 
-     * @return A map of ship locations for player 2.
+     * @return A Map where the key is the Point representing the ship's starting
+     *         location on the grid,
+     *         and the value is the IShip object.
      */
     public Map<Point, IShip> getPlayer2ShipLocations() {
         return player2.getGameBoard().getShipLocations();
     }
 
     /**
-     * Gets the current player.
+     * Returns a string identifier for the current player.
      * 
-     * @return "player1" if the current player is player 1, "player2" otherwise.
+     * @return "player1" if the current player is player1, "player2" otherwise.
      */
     public String getCurrentPlayer() {
         return currentPlayer == player1 ? "player1" : "player2";

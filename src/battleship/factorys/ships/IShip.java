@@ -1,8 +1,3 @@
-/**
- * @file IShip.java
- *   Interface for a ship in the Battleship game.
- */
-
 package battleship.factorys.ships;
 
 /**

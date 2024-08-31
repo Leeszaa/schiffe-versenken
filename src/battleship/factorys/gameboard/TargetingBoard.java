@@ -1,8 +1,3 @@
-/**
- * @file TargetingBoard.java
- *   Represents a targeting board in the Battleship game.
- */
-
 package battleship.factorys.gameboard;
 
 import java.util.HashMap;
@@ -18,11 +13,8 @@ import battleship.factorys.hits.*;
  */
 public class TargetingBoard implements IGameBoard {
     private Map<Point, IShip> ships;
-    /** < A map of ship locations on the board */
     private Map<Point, Boolean> hitAttempts;
-    /** < A map of hit attempts on the board */
     private Map<Point, IHits> hits;
-    /** < A map of hits on the board */
 
     /**
      * Constructor for TargetingBoard.
@@ -34,11 +26,23 @@ public class TargetingBoard implements IGameBoard {
         hitAttempts = new HashMap<>();
     }
 
+    /**
+     * Places a hit on the board.
+     * 
+     * @param x   The x-coordinate of the hit.
+     * @param y   The y-coordinate of the hit.
+     * @param hit The hit object to be placed.
+     */
     public void placeHit(int x, int y, IHits hit) {
          Point point = new Point(x, y);
          hits.put(point, hit);
      }
 
+    /**
+     * Gets the hits on the board.
+     * 
+     * @return A map of hits on the board.
+     */
     public Map<Point, IHits> getHits() {
         return new HashMap<>(hits);
     }
@@ -88,6 +92,11 @@ public class TargetingBoard implements IGameBoard {
         return new HashMap<>(hitAttempts);
     }
 
+    /**
+     * Removes a ship from the board.
+     * 
+     * @param ship The ship to be removed.
+     */
     @Override
     public void removeShip(IShip ship) {
         ships.entrySet().removeIf(entry -> entry.getValue().equals(ship));

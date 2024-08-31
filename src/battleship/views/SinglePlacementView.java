@@ -12,15 +12,15 @@ import java.awt.event.MouseEvent;
 
 /**
  * @class SinglePlacementView
- *        Represents the ship placement view in the Battleship game for computer player mode.
- *        Extends {@link JPanel} to create a custom panel for ship placement.
+ *        Represents the ship placement view for computer player mode.
+ *        Extends {@link JPanel} for custom ship placement.
  */
 public class SinglePlacementView extends JPanel {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4946862325911538781L;
-	private JPanel gridPanel;
+     * SerialVersionUID for SinglePlacementView class.
+     */
+    private static final long serialVersionUID = 4946862325911538781L;
+    private JPanel gridPanel;
     private JPanel[][] gridCells;
     private JPanel parentPanel;
     private SinglePlacementManager shipPlacementManager;
@@ -29,16 +29,15 @@ public class SinglePlacementView extends JPanel {
     private IPlayer player1;
 
     /**
-     * Constructor for PlacementView.
+     * Constructor for SinglePlacementView.
      *
-     * @param cardLayout    The card layout for switching views.
      * @param parentPanel   The parent panel containing this view.
-     * @param player1       The first player.
-     * @param computer     The computer player.
+     * @param player1       The human player.
+     * @param computer      The computer player.
      * @param battleshipGUI The main GUI.
      */
     public SinglePlacementView(JPanel parentPanel,
-                                IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
+            IPlayer player1, IPlayer computer, BattleshipGUI battleshipGUI) {
         this.parentPanel = parentPanel;
         this.battleshipGUI = battleshipGUI;
         this.shipPlacementManager = new SinglePlacementManager(player1, this, battleshipGUI);
@@ -55,7 +54,8 @@ public class SinglePlacementView extends JPanel {
         setBackground(Color.darkGray);
 
         JButton backButton = new JButton("Spiel beenden");
-        backButton.addActionListener(e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
+        backButton.addActionListener(
+                e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
         initGridPanel();
 
@@ -108,7 +108,10 @@ public class SinglePlacementView extends JPanel {
 
         add(mainPanel, BorderLayout.CENTER);
     }
-    
+
+    /**
+     * Initializes the grid panel and cells.
+     */
     private void initGridPanel() {
         gridPanel = new JPanel(new GridLayout(10, 10));
         gridPanel.setPreferredSize(new Dimension(600, 600));
@@ -125,6 +128,9 @@ public class SinglePlacementView extends JPanel {
         }
     }
 
+    /**
+     * Shows the game rules dialog.
+     */
     private void showRulesDialog() {
         JDialog dialog = new JDialog(battleshipGUI, "Regeln", true);
         dialog.setLayout(new BorderLayout());
@@ -143,6 +149,11 @@ public class SinglePlacementView extends JPanel {
         dialog.setVisible(true);
     }
 
+    /**
+     * Adds the rules to the dialog.
+     * 
+     * @param contentPanel The panel to add the rules to.
+     */
     private void addRulesToDialog(JPanel contentPanel) {
         String[] rules = {
                 "Regeln:",
@@ -162,6 +173,7 @@ public class SinglePlacementView extends JPanel {
             contentPanel.add(label);
         }
     }
+
     /**
      * Creates the column labels for the grid.
      *
@@ -198,6 +210,11 @@ public class SinglePlacementView extends JPanel {
         return panel;
     }
 
+    /**
+     * Creates the ship list panel showing available ships.
+     * 
+     * @return The panel containing the ship list.
+     */
     private JPanel createShipListPanel() {
         JPanel shipListPanel = new JPanel();
         shipListPanel.setLayout(new BoxLayout(shipListPanel, BoxLayout.Y_AXIS));
@@ -220,7 +237,14 @@ public class SinglePlacementView extends JPanel {
 
         return shipListPanel;
     }
-    
+
+    /**
+     * Creates and adds a label for a ship type and its count.
+     * 
+     * @param shipName      The name of the ship type.
+     * @param shipCount     The initial count of the ship type.
+     * @param shipListPanel The panel to add the label to.
+     */
     private void createShipCountLabel(String shipName, int shipCount, JPanel shipListPanel) {
         JPanel shipPanel = new JPanel(new BorderLayout());
         shipPanel.setBackground(Color.darkGray);
@@ -241,6 +265,12 @@ public class SinglePlacementView extends JPanel {
         shipListPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     }
 
+    /**
+     * Updates the displayed count of a ship type.
+     * 
+     * @param shipName The name of the ship type to update.
+     * @param delta    The amount to change the count by.
+     */
     private void updateShipCount(String shipName, int delta) {
         String[] shipNames = { "Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot" };
         for (int i = 0; i < shipNames.length; i++) {
@@ -254,9 +284,8 @@ public class SinglePlacementView extends JPanel {
 
     /**
      * @class GridCellClickListener
-     *        Listener for grid cell clicks.
-     *        Extends {@link MouseAdapter} to handle mouse click events on grid
-     *        cells.
+     *        Listener for grid cell clicks, handling ship placement/removal.
+     *        Extends {@link MouseAdapter} for mouse click events.
      */
     private class GridCellClickListener extends MouseAdapter {
         private final int row;
@@ -283,6 +312,9 @@ public class SinglePlacementView extends JPanel {
             handleGridCellClick();
         }
 
+        /**
+         * Handles a grid cell click, either placing or removing a ship.
+         */
         private void handleGridCellClick() {
             IShip existingShip = shipPlacementManager.getShipAt(row, col);
             if (existingShip != null) {
@@ -293,9 +325,14 @@ public class SinglePlacementView extends JPanel {
             showShipPlacementDialog();
         }
 
+        /**
+         * Handles click on a cell with an existing ship, prompting for removal.
+         * 
+         * @param existingShip The ship currently at the clicked cell.
+         */
         private void handleExistingShipClick(IShip existingShip) {
             int confirm = JOptionPane.showConfirmDialog(SinglePlacementView.this,
-                    "An dieser Stelle befindet sich bereits ein Schiff. Möchten Sie es löschen?",
+                    "An dieser Stelle befindet sich bereits ein Schiff. Möchtest du es löschen?",
                     "Schiff löschen", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 shipPlacementManager.removeShip(row, col, existingShip, gridCells);
@@ -304,14 +341,16 @@ public class SinglePlacementView extends JPanel {
             }
         }
 
-
+        /**
+         * Displays a dialog to choose ship type and orientation for placement.
+         */
         private void showShipPlacementDialog() {
             JPanel panel = new JPanel(new GridLayout(2, 2));
             JLabel sizeLabel = new JLabel("Wähle ein Schiff aus:");
-            String[] shipOptions = {"Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot"};
+            String[] shipOptions = { "Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot" };
             JComboBox<String> sizeComboBox = new JComboBox<>(shipOptions);
             JLabel orientationLabel = new JLabel("Ausrichtung auswählen:");
-            String[] orientationOptions = {"Horizontal", "Vertikal"};
+            String[] orientationOptions = { "Horizontal", "Vertikal" };
             JComboBox<String> orientationComboBox = new JComboBox<>(orientationOptions);
 
             panel.add(sizeLabel);
@@ -327,6 +366,12 @@ public class SinglePlacementView extends JPanel {
             }
         }
 
+        /**
+         * Handles the ship placement logic based on dialog selections.
+         * 
+         * @param sizeComboBox        The combo box for selecting ship type.
+         * @param orientationComboBox The combo box for selecting orientation.
+         */
         private void handleShipPlacement(JComboBox<String> sizeComboBox, JComboBox<String> orientationComboBox) {
             String selectedShip = (String) sizeComboBox.getSelectedItem();
             int shipSize = shipPlacementManager.getShipSize(selectedShip);

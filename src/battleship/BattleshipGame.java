@@ -1,8 +1,3 @@
-/**
- * @file BattleshipGame.java
- *   Main class for the Battleship game.
- */
-
 package battleship;
 
 /**

@@ -5,24 +5,26 @@ import battleship.BattleshipGUI;
 import java.awt.*;
 
 /**
- * Represents the main menu view in the Battleship game.
- * Extends {@link JPanel} for a custom main menu panel.
+ * @class MainMenuView
+ *        Represents the main menu view of the Battleship game.
+ *        Extends {@link JPanel} for a custom main menu panel.
  */
 public class MainMenuView extends JPanel {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3508847850101162469L;
+     * SerialVersionUID for the MainMenuView class.
+     */
+    private static final long serialVersionUID = -3508847850101162469L;
     private final JPanel parentPanel;
     private JButton buttonFive;
     private JButton buttonSix;
     private JButton buttonSeven;
     private JButton buttonEight;
     private JButton buttonNine;
+    private JButton buttonTen;
 
     /**
      * Constructor for MainMenuView.
-     * @param cardLayout The card layout for switching views.
+     * 
      * @param parentPanel The parent panel containing this view.
      */
     public MainMenuView(JPanel parentPanel) {
@@ -31,7 +33,8 @@ public class MainMenuView extends JPanel {
     }
 
     /**
-     * Initializes the components of the view.
+     * Initializes the components of the view, including title, buttons, and
+     * background.
      */
     private void initComponents() {
         setLayout(new GridBagLayout());
@@ -50,6 +53,11 @@ public class MainMenuView extends JPanel {
         setBackground(Color.darkGray);
     }
 
+    /**
+     * Adds the game title label to the main menu.
+     * 
+     * @param gbc The GridBagConstraints for positioning the title label.
+     */
     private void addTitle(GridBagConstraints gbc) {
         JLabel titleLabel = new JLabel("Schiffeversenken 0.0.1");
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -60,9 +68,15 @@ public class MainMenuView extends JPanel {
         add(titleLabel, gbc);
     }
 
+    /**
+     * Adds the main menu buttons to the panel, including game mode selections and
+     * debug options.
+     * 
+     * @param gbc The GridBagConstraints for positioning the buttons.
+     */
     private void addButtons(GridBagConstraints gbc) {
         gbc.gridy = 1;
-        gbc.gridwidth = 1; 
+        gbc.gridwidth = 1;
         add(createButton("Lokaler Coop", () -> {
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeLocalCoopGame();
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
@@ -80,7 +94,8 @@ public class MainMenuView extends JPanel {
         });
         add(debugButton, gbc);
 
-        buttonFive = addDebugButton(gbc, 5, "Platzierungsphase Debug",  () -> {
+        // Add debug buttons, initially hidden
+        buttonFive = addDebugButton(gbc, 5, "Platzierungsphase Debug", () -> {
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeLocalCoopGame();
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showPlacementView();
         });
@@ -98,26 +113,50 @@ public class MainMenuView extends JPanel {
         });
         buttonNine = addDebugButton(gbc, 9, "Computer Shooting View Debug", () -> {
             ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeComputerOpponentGameDebug();
-            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showComputerShootingViewDebug();
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showComputerShootingViewDebug(false);
+        });
+        buttonTen = addDebugButton(gbc, 10, "Computer Shooting View (nur Computer spielt) Debug", () -> {
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).initializeComputerOpponentGameDebug();
+            ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showComputerShootingViewDebug(true);
         });
     }
 
-    private void toggleDebugButtons(){
+    /**
+     * Toggles the visibility of the debug buttons.
+     */
+    private void toggleDebugButtons() {
         buttonFive.setVisible(!buttonFive.isVisible());
         buttonSix.setVisible(!buttonSix.isVisible());
         buttonSeven.setVisible(!buttonSeven.isVisible());
         buttonEight.setVisible(!buttonEight.isVisible());
         buttonNine.setVisible(!buttonNine.isVisible());
-      }
-    
-        private JButton addDebugButton(GridBagConstraints gbc, int gridy, String label, Runnable action) {
-            JButton button = createButton(label, action);
-            button.setVisible(false);
-            gbc.gridy = gridy;
-            add(button, gbc);
-            return button; // Return the button so it can be stored
-        }
+        buttonTen.setVisible(!buttonTen.isVisible());
+    }
 
+    /**
+     * Creates and adds a debug button to the panel. The button is initially hidden.
+     * 
+     * @param gbc    The GridBagConstraints for positioning the button.
+     * @param gridy  The grid y-coordinate for the button.
+     * @param label  The label text for the button.
+     * @param action The action to perform when the button is clicked.
+     * @return The created JButton.
+     */
+    private JButton addDebugButton(GridBagConstraints gbc, int gridy, String label, Runnable action) {
+        JButton button = createButton(label, action);
+        button.setVisible(false);
+        gbc.gridy = gridy;
+        add(button, gbc);
+        return button;
+    }
+
+    /**
+     * Creates a JButton with the specified label and action.
+     * 
+     * @param label  The text label for the button.
+     * @param action The Runnable action to perform when the button is clicked.
+     * @return The created JButton.
+     */
     private JButton createButton(String label, Runnable action) {
         JButton button = new JButton(label);
         button.addActionListener(e -> action.run());

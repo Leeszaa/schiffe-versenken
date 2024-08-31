@@ -13,6 +13,12 @@ import battleship.factorys.hits.ShipHitFactory;
 import battleship.factorys.ships.*;
 import battleship.factorys.player.*;
 
+/**
+ * @class BattleshipAI
+ *        Represents the artificial intelligence (AI) for the Battleship game.
+ *        Responsible for placing ships and making shot attempts for the
+ *        computer player.
+ */
 public class BattleshipAI {
 
     private Random random;
@@ -27,8 +33,14 @@ public class BattleshipAI {
     private final ShipHitFactory hitFactory;
     private final IPlayer player;
     private final IPlayer computer;
-    private List<int[]> potentialDirections; // Mögliche Richtungen für den Sink Mode
+    private List<int[]> potentialDirections; // Potential directions for Sink Mode
 
+    /**
+     * Constructor for the BattleshipAI.
+     * 
+     * @param player   The human player object.
+     * @param computer The computer player object.
+     */
     public BattleshipAI(IPlayer player, IPlayer computer) {
         this.player = player;
         this.computer = computer;
@@ -42,13 +54,19 @@ public class BattleshipAI {
         this.SchlachtschiffFactory = new SchlachtschiffFactory();
     }
 
+    /**
+     * Maximum number of attempts allowed to place a single ship.
+     */
     private static final int MAX_ATTEMPTS_PER_SHIP = 100;
 
+    /**
+     * Places all ships for the computer player on the game board.
+     * Ensures that ships are placed randomly and without overlapping or touching.
+     */
     public void placeAllShips() {
         boolean allShipsPlaced = false;
 
         while (!allShipsPlaced) {
-            // Leeres Spielfeld resetten
             clearBoard();
             try {
                 placeShip(5, "SchlachtschiffFactory");
@@ -69,6 +87,13 @@ public class BattleshipAI {
         }
     }
 
+    /**
+     * Places a single ship of the given size and type on the computer's game board.
+     * 
+     * @param shipSize    The size (length) of the ship.
+     * @param factoryType The type of ship factory to use (e.g.,
+     *                    "SchlachtschiffFactory").
+     */
     private void placeShip(int shipSize, String factoryType) {
         boolean placed = false;
         int attempts = 0;
@@ -99,8 +124,24 @@ public class BattleshipAI {
             }
             attempts++;
         }
+
+        if (!placed) {
+            throw new IllegalStateException("Failed to place ship after " + MAX_ATTEMPTS_PER_SHIP + " attempts.");
+        }
     }
 
+    /**
+     * Checks if a ship can be placed at the given coordinates without overlapping
+     * or
+     * touching other ships.
+     * 
+     * @param row          The starting row coordinate for the ship placement.
+     * @param col          The starting column coordinate for the ship placement.
+     * @param shipSize     The size (length) of the ship.
+     * @param isHorizontal True if the ship should be placed horizontally, false if
+     *                     vertically.
+     * @return True if the ship can be placed, false otherwise.
+     */
     private boolean canPlaceShip(int row, int col, int shipSize, boolean isHorizontal) {
 
         for (int i = 0; i < shipSize; i++) {
@@ -114,6 +155,15 @@ public class BattleshipAI {
         return true;
     }
 
+    /**
+     * Checks if a cell at the given coordinates is adjacent to any existing ships
+     * on the
+     * computer's game board.
+     * 
+     * @param row The row coordinate of the cell.
+     * @param col The column coordinate of the cell.
+     * @return True if the cell is adjacent to a ship, false otherwise.
+     */
     private boolean isAdjacentToShip(int row, int col) {
         Map<Point, IShip> ships = computer.getGameBoard().getShipLocations();
         return isAdjacent(row, col, ships);
@@ -143,6 +193,9 @@ public class BattleshipAI {
         return false;
     }
 
+    /**
+     * Clears the computer's game board, removing all placed ships.
+     */
     private void clearBoard() {
         Map<Point, IShip> shipLocations = computer.getGameBoard().getShipLocations();
         Set<IShip> uniqueShips = new HashSet<>(shipLocations.values());
@@ -152,6 +205,10 @@ public class BattleshipAI {
         shipLocations.clear();
     }
 
+    /**
+     * Determines and executes the computer's next move,
+     * following a simple AI strategy.
+     */
     public void makeNextMove() {
         if (inSinkMode) {
             sink();
@@ -162,6 +219,10 @@ public class BattleshipAI {
         }
     }
 
+    /**
+     * Makes a random shot on the player's board, avoiding cells that have already
+     * been hit.
+     */
     private void randomShot() {
         int col, row;
 
@@ -180,6 +241,14 @@ public class BattleshipAI {
         }
     }
 
+    /**
+     * Adds a hit to the computer's targeting board,
+     * indicating whether the shot hit a ship or missed.
+     * 
+     * @param x The column coordinate of the shot.
+     * @param y The row coordinate of the shot.
+     * @return True if the shot hit a ship, false otherwise.
+     */
     private boolean addHitToTargetBoard(int x, int y) {
         boolean isHit = isHitHittingShip(x, y);
         IHits hit = hitFactory.createHit(isHit);
@@ -187,10 +256,22 @@ public class BattleshipAI {
         return isHit;
     }
 
+    /**
+     * Checks if a shot at the given coordinates would hit a ship on the player's
+     * game board.
+     * 
+     * @param x The column coordinate of the shot.
+     * @param y The row coordinate of the shot.
+     * @return True if the shot would hit a ship, false otherwise.
+     */
     public boolean isHitHittingShip(int x, int y) {
         return player.getGameBoard().isShipHit(x, y);
     }
 
+    /**
+     * Executes the "hunt" mode of the AI, where it systematically tries to find
+     * adjacent hits after a successful hit.
+     */
     private void hunt() {
         int col = lastHit[0];
         int row = lastHit[1];
@@ -203,12 +284,20 @@ public class BattleshipAI {
                 return;
             }
         }
-
         inHuntMode = false;
         randomShot();
 
     }
 
+    /**
+     * Attempts to shoot at the given coordinates if the cell is valid and hasn't
+     * been hit before.
+     * 
+     * @param col The column coordinate of the shot.
+     * @param row The row coordinate of the shot.
+     * @return True if the shot was attempted (whether hit or miss), false if the
+     *         cell was invalid or already hit.
+     */
     private boolean tryShootingAt(int col, int row) {
         if (col >= 0 && col < 10 && row >= 0 && row < 10
                 && !computer.getTargetingBoard().getHits().containsKey(new Point(col, row))) {
@@ -227,6 +316,11 @@ public class BattleshipAI {
         return false;
     }
 
+    /**
+     * Executes the "sink" mode of the AI, where it tries to sink a ship after
+     * finding
+     * two consecutive hits.
+     */
     private void sink() {
         int col = lastHit[0];
         int row = lastHit[1];
@@ -241,19 +335,29 @@ public class BattleshipAI {
         int newRow = row + dRow;
 
         if (!tryShootingAt(newCol, newRow)) {
-
+            // Try shooting in the opposite direction
             dCol = -dCol;
             dRow = -dRow;
             newCol = firstHit[0] + dCol;
             newRow = firstHit[1] + dRow;
 
             if (!tryShootingAt(newCol, newRow)) {
+                // Ship likely sunk, switch back to hunt mode
                 inSinkMode = false;
                 hunt();
             }
         }
     }
 
+    /**
+     * Generates a list of potential shooting directions (up, down, left, right)
+     * relative to the given coordinates.
+     * 
+     * @param col The column coordinate.
+     * @param row The row coordinate.
+     * @return A list of int arrays, each representing a direction (e.g., {1, 0} for
+     *         right).
+     */
     private List<int[]> generatePotentialDirections(int col, int row) {
         List<int[]> directions = new ArrayList<>();
         directions.add(new int[] { 1, 0 });

@@ -14,14 +14,17 @@ import java.awt.event.MouseEvent;
 /**
  * @class PlacementView
  *        Represents the ship placement view in the Battleship game.
- *        Extends {@link JPanel} to create a custom panel for ship placement.
+ *        Extends {@link JPanel} for custom ship placement.
  */
 public class PlacementView extends JPanel {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -5028148731983685669L;
-	private static final int TOTAL_SHIPS = 10;
+     * SerialVersionUID for PlacementView class.
+     */
+    private static final long serialVersionUID = -5028148731983685669L;
+    /**
+     * Constant for the total number of ships to be placed by each player.
+     */
+    private static final int TOTAL_SHIPS = 10;
     private JPanel gridPanel;
     private JPanel[][] gridCells;
     private CardLayout cardLayout;
@@ -65,7 +68,8 @@ public class PlacementView extends JPanel {
         setBackground(Color.darkGray);
 
         JButton backButton = new JButton("Spiel beenden");
-        backButton.addActionListener(e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
+        backButton.addActionListener(
+                e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
         initGridPanel();
 
@@ -119,6 +123,9 @@ public class PlacementView extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Initializes the grid panel and grid cells for ship placement.
+     */
     private void initGridPanel() {
         gridPanel = new JPanel(new GridLayout(10, 10));
         gridPanel.setPreferredSize(new Dimension(600, 600));
@@ -135,6 +142,9 @@ public class PlacementView extends JPanel {
         }
     }
 
+    /**
+     * Displays a dialog containing the game rules.
+     */
     private void showRulesDialog() {
         JDialog dialog = new JDialog(battleshipGUI, "Regeln", true);
         dialog.setLayout(new BorderLayout());
@@ -171,7 +181,7 @@ public class PlacementView extends JPanel {
     }
 
     /**
-     * Creates the column labels for the grid.
+     * Creates the column labels (A-J) for the grid.
      * 
      * @return A panel containing the column labels.
      */
@@ -189,7 +199,7 @@ public class PlacementView extends JPanel {
     }
 
     /**
-     * Creates the row labels for the grid.
+     * Creates the row labels (1-10) for the grid.
      * 
      * @return A panel containing the row labels.
      */
@@ -206,6 +216,11 @@ public class PlacementView extends JPanel {
         return panel;
     }
 
+    /**
+     * Creates the panel displaying the list of ships and their remaining count.
+     * 
+     * @return The panel containing the ship list.
+     */
     private JPanel createShipListPanel() {
         shipListPanel = new JPanel();
         shipListPanel.setLayout(new BoxLayout(shipListPanel, BoxLayout.Y_AXIS));
@@ -228,7 +243,14 @@ public class PlacementView extends JPanel {
 
         return shipListPanel;
     }
-    
+
+    /**
+     * Creates a label for a specific ship type and its count,
+     * adding it to the ship list panel.
+     * 
+     * @param shipName  The name of the ship type.
+     * @param shipCount The initial count of ships of this type.
+     */
     private void createShipCountLabel(String shipName, int shipCount) {
         JPanel shipPanel = new JPanel(new BorderLayout());
         shipPanel.setBackground(Color.darkGray);
@@ -237,7 +259,7 @@ public class PlacementView extends JPanel {
         nameLabel.setFont(new Font("Roboto", Font.BOLD, 16));
         nameLabel.setForeground(Color.WHITE);
 
-        int index = shipCount - 1; 
+        int index = shipCount - 1;
         shipCountLabels[index] = new JLabel("x" + shipCount);
         shipCountLabels[index].setFont(new Font("Roboto", Font.BOLD, 16));
         shipCountLabels[index].setForeground(Color.WHITE);
@@ -249,7 +271,12 @@ public class PlacementView extends JPanel {
         shipListPanel.add(Box.createRigidArea(new Dimension(0, 5)));
     }
 
-
+    /**
+     * Updates the displayed count of a ship type in the ship list.
+     * 
+     * @param shipName The name of the ship type to update.
+     * @param delta    The amount to change the count by (positive or negative).
+     */
     private void updateShipCount(String shipName, int delta) {
         String[] shipNames = { "Schlachtschiff", "Kreuzer", "Zerstörer", "U-Boot" };
         for (int i = 0; i < shipNames.length; i++) {
@@ -265,9 +292,8 @@ public class PlacementView extends JPanel {
 
     /**
      * @class GridCellClickListener
-     *        Listener for grid cell clicks.
-     *        Extends {@link MouseAdapter} to handle mouse click events on grid
-     *        cells.
+     *        Listener for grid cell clicks, handles ship placement/removal.
+     *        Extends {@link MouseAdapter} for mouse click events.
      */
     private class GridCellClickListener extends MouseAdapter {
         private final int row;
@@ -276,8 +302,8 @@ public class PlacementView extends JPanel {
         /**
          * Constructor for GridCellClickListener.
          * 
-         * @param row The row of the grid cell.
-         * @param col The column of the grid cell.
+         * @param row The row of the associated grid cell.
+         * @param col The column of the associated grid cell.
          */
         public GridCellClickListener(int row, int col) {
             this.row = row;
@@ -285,15 +311,19 @@ public class PlacementView extends JPanel {
         }
 
         /**
-         * Handles mouse click events on grid cells.
+         * Handles a mouse click event on a grid cell.
          * 
-         * @param e The mouse event.
+         * @param e The MouseEvent triggered by the click.
          */
         @Override
         public void mouseClicked(MouseEvent e) {
             handleGridCellClick();
         }
 
+        /**
+         * Handles the logic for a grid cell click, either placing or removing a ship.
+         * Also manages the transition between player turns during placement.
+         */
         private void handleGridCellClick() {
             IShip existingShip = shipPlacementManager.getShipAt(row, col);
             if (existingShip != null) {
@@ -309,9 +339,14 @@ public class PlacementView extends JPanel {
             showShipPlacementDialog();
         }
 
+        /**
+         * Handles click on a cell with an existing ship, prompting for removal.
+         * 
+         * @param existingShip The IShip object currently at the clicked cell.
+         */
         private void handleExistingShipClick(IShip existingShip) {
             int confirm = JOptionPane.showConfirmDialog(PlacementView.this,
-                    "An dieser Stelle befindet sich bereits ein Schiff. Möchten Sie es löschen?",
+                    "An dieser Stelle befindet sich bereits ein Schiff. Möchtest du es löschen?",
                     "Schiff löschen", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 shipPlacementManager.removeShip(row, col, existingShip, gridCells);
@@ -322,6 +357,10 @@ public class PlacementView extends JPanel {
             }
         }
 
+        /**
+         * Handles the case when the maximum number of ships have been placed.
+         * Transitions to the next player's turn or to the shooting phase.
+         */
         private void handleMaxShipsPlaced() {
             if (shipPlacementManager.getCurrentPlayer().equals("player1")) {
                 clearGrid();
@@ -335,6 +374,10 @@ public class PlacementView extends JPanel {
             }
         }
 
+        /**
+         * Displays a dialog allowing the user to choose ship type and orientation for
+         * placement.
+         */
         private void showShipPlacementDialog() {
             JPanel panel = new JPanel(new GridLayout(2, 2));
             JLabel sizeLabel = new JLabel("Wähle ein Schiff aus:");
@@ -357,6 +400,13 @@ public class PlacementView extends JPanel {
             }
         }
 
+        /**
+         * Handles the ship placement based on the user's selections in the dialog.
+         * 
+         * @param sizeComboBox        The combo box from which the ship type was chosen.
+         * @param orientationComboBox The combo box from which the ship orientation was
+         *                            chosen.
+         */
         private void handleShipPlacement(JComboBox<String> sizeComboBox, JComboBox<String> orientationComboBox) {
             String selectedShip = (String) sizeComboBox.getSelectedItem();
             int shipSize = shipPlacementManager.getShipSize(selectedShip);
@@ -367,7 +417,8 @@ public class PlacementView extends JPanel {
                     updateShipCount(selectedShip, -1);
                     shipPlacementManager.placeShip(row, col, shipSize, isHorizontal, selectedShip, gridCells);
                 } catch (IllegalArgumentException ex) {
-                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(PlacementView.this, ex.getMessage()));
+                    SwingUtilities
+                            .invokeLater(() -> JOptionPane.showMessageDialog(PlacementView.this, ex.getMessage()));
                 }
             } else {
                 SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(PlacementView.this,
@@ -377,7 +428,7 @@ public class PlacementView extends JPanel {
     }
 
     /**
-     * Clears the grid by resetting the background color of all cells.
+     * Clears the placement grid, resetting the background color of all cells.
      */
     public void clearGrid() {
         for (int i = 0; i < 10; i++) {
@@ -387,12 +438,20 @@ public class PlacementView extends JPanel {
         }
     }
 
+    /**
+     * Resets the ship counts in the ship list to their initial values.
+     * Used when switching between players during the placement phase.
+     */
     private void resetShipCounts() {
         for (int i = 0; i < shipCountLabels.length; i++) {
             shipCountLabels[i].setText("x" + (i + 1));
         }
     }
 
+    /**
+     * Updates the labels to reflect the current player's turn.
+     * Called when switching between player 1 and player 2 during placement.
+     */
     public void updateLabels() {
         SwingUtilities.invokeLater(() -> {
             instructionLabel.setText(player2.getName() + ", platziere deine Schiffe.");

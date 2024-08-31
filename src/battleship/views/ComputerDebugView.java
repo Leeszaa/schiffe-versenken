@@ -26,10 +26,10 @@ import java.util.Set;
  */
 public class ComputerDebugView extends JPanel {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -152661922747028345L;
-	private JPanel gridPanel;
+     * 
+     */
+    private static final long serialVersionUID = -152661922747028345L;
+    private JPanel gridPanel;
     /** < Panel for the grid layout */
     private JPanel[][] gridCells;
     /** < 2D array of grid cells */
@@ -38,6 +38,7 @@ public class ComputerDebugView extends JPanel {
     private BattleshipAI ai;
     /** < Manager for ship placement */
     private IPlayer computer;
+
     /** < The second player */
 
     /** < Total number of ships to be placed */
@@ -71,7 +72,8 @@ public class ComputerDebugView extends JPanel {
         setBackground(Color.darkGray);
 
         JButton backButton = new JButton("Beenden");
-        backButton.addActionListener(e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
+        backButton.addActionListener(
+                e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
         gridPanel = new JPanel(new GridLayout(10, 10));
         gridPanel.setPreferredSize(new Dimension(600, 600));
@@ -165,7 +167,6 @@ public class ComputerDebugView extends JPanel {
      *        cells.
      */
     private class GridCellClickListener extends MouseAdapter {
-
 
         /** < The column of the grid cell */
 

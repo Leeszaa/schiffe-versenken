@@ -176,13 +176,13 @@ public class BattleshipGUI extends JFrame {
         cardLayout.show(panelCont, "ComputerShootingView");
     }
 
-    public void showComputerShootingViewDebug() {
+    public void showComputerShootingViewDebug(boolean isOnePlayerDebug) {
         if (player1 == null || computer == null) {
             System.err.println("Players are not initialized. Call initializeComputerOpponentGame first.");
             return;
         }
 
-        ComputerShootingView computerDebugShootingView = new ComputerShootingView(player1, computer, false, this);
+        ComputerShootingView computerDebugShootingView = new ComputerShootingView(player1, computer, isOnePlayerDebug, this);
         panelCont.add(computerDebugShootingView, "ComputerDebugShootingView");
         cardLayout.show(panelCont, "ComputerDebugShootingView");
     }

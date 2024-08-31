@@ -19,14 +19,14 @@ import java.util.Map;
 /**
  * @class ShootingView
  *        Represents the shooting view in the Battleship game.
- *        Extends {@link JPanel} to create a custom panel for shooting actions.
+ *        Extends {@link JPanel} for shooting actions.
  */
 public class ShootingView extends JPanel implements ShootingManagerObserver {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -33964322305217838L;
-	private JPanel gridPanel1;
+     * SerialVersionUID for the ShootingView class.
+     */
+    private static final long serialVersionUID = -33964322305217838L;
+    private JPanel gridPanel1;
     private JPanel gridPanel2;
     private JPanel[][] gridCells1;
     private LinePanel[][] gridCells2;
@@ -47,7 +47,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
      * @param player1          The first player.
      * @param player2          The second player.
      * @param isOnePlayerDebug Flag for single-player debug mode.
-     * @param battleshipGUI   Reference to the main GUI.
+     * @param battleshipGUI    Reference to the main GUI.
      */
     public ShootingView(IPlayer player1, IPlayer player2, boolean isOnePlayerDebug, BattleshipGUI battleshipGUI) {
         this.shootingManager = new ShootingManager(player1, player2);
@@ -64,6 +64,12 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         initComponents();
     }
 
+    /**
+     * Handles the player switch event.
+     * 
+     * @param newPlayer      The new current player.
+     * @param opponentPlayer The opponent player.
+     */
     @Override
     public void onPlayerSwitched(IPlayer newPlayer, IPlayer opponentPlayer) {
         this.currentPlayer = newPlayer;
@@ -88,7 +94,12 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         initGridPanels();
         initButtons(gbc);
     }
-    
+
+    /**
+     * Initializes the player name label.
+     * 
+     * @param gbc The GridBagConstraints for the label.
+     */
     private void initPlayerNameLabel(GridBagConstraints gbc) {
         playerName = new JLabel(currentPlayer.getName(), SwingConstants.CENTER);
         playerName.setFont(new Font("Roboto", Font.BOLD, 40));
@@ -98,6 +109,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         add(playerName, gbc);
     }
 
+    /**
+     * Initializes the grid labels.
+     * 
+     * @param gbc The GridBagConstraints for the labels.
+     */
     private void initGridLabels(GridBagConstraints gbc) {
         JLabel label1 = new JLabel("Eigene Schiffe", SwingConstants.CENTER);
         label1.setFont(new Font("Roboto", Font.BOLD, 20));
@@ -114,6 +130,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         add(label2, gbc);
     }
 
+    /**
+     * Initializes the grid panels for both players.
+     */
     private void initGridPanels() {
         gridPanel1 = new JPanel(new GridLayout(10, 10));
         gridPanel2 = new JPanel(new GridLayout(10, 10));
@@ -138,7 +157,10 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         drawShipsOnOwnBoard();
         drawTargetBoard();
     }
-    
+
+    /**
+     * Initializes the individual grid cells within the panels.
+     */
     private void initGridCells() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -156,6 +178,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         }
     }
 
+    /**
+     * Initializes the buttons for the view.
+     * 
+     * @param gbc The GridBagConstraints for the buttons.
+     */
     private void initButtons(GridBagConstraints gbc) {
         initNextPlayerButton(gbc);
 
@@ -175,7 +202,12 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         gbc.gridy = 3;
         add(nextPlayerButton, gbc);
     }
-    
+
+    /**
+     * Initializes the "Next Player" button.
+     * 
+     * @param gbc The GridBagConstraints for the button.
+     */
     private void initNextPlayerButton(GridBagConstraints gbc) {
         nextPlayerButton = new JButton("Nächster Spieler");
         nextPlayerButton.addActionListener(e -> handleNextPlayerClick());
@@ -186,6 +218,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         nextPlayerButton.setVisible(false);
     }
 
+    /**
+     * Handles the click on the "Next Player" button.
+     */
     private void handleNextPlayerClick() {
         shootingManager.switchPlayers();
         clearGrids();
@@ -198,7 +233,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     }
 
     /**
-     * Creates the column labels for the grid.
+     * Creates the column labels (A-J) for the grid.
      * 
      * @return A panel containing the column labels.
      */
@@ -216,7 +251,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     }
 
     /**
-     * Creates the row labels for the grid.
+     * Creates the row labels (1-10) for the grid.
      * 
      * @return A panel containing the row labels.
      */
@@ -233,6 +268,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         return panel;
     }
 
+    /**
+     * Draws the player's own ships on their game board grid.
+     */
     private void drawShipsOnOwnBoard() {
         Map<Point, IShip> ships = currentGameBoard.getShipLocations();
         Map<Point, IHits> hits = opponentPlayer.getTargetingBoard().getHits();
@@ -258,6 +296,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         }
     }
 
+    /**
+     * Draws the target board grid, showing hits and misses.
+     */
     private void drawTargetBoard() {
         Map<Point, IHits> hits = currentTargetingBoard.getHits();
         for (Map.Entry<Point, IHits> entry : hits.entrySet()) {
@@ -275,12 +316,18 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
             }
         }
     }
-    
+
+    /**
+     * Draws a miss marker (animated water) on the target board.
+     * 
+     * @param r The row of the cell to draw the marker in.
+     * @param c The column of the cell to draw the marker in.
+     */
     private void drawMissMarker(int r, int c) {
         try {
             ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
             if (gifIcon.getIconWidth() == -1) {
-                return; 
+                return;
             }
 
             JLabel missLabel = new JLabel(gifIcon);
@@ -302,12 +349,20 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         }
     }
 
+    /**
+     * Draws a cross through a sunk ship on the target board.
+     * 
+     * @param coordinates The list of coordinates that make up the sunk ship.
+     */
     private void drawLineThroughSunkShip(List<Point> coordinates) {
         for (Point point : coordinates) {
             gridCells2[point.y][point.x].setSunk(true);
         }
     }
 
+    /**
+     * Clears both game board grids, resetting them to their initial states.
+     */
     public void clearGrids() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -323,9 +378,8 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
 
     /**
      * @class GridClickListener
-     *        Listener for grid cell clicks.
-     *        Extends {@link MouseAdapter} to handle mouse click events on grid
-     *        cells.
+     *        Listener for grid cell clicks, handling shot attempts.
+     *        Extends {@link MouseAdapter} for mouse click events.
      */
     private class GridClickListener extends MouseAdapter {
         private final int row;
@@ -336,21 +390,30 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
          *
          * @param row        The row of the grid cell.
          * @param col        The column of the grid cell.
-         * @param playerGrid The player grid identifier.
+         * @param playerGrid The player grid identifier (not used in this
+         *                   implementation).
          */
         public GridClickListener(int row, int col, int playerGrid) {
             this.row = row;
             this.col = col;
         }
 
+        /**
+         * Handles mouse click events on the grid cells.
+         * 
+         * @param e The MouseEvent triggered by the click.
+         */
         @Override
         public void mouseClicked(MouseEvent e) {
             handleGridCellClick();
         }
-        
+
+        /**
+         * Handles the logic for a grid cell click, representing a shot attempt.
+         */
         private void handleGridCellClick() {
             if (!clicksAllowed) {
-                return; 
+                return;
             }
             if (shootingManager.isAlreadyHit(col, row)) {
                 JOptionPane.showMessageDialog(null, "Bereits auf dieses Feld geschossen!");
@@ -374,7 +437,11 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 nextPlayerButton.setVisible(true);
             }
         }
-        
+
+        /**
+         * Handles a successful hit event, updating the grid and checking for a sunk
+         * ship.
+         */
         private void handleHit() {
             gridCells2[row][col].setBackground(Color.RED);
             List<Point> sunkShipCoordinates = shootingManager.isShipSunk(col, row);
@@ -384,10 +451,17 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
             }
         }
 
+        /**
+         * Handles a miss event, updating the grid with a miss marker.
+         */
         private void handleMiss() {
             drawMissMarker(row, col);
         }
 
+        /**
+         * Handles the end of the game, declaring the winner and returning to the main
+         * menu.
+         */
         private void handleGameOver() {
             JOptionPane.showMessageDialog(null, "Spiel vorbei! " + currentPlayer.getName() + " hat gewonnen!");
             battleshipGUI.showMainMenuView();
@@ -395,18 +469,33 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
 
     }
 
+    /**
+     * @class LinePanel
+     *        A custom JPanel that can draw a line through it to indicate a sunk
+     *        ship.
+     */
     class LinePanel extends JPanel {
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 8261635737354447451L;
-		private boolean isSunk = false;
+         * SerialVersionUID for the LinePanel class.
+         */
+        private static final long serialVersionUID = 8261635737354447451L;
+        private boolean isSunk = false;
 
+        /**
+         * Sets the sunk state of the panel.
+         * 
+         * @param isSunk True if the panel represents a sunk ship cell, false otherwise.
+         */
         public void setSunk(boolean isSunk) {
             this.isSunk = isSunk;
             repaint();
         }
 
+        /**
+         * Overrides the paintComponent method to draw the line if isSunk is true.
+         * 
+         * @param g The Graphics object for drawing.
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -420,18 +509,33 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
         }
     }
 
+    /**
+     * @class TransparentPanel
+     *        A custom JPanel that draws a semi-transparent overlay.
+     *        Used to indicate hits on the player's own board.
+     */
     class TransparentPanel extends JPanel {
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = -9012335818565252012L;
-		private final Color overlayColor;
+         * SerialVersionUID for the TransparentPanel class.
+         */
+        private static final long serialVersionUID = -9012335818565252012L;
+        private final Color overlayColor;
 
+        /**
+         * Constructor for TransparentPanel.
+         * 
+         * @param overlayColor The color of the semi-transparent overlay.
+         */
         public TransparentPanel(Color overlayColor) {
             this.overlayColor = overlayColor;
             setOpaque(false);
         }
 
+        /**
+         * Overrides the paintComponent to draw the semi-transparent overlay.
+         * 
+         * @param g The Graphics object for drawing.
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);

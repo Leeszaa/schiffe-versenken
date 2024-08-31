@@ -16,15 +16,15 @@ import java.util.Map;
 
 /**
  * @class ComputerShootingView
- *        Represents the shooting view in the Battleship game against a computer opponent.
+ *        Represents the shooting view for playing against a computer opponent.
  *        Extends {@link JPanel} to create a custom panel for shooting actions.
  */
 public class ComputerShootingView extends JPanel {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3677038397678972024L;
-	private JPanel gridPanel1;
+     * SerialVersionUID for the ComputerShootingView class.
+     */
+    private static final long serialVersionUID = -3677038397678972024L;
+    private JPanel gridPanel1;
     private JPanel gridPanel2;
     private JPanel[][] gridCells1;
     private LinePanel[][] gridCells2;
@@ -40,13 +40,13 @@ public class ComputerShootingView extends JPanel {
     /**
      * Constructor for ComputerShootingView.
      *
-     * @param player          The human player.
-     * @param computer     The computer player.
+     * @param player           The human player.
+     * @param computer         The computer player.
      * @param isOnePlayerDebug Flag for single-player debug mode.
-     * @param battleshipGUI   Reference to the main GUI.
+     * @param battleshipGUI    Reference to the main GUI.
      */
     public ComputerShootingView(IPlayer player, IPlayer computer, boolean isOnePlayerDebug,
-                                 BattleshipGUI battleshipGUI) {
+            BattleshipGUI battleshipGUI) {
         this.shootingManager = new ComputerShootingManager(player, computer);
         this.player = player;
         this.computer = computer;
@@ -57,7 +57,8 @@ public class ComputerShootingView extends JPanel {
     }
 
     /**
-     * Initializes the components of the view.
+     * Initializes the components of the view, including grids, labels, buttons,
+     * and sets up the starting player.
      */
     private void initComponents() {
         setBackground(Color.darkGray);
@@ -80,7 +81,12 @@ public class ComputerShootingView extends JPanel {
         gbc.gridy = 3;
         add(backButton, gbc);
     }
-    
+
+    /**
+     * Initializes the label that displays the current player's name.
+     * 
+     * @param gbc The GridBagConstraints for positioning the label.
+     */
     private void initPlayerNameLabel(GridBagConstraints gbc) {
         playerName = new JLabel(player.getName(), SwingConstants.CENTER);
         playerName.setFont(new Font("Roboto", Font.BOLD, 40));
@@ -89,7 +95,12 @@ public class ComputerShootingView extends JPanel {
         gbc.gridy = 0;
         add(playerName, gbc);
     }
-    
+
+    /**
+     * Initializes the labels that describe the two game board grids.
+     * 
+     * @param gbc The GridBagContraints for positioning the labels.
+     */
     private void initGridLabels(GridBagConstraints gbc) {
         JLabel label1 = new JLabel("Eigene Schiffe", SwingConstants.CENTER);
         label1.setFont(new Font("Roboto", Font.BOLD, 20));
@@ -105,7 +116,13 @@ public class ComputerShootingView extends JPanel {
         gbc.gridy = 1;
         add(label2, gbc);
     }
-    
+
+    /**
+     * Initializes the two game board grid panels, one for the player and one for
+     * the computer.
+     * 
+     * @param gbc The GridBagConstraints for positioning the panels.
+     */
     private void initGridPanels(GridBagConstraints gbc) {
         gridPanel1 = new JPanel(new GridLayout(10, 10));
         gridPanel2 = new JPanel(new GridLayout(10, 10));
@@ -134,7 +151,12 @@ public class ComputerShootingView extends JPanel {
         gbc.gridy = 2;
         add(gridWithLabels2, gbc);
     }
-    
+
+    /**
+     * Initializes the individual cells within the grid panels.
+     * Adds mouse listeners to the cells on the computer's grid to handle player
+     * shots.
+     */
     private void initGridCells() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -151,7 +173,14 @@ public class ComputerShootingView extends JPanel {
             }
         }
     }
-    
+
+    /**
+     * Initializes the "Next Player" button (or "Weiter" in German).
+     * This button is used to trigger the computer's turn after the player has made
+     * their shot.
+     * 
+     * @param gbc The GridBagConstraints for positioning the button.
+     */
     private void initNextPlayerButton(GridBagConstraints gbc) {
         nextPlayerButton = new JButton("Weiter");
         nextPlayerButton.addActionListener(e -> handleNextPlayerClick());
@@ -160,12 +189,16 @@ public class ComputerShootingView extends JPanel {
         nextPlayerButton.setForeground(Color.BLACK);
         nextPlayerButton.setPreferredSize(new Dimension(200, 50));
         nextPlayerButton.setVisible(false);
-        
+
         gbc.gridx = 0;
         gbc.gridy = 3;
         add(nextPlayerButton, gbc);
     }
-    
+
+    /**
+     * Handles the click on the "Next Player" button, executing the computer's turn.
+     * Redraws the grids and checks for game over conditions.
+     */
     private void handleNextPlayerClick() {
         shootingManager.computerShoot();
         clearGrids();
@@ -177,15 +210,22 @@ public class ComputerShootingView extends JPanel {
         if (shootingManager.isGameOver(computer)) {
             handleComputerWins();
         } else {
-            handlePlayerTurn(); 
+            handlePlayerTurn();
         }
     }
 
+    /**
+     * Handles the scenario where the computer wins the game.
+     */
     private void handleComputerWins() {
         JOptionPane.showMessageDialog(null, "Spiel vorbei! " + computer.getName() + " hat gewonnen!");
         battleshipGUI.showMainMenuView();
     }
-    
+
+    /**
+     * Manages the player's turn, enabling or disabling clicks based on debug mode
+     * settings.
+     */
     private void handlePlayerTurn() {
         clicksAllowed = true;
         if (isOnePlayerDebug) {
@@ -196,6 +236,10 @@ public class ComputerShootingView extends JPanel {
         }
     }
 
+    /**
+     * Randomly selects the starting player (human or computer) and
+     * displays a message indicating who goes first.
+     */
     private void determineStartingPlayer() {
         IPlayer startPlayer = shootingManager.selectRandomPlayer();
         if (startPlayer == player) {
@@ -206,6 +250,10 @@ public class ComputerShootingView extends JPanel {
         }
     }
 
+    /**
+     * Handles the case where the computer starts the game,
+     * executing the computer's first shot.
+     */
     private void handleComputerStarts() {
         clicksAllowed = false;
         JOptionPane.showMessageDialog(ComputerShootingView.this, "Der Computer beginnt!");
@@ -213,11 +261,10 @@ public class ComputerShootingView extends JPanel {
         clicksAllowed = true;
     }
 
-
     /**
-     * Creates the column labels for the grid.
+     * Creates the column labels (A-J) for the game board grids.
      * 
-     * @return A panel containing the column labels.
+     * @return A JPanel containing the column labels.
      */
     private JPanel createColumnLabels() {
         JPanel panel = new JPanel(new GridLayout(1, 10));
@@ -233,9 +280,9 @@ public class ComputerShootingView extends JPanel {
     }
 
     /**
-     * Creates the row labels for the grid.
+     * Creates the row labels (1-10) for the game board grids.
      * 
-     * @return A panel containing the row labels.
+     * @return A JPanel containing the row labels.
      */
     private JPanel createRowLabels() {
         JPanel panel = new JPanel(new GridLayout(10, 1));
@@ -249,7 +296,11 @@ public class ComputerShootingView extends JPanel {
         }
         return panel;
     }
-    
+
+    /**
+     * Draws the player's ships on their own game board, including any hits made by
+     * the computer.
+     */
     private void drawShipsOnOwnBoard() {
         Map<Point, IShip> ships = player.getGameBoard().getShipLocations();
         Map<Point, IHits> hits = computer.getTargetingBoard().getHits();
@@ -276,6 +327,10 @@ public class ComputerShootingView extends JPanel {
         }
     }
 
+    /**
+     * Draws the player's target board, showing hits, misses, and sunk ships on the
+     * computer's grid.
+     */
     private void drawTargetBoard() {
         Map<Point, IHits> hits = player.getTargetingBoard().getHits();
         for (Map.Entry<Point, IHits> entry : hits.entrySet()) {
@@ -294,6 +349,13 @@ public class ComputerShootingView extends JPanel {
         }
     }
 
+    /**
+     * Draws a miss marker (animated water) on the target board at the given
+     * coordinates.
+     * 
+     * @param r The row coordinate.
+     * @param c The column coordinate.
+     */
     private void drawMissMarker(int r, int c) {
         try {
             ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
@@ -319,13 +381,23 @@ public class ComputerShootingView extends JPanel {
             ex.printStackTrace();
         }
     }
-    
+
+    /**
+     * Draws a cross through the cells that represent a sunk ship on the target
+     * board.
+     * 
+     * @param coordinates A List of Point objects, each representing a cell of the
+     *                    sunk ship.
+     */
     private void drawLineThroughSunkShip(List<Point> coordinates) {
         for (Point point : coordinates) {
             gridCells2[point.y][point.x].setSunk(true);
         }
     }
 
+    /**
+     * Clears the contents of both game board grids, resetting their visual state.
+     */
     public void clearGrids() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -338,13 +410,11 @@ public class ComputerShootingView extends JPanel {
             }
         }
     }
-    
 
     /**
      * @class GridClickListener
-     *        Listener for grid cell clicks.
-     *        Extends {@link MouseAdapter} to handle mouse click events on grid
-     *        cells.
+     *        A MouseAdapter that listens for clicks on the grid cells
+     *        and handles player shots on the computer's board.
      */
     private class GridClickListener extends MouseAdapter {
         private final int row;
@@ -353,8 +423,8 @@ public class ComputerShootingView extends JPanel {
         /**
          * Constructor for GridClickListener.
          *
-         * @param row The row of the grid cell.
-         * @param col The column of the grid cell.
+         * @param row The row coordinate of the grid cell.
+         * @param col The column coordinate of the grid cell.
          */
         public GridClickListener(int row, int col) {
             this.row = row;
@@ -362,18 +432,23 @@ public class ComputerShootingView extends JPanel {
         }
 
         /**
-         * Handles mouse click events on grid cells.
+         * Handles mouse click events on the grid cells.
          *
-         * @param e The mouse event.
+         * @param e The MouseEvent triggered by the click.
          */
         @Override
         public void mouseClicked(MouseEvent e) {
             handleGridCellClick();
         }
 
+        /**
+         * Handles the logic for a grid cell click, representing a player shot.
+         * Checks for valid shots, updates the game state, and manages game over
+         * conditions.
+         */
         private void handleGridCellClick() {
             if (!clicksAllowed) {
-                return; 
+                return;
             }
             if (shootingManager.isAlreadyHit(col, row)) {
                 JOptionPane.showMessageDialog(null, "Bereits auf dieses Feld geschossen!");
@@ -394,7 +469,10 @@ public class ComputerShootingView extends JPanel {
                 prepareComputerTurn();
             }
         }
-        
+
+        /**
+         * Handles a successful hit, updating the display and checking for sunk ships.
+         */
         private void handleHit() {
             gridCells2[row][col].setBackground(Color.RED);
             List<Point> sunkShipCoordinates = shootingManager.isShipSunk(col, row);
@@ -404,33 +482,60 @@ public class ComputerShootingView extends JPanel {
             }
         }
 
+        /**
+         * Handles a miss, updating the display with a miss marker.
+         */
         private void handleMiss() {
             drawMissMarker(row, col);
         }
 
+        /**
+         * Handles the case where the player wins the game.
+         */
         private void handlePlayerWins() {
             JOptionPane.showMessageDialog(null, "Spiel vorbei! " + player.getName() + " hat gewonnen!");
             battleshipGUI.showMainMenuView();
         }
-        
+
+        /**
+         * Prepares the game for the computer's turn by disabling player input and
+         * enabling the "Next Player" button.
+         */
         private void prepareComputerTurn() {
             clicksAllowed = false;
             nextPlayerButton.setVisible(true);
         }
     }
 
+    /**
+     * @class LinePanel
+     *        A custom JPanel that can draw a line through it to visually indicate a
+     *        sunk ship.
+     */
     class LinePanel extends JPanel {
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 790697028496269236L;
-		private boolean isSunk = false;
+         * SerialVersionUID for the LinePanel class.
+         */
+        private static final long serialVersionUID = 790697028496269236L;
+        private boolean isSunk = false;
 
+        /**
+         * Sets the sunk status of the panel.
+         * 
+         * @param isSunk True if the panel should represent a sunk ship cell, false
+         *               otherwise.
+         */
         public void setSunk(boolean isSunk) {
             this.isSunk = isSunk;
             repaint();
         }
 
+        /**
+         * Overrides the paintComponent method to draw a diagonal line through the panel
+         * if the `isSunk` flag is set to true.
+         * 
+         * @param g The Graphics object to use for drawing.
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -444,18 +549,34 @@ public class ComputerShootingView extends JPanel {
         }
     }
 
+    /**
+     * @class TransparentPanel
+     *        A custom JPanel that draws a semi-transparent overlay color.
+     *        Used to visually indicate hits on the player's own board.
+     */
     class TransparentPanel extends JPanel {
         /**
-		 * 
-		 */
-		private static final long serialVersionUID = 383926842048906531L;
-		private final Color overlayColor;
+         * SerialVersionUID for the TransparentPanel class.
+         */
+        private static final long serialVersionUID = 383926842048906531L;
+        private final Color overlayColor;
 
+        /**
+         * Constructor for TransparentPanel.
+         * 
+         * @param overlayColor The Color to use for the semi-transparent overlay.
+         */
         public TransparentPanel(Color overlayColor) {
             this.overlayColor = overlayColor;
             setOpaque(false);
         }
 
+        /**
+         * Overrides the paintComponent method to draw the semi-transparent color
+         * overlay.
+         * 
+         * @param g The Graphics object used for drawing.
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);

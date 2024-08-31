@@ -1,8 +1,3 @@
-/**
- * @file IGameBoard.java
- *   Interface for a game board in the Battleship game.
- */
-
 package battleship.factorys.gameboard;
 
 import battleship.factorys.ships.IShip;
@@ -40,9 +35,23 @@ public interface IGameBoard {
      */
     boolean isShipHit(int x, int y);
 
+    /**
+     *   Removes a ship from the game board.
+     * @param ship The ship to be removed.
+     */
     void removeShip(IShip ship);
 
+    /**
+     *   Places a hit on the game board.
+     * @param x The x-coordinate where the hit will be placed.
+     * @param y The y-coordinate where the hit will be placed.
+     * @param hit The hit to be placed.
+     */
     void placeHit(int x, int y, IHits hit);
 
+    /**
+     *   Gets the hits on the game board.
+     * @return A map of hits with coordinates as keys and hits as values.
+     */
     Map<Point, IHits> getHits();
 }
