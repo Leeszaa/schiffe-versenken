@@ -8,10 +8,14 @@ package battleship.views;
 import javax.swing.*;
 
 import battleship.BattleshipGUI;
+import battleship.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @class MainMenuView
@@ -158,10 +162,7 @@ public class MainMenuView extends JPanel {
         add(buttonNine, gbc);
         buttonNine.setVisible(false);
 
-        String gifPath = "src/battleship/assets/waves.gif";
-        File gifFile = new File(gifPath);
-        String absoluteGifPath = gifFile.getAbsolutePath();
-        ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+        ImageIcon gifIcon = new ImageIcon(getClass().getResource("waves.gif"));
 
         gbc.gridy = 11;
         gbc.gridwidth = GridBagConstraints.REMAINDER;

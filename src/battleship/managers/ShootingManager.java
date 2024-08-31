@@ -60,13 +60,6 @@ public class ShootingManager {
         notifyObservers();
     }
 
-    public void getCurrentPlayerBoards() {
-
-        this.currentGameBoard = currentPlayer.getGameBoard();
-        this.currentTargetBoard = currentPlayer.getTargetingBoard();
-        this.currentOpponentBoard = opponentPlayer.getGameBoard();
-    }
-
     public boolean addHitToTargetBoard(int x, int y) {
         boolean isHit = isHitHittingShip(x, y);
         IHits hit = hitFactory.createHit(isHit);
@@ -86,8 +79,14 @@ public class ShootingManager {
             currentPlayer = player1;
             opponentPlayer = player2;
         }
-        getCurrentPlayerBoards();
         notifyObservers();
+    }
+    
+    public void getCurrentPlayerBoards() {
+
+        this.currentGameBoard = currentPlayer.getGameBoard();
+        this.currentTargetBoard = currentPlayer.getTargetingBoard();
+        this.currentOpponentBoard = opponentPlayer.getGameBoard();
     }
 
     public boolean isGameOver() {

@@ -319,13 +319,7 @@ public class ComputerShootingView extends JPanel {
                 }
             } else {
                 try {
-                    File gifFile = new File("src/battleship/assets/water_tile.gif");
-                    if (!gifFile.exists()) {
-                        return;
-                    }
-
-                    String absoluteGifPath = gifFile.getAbsolutePath();
-                    ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+                    ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
                     if (gifIcon.getIconWidth() == -1) {
                         return;
                     }
@@ -406,13 +400,7 @@ public class ComputerShootingView extends JPanel {
                 }
             } else {
                 try {
-                    File gifFile = new File("src/battleship/assets/water_tile.gif");
-                    if (!gifFile.exists()) {
-                        return;
-                    }
-
-                    String absoluteGifPath = gifFile.getAbsolutePath();
-                    ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+                	ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
                     if (gifIcon.getIconWidth() == -1) {
                         return;
                     }

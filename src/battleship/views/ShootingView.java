@@ -319,13 +319,7 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 }
             } else {
                 try {
-                    File gifFile = new File("src/battleship/assets/water_tile.gif");
-                    if (!gifFile.exists()) {
-                        return;
-                    }
-
-                    String absoluteGifPath = gifFile.getAbsolutePath();
-                    ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+                	ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
                     if (gifIcon.getIconWidth() == -1) {
                         return;
                     }
@@ -409,16 +403,9 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
                 }
             } else {
                 try {
-                    File gifFile = new File("src/battleship/assets/water_tile.gif");
-                    if (!gifFile.exists()) {
-                        System.err.println("GIF file not found: " + gifFile.getAbsolutePath());
-                        return;
-                    }
-
-                    String absoluteGifPath = gifFile.getAbsolutePath();
-                    ImageIcon gifIcon = new ImageIcon(absoluteGifPath);
+                    ImageIcon gifIcon = new ImageIcon(getClass().getResource("water_tile.gif"));
                     if (gifIcon.getIconWidth() == -1) {
-                        System.err.println("Failed to load GIF: " + absoluteGifPath);
+                        System.err.println("Failed to load GIF: " + getClass().getResource("waves.gif"));
                         return;
                     }
 
