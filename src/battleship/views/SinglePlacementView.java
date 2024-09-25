@@ -114,7 +114,7 @@ public class SinglePlacementView extends JPanel {
      */
     private void initGridPanel() {
         gridPanel = new JPanel(new GridLayout(10, 10));
-        gridPanel.setPreferredSize(new Dimension(600, 600));
+        gridPanel.setPreferredSize(new Dimension(500, 500));
         gridCells = new JPanel[10][10];
 
         for (int i = 0; i < 10; i++) {

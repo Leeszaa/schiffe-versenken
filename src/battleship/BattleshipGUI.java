@@ -73,7 +73,7 @@ public class BattleshipGUI extends JFrame {
         add(panelCont);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1400, 1000);
+        setSize(1400, 800);
         setLocationRelativeTo(null);
         setVisible(true);
     }

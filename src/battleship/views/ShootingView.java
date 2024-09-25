@@ -136,8 +136,8 @@ public class ShootingView extends JPanel implements ShootingManagerObserver {
     private void initGridPanels() {
         gridPanel1 = new JPanel(new GridLayout(10, 10));
         gridPanel2 = new JPanel(new GridLayout(10, 10));
-        gridPanel1.setPreferredSize(new Dimension(600, 600));
-        gridPanel2.setPreferredSize(new Dimension(600, 600));
+        gridPanel1.setPreferredSize(new Dimension(500, 500));
+        gridPanel2.setPreferredSize(new Dimension(500, 500));
 
         gridCells1 = new JPanel[10][10];
         gridCells2 = new LinePanel[10][10];
