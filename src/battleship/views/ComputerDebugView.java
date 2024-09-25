@@ -76,7 +76,7 @@ public class ComputerDebugView extends JPanel {
                 e -> ((BattleshipGUI) SwingUtilities.getWindowAncestor(parentPanel)).showMainMenuView());
 
         gridPanel = new JPanel(new GridLayout(10, 10));
-        gridPanel.setPreferredSize(new Dimension(600, 600));
+        gridPanel.setPreferredSize(new Dimension(500, 500));
         gridCells = new JPanel[10][10];
 
         for (int i = 0; i < 10; i++) {
